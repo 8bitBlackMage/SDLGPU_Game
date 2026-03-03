@@ -17,11 +17,14 @@ set(VENDOR_DIR "${PROJECT_SOURCE_DIR}/vendor")
 add_subdirectory(${VENDOR_DIR}/SDL)
 add_subdirectory(${VENDOR_DIR}/SDL_image)
 add_subdirectory(${VENDOR_DIR}/SDL_ttf)
+add_subdirectory(${VENDOR_DIR}/imgui)
 
+target_include_directories(${PROJECT_NAME} INTERFACE ${VENDOR_DIR}/imgui)
 
 target_link_libraries(${PROJECT_NAME}
     PRIVATE 
     SDL3::SDL3
     SDL3_image::SDL3_image
     SDL3_ttf::SDL3_ttf
+    imgui
     )
