@@ -1,0 +1,22 @@
+#pragma once 
+#include <SDL3/SDL.h>
+
+/// @brief Class that holds the core Game Data, such as the SDL contexts, scene graph and event handling.
+class Game final {
+public:
+    /// @brief Standard Constructor
+    Game();
+    /// @brief Function to start and run the game loop.
+    void run();
+
+private:
+    void setupSDLContext();
+    void setupImGuiContext();
+    void handleEvents();
+    void render();
+
+
+    SDL_Window * window;
+    SDL_Renderer * renderer;
+    bool running;
+};

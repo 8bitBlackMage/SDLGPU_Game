@@ -11,7 +11,18 @@ Project("DungeonCrawler"
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_executable(${PROJECT_NAME}  src/main.cpp)
+add_executable(${PROJECT_NAME})
+
+target_include_directories(${PROJECT_NAME}
+    PUBLIC
+    src/
+)
+
+target_sources(${PROJECT_NAME}
+    PUBLIC
+    src/main.cpp
+    src/game.cpp
+    )
 
 set(VENDOR_DIR "${PROJECT_SOURCE_DIR}/vendor")
 add_subdirectory(${VENDOR_DIR}/SDL)
