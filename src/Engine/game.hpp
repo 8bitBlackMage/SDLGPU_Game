@@ -1,6 +1,9 @@
 #pragma once 
 #include <SDL3/SDL.h>
 
+
+
+#include "Engine/Scenes/sceneManager.hpp"
 /// @brief Class that holds the core Game Data, such as the SDL contexts, scene graph and event handling.
 class Game final {
 public:
@@ -16,7 +19,10 @@ private:
     void render();
 
 
+    SceneManager sceneManager;
+
     SDL_Window * window;
     SDL_Renderer * renderer;
+    SDL_Texture * texture;
     bool running;
 };

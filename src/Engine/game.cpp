@@ -1,4 +1,4 @@
-#include <game.hpp>
+#include "game.hpp"
 
 #include <imgui.h>
 #include <imgui_impl_sdl3.h>
@@ -30,7 +30,8 @@ void Game::setupSDLContext()
         exit(-1);
     }
 
-    window = SDL_CreateWindow("TEST", 640,480, SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIDDEN);
+
+    window = SDL_CreateWindow("TEST", 1920,1080, SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIDDEN | SDL_WINDOW_HIGH_PIXEL_DENSITY);
     if (window == nullptr)
     {
         std::cerr << "SDL WINDOW Creation failed: " << SDL_GetError() << std::endl;
@@ -48,6 +49,11 @@ void Game::setupSDLContext()
         exit(-1);
     }
 
+    texture = SDL_CreateTexture(renderer,
+                                SDL_PIXELFORMAT_ARGB8888,
+                                SDL_TEXTUREACCESS_TARGET,
+                                320,240);
+
     SDL_ShowWindow(window);
 }
 
@@ -59,7 +65,12 @@ void Game::setupImGuiContext()
 
     ImGui_ImplSDL3_InitForSDLRenderer(window,renderer);
     ImGui_ImplSDLRenderer3_Init(renderer);
+    ImGui::StyleColorsLight();
+    ImGuiStyle& style = ImGui::GetStyle();
 
+    float mainScale = SDL_GetDisplayContentScale(SDL_GetPrimaryDisplay());
+    style.ScaleAllSizes(mainScale);
+    style.FontScaleDpi = mainScale;
 }
 
 void Game::handleEvents()
@@ -84,11 +95,38 @@ void Game::render()
         ImGui_ImplSDL3_NewFrame();
         ImGui::NewFrame();
 
-        ImGui::Begin("TEST");
+        ImGui::Begin("debug");
+        {
+            ImGuiIO& io = ImGui::GetIO();
+            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
+        }
+        ImGui::End();
+        ImGui::Begin("Game Render");
+        {
+            SDL_SetRenderTarget(renderer,texture);
+            SDL_RenderClear(renderer);
+            SDL_FRect Rect{0.0,0.0,32.0,32.0};
+            SDL_SetRenderDrawColor(renderer,255,255,255,255);
+            SDL_RenderRect(renderer,&Rect);
+
+        SDL_SetRenderTarget(renderer,nullptr);
+        auto winSize = ImGui::GetContentRegionAvail();
+        float widthScale = winSize.x / 320.;
+        float heightScale = winSize.y / 240;
+        float scale = int (std::min(widthScale,heightScale));
+        
+
+
+        ImGui::Image(texture,{320 * scale, 240 *scale});
+        }
         ImGui::End();
 
 
+        sceneManager.debugView();
+
         ImGui::Render();
+        ImGuiIO io = ImGui::GetIO();
+        SDL_SetRenderScale(renderer, io.DisplayFramebufferScale.x, io.DisplayFramebufferScale.y);
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
         ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(), renderer);

@@ -16,12 +16,14 @@ add_executable(${PROJECT_NAME})
 target_include_directories(${PROJECT_NAME}
     PUBLIC
     src/
+    src/engine
 )
 
 target_sources(${PROJECT_NAME}
     PUBLIC
     src/main.cpp
-    src/game.cpp
+    src/Engine/game.cpp
+    src/Engine/Scenes/SceneManager.cpp
     )
 
 set(VENDOR_DIR "${PROJECT_SOURCE_DIR}/vendor")
