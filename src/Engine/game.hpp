@@ -18,6 +18,7 @@ private:
     void handleEvents();
     void render();
 
+    void shutdown();
 
     SceneManager sceneManager;
 

@@ -1,12 +1,11 @@
 #pragma once 
 #include <map>
+#include <memory>
 
-class Scene {
-public:
-    virtual void render()=0;
-    virtual void update()=0;
-};
+#include "scene.hpp"
 
+
+/// @brief This object handles the lifetime and operation of scenes, along with displaying debugging info.
 class SceneManager final {
 
 public:
@@ -14,9 +13,9 @@ public:
     SceneManager();
 
     /// @brief Change the current scene to a new one, with a scene transition.
-    /// @param sceneId The ID of the new  Scene
+    /// @param sceneName The name of the new  Scene
     /// @param playSceneTransition Should the transition animation play.
-    void changeScene(int sceneId, bool playSceneTransition = true);
+    void changeScene(const std::string & sceneName, bool playSceneTransition = true);
 
     /// @brief Renders the current scene to the screen.
     void renderScene();
@@ -29,5 +28,11 @@ public:
 
 
 private:
-       Scene* currentScene;
+    std::unique_ptr<Scene> createScene(const std::string & sceneName);
+    const std::string & currentSceneName;
+
+
+    const std::string emptySceneName = "None";
+    std::map<std::string, std::function<std::unique_ptr<Scene>() >> factories;
+    std::unique_ptr<Scene> currentScene;
 };

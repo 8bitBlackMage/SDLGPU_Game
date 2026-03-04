@@ -31,7 +31,7 @@ void Game::setupSDLContext()
     }
 
 
-    window = SDL_CreateWindow("TEST", 1920,1080, SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIDDEN | SDL_WINDOW_HIGH_PIXEL_DENSITY);
+    window = SDL_CreateWindow("Dungeon Crawler", 1920,1080, SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIDDEN | SDL_WINDOW_HIGH_PIXEL_DENSITY);
     if (window == nullptr)
     {
         std::cerr << "SDL WINDOW Creation failed: " << SDL_GetError() << std::endl;
@@ -61,13 +61,17 @@ void Game::setupImGuiContext()
 {
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
+    //Create a Dockable ImGUI Instance
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+    io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
     ImGui_ImplSDL3_InitForSDLRenderer(window,renderer);
     ImGui_ImplSDLRenderer3_Init(renderer);
     ImGui::StyleColorsLight();
     ImGuiStyle& style = ImGui::GetStyle();
 
+    //Handle High DPI mode.
     float mainScale = SDL_GetDisplayContentScale(SDL_GetPrimaryDisplay());
     style.ScaleAllSizes(mainScale);
     style.FontScaleDpi = mainScale;
@@ -94,7 +98,7 @@ void Game::render()
         ImGui_ImplSDLRenderer3_NewFrame();
         ImGui_ImplSDL3_NewFrame();
         ImGui::NewFrame();
-
+        ImGui::DockSpaceOverViewport();
         ImGui::Begin("debug");
         {
             ImGuiIO& io = ImGui::GetIO();
@@ -131,4 +135,12 @@ void Game::render()
         SDL_RenderClear(renderer);
         ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(), renderer);
         SDL_RenderPresent(renderer);
+}
+
+void Game::shutdown()
+{
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
+
+    SDL_Quit();
 }
