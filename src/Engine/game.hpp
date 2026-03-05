@@ -1,6 +1,6 @@
 #pragma once 
 #include <SDL3/SDL.h>
-
+#include "Engine/graphicsContext.hpp"
 
 
 #include "Engine/Scenes/sceneManager.hpp"
@@ -21,6 +21,8 @@ private:
     void shutdown();
 
     SceneManager sceneManager;
+    GraphicsContext graphicsContext;
+
 
     SDL_Window * window;
     SDL_Renderer * renderer;

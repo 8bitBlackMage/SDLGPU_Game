@@ -25,6 +25,7 @@ target_sources(${PROJECT_NAME}
     src/Engine/game.cpp
     src/Engine/Scenes/SceneManager.cpp
     src/Engine/Scenes/testScene.cpp
+    src/Engine/graphicsContext.cpp
     )
 
 set(VENDOR_DIR "${PROJECT_SOURCE_DIR}/vendor")

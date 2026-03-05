@@ -15,6 +15,7 @@ target_sources(imgui
     imgui/imgui_tables.cpp
     imgui/imgui_widgets.cpp
     imgui/backends/imgui_impl_sdl3.cpp
+    imgui/backends/imgui_impl_sdlgpu3.cpp
     imgui/backends/imgui_impl_sdlrenderer3.cpp
 )
 

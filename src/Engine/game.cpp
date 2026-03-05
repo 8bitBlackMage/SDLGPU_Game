@@ -6,7 +6,9 @@
 
 #include <iostream>
 
-Game::Game() {
+Game::Game():
+    graphicsContext()
+{
     setupSDLContext();
     setupImGuiContext();
     running = true;
@@ -54,27 +56,21 @@ void Game::setupSDLContext()
                                 SDL_TEXTUREACCESS_TARGET,
                                 320,240);
 
+    graphicsContext.initContext(window);
+
     SDL_ShowWindow(window);
 }
 
 void Game::setupImGuiContext()
 {
-    ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO();
-    //Create a Dockable ImGUI Instance
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-    io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
-    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
-    ImGui_ImplSDL3_InitForSDLRenderer(window,renderer);
-    ImGui_ImplSDLRenderer3_Init(renderer);
-    ImGui::StyleColorsLight();
-    ImGuiStyle& style = ImGui::GetStyle();
 
-    //Handle High DPI mode.
-    float mainScale = SDL_GetDisplayContentScale(SDL_GetPrimaryDisplay());
-    style.ScaleAllSizes(mainScale);
-    style.FontScaleDpi = mainScale;
+
+    graphicsContext.initImGuiGPU();
+
+    // ImGui_ImplSDL3_InitForSDLRenderer(window,renderer);
+    // ImGui_ImplSDLRenderer3_Init(renderer);
+
 }
 
 void Game::handleEvents()
@@ -95,52 +91,17 @@ void Game::handleEvents()
 
 void Game::render()
 {
-        ImGui_ImplSDLRenderer3_NewFrame();
-        ImGui_ImplSDL3_NewFrame();
-        ImGui::NewFrame();
-        ImGui::DockSpaceOverViewport();
-        ImGui::Begin("debug");
-        {
-            ImGuiIO& io = ImGui::GetIO();
-            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
-        }
-        ImGui::End();
-        ImGui::Begin("Game Render");
-        {
-            SDL_SetRenderTarget(renderer,texture);
-            SDL_RenderClear(renderer);
-            SDL_FRect Rect{0.0,0.0,32.0,32.0};
-            SDL_SetRenderDrawColor(renderer,255,255,255,255);
-            SDL_RenderRect(renderer,&Rect);
-
-        SDL_SetRenderTarget(renderer,nullptr);
-        auto winSize = ImGui::GetContentRegionAvail();
-        float widthScale = winSize.x / 320.;
-        float heightScale = winSize.y / 240;
-        float scale = int (std::min(widthScale,heightScale));
-        
+    graphicsContext.startFrame();
 
 
-        ImGui::Image(texture,{320 * scale, 240 *scale});
-        }
-        ImGui::End();
+    sceneManager.debugView();
+    graphicsContext.debugView();
 
-
-        sceneManager.debugView();
-
-        ImGui::Render();
-        ImGuiIO io = ImGui::GetIO();
-        SDL_SetRenderScale(renderer, io.DisplayFramebufferScale.x, io.DisplayFramebufferScale.y);
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-        SDL_RenderClear(renderer);
-        ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(), renderer);
-        SDL_RenderPresent(renderer);
+    graphicsContext.endFrame();
 }
 
 void Game::shutdown()
 {
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
-
-    SDL_Quit();
 }
