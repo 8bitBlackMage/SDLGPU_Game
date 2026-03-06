@@ -5,6 +5,9 @@
 #include <imgui_impl_sdlrenderer3.h>
 
 #include <iostream>
+#include "Graphics/spriteBatch.hpp"
+
+#include "logger.hpp"
 
 Game::Game():
     graphicsContext()
@@ -26,9 +29,11 @@ void Game::run()
 
 void Game::setupSDLContext()
 {
+    Logger::getLogger().appendToLog("Creating Context");
+
     if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_EVENTS))
     {
-        std::cerr << "SDL CONTEXT Creation failed: "  << SDL_GetError() << std::endl;
+        Logger::getLogger().appendToLog("SDL CONTEXT Creation failed: " , SDL_GetError());
         exit(-1);
     }
 
@@ -36,18 +41,18 @@ void Game::setupSDLContext()
     window = SDL_CreateWindow("Dungeon Crawler", 1920,1080, SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIDDEN | SDL_WINDOW_HIGH_PIXEL_DENSITY);
     if (window == nullptr)
     {
-        std::cerr << "SDL WINDOW Creation failed: " << SDL_GetError() << std::endl;
+        Logger::log( "SDL WINDOW Creation failed: " , SDL_GetError() );
         exit(-1);
     }
     renderer = SDL_CreateRenderer(window,nullptr);
     if (renderer == nullptr){
-        std::cerr << "SDL RENDERER Creation failed: " << SDL_GetError() << std::endl;
+        Logger::log(  "SDL RENDERER Creation failed: " , SDL_GetError());
         exit(-1);
     }
 
     if (!SDL_SetRenderVSync(renderer, 1))
     {
-        std::cerr << "SDL VSync set failed: "  << SDL_GetError() << std::endl;
+        Logger::log("SDL VSync set failed: ", SDL_GetError());
         exit(-1);
     }
 
@@ -58,14 +63,13 @@ void Game::setupSDLContext()
 
     graphicsContext.initContext(window);
 
+    SpriteBatch test(&graphicsContext);
+
     SDL_ShowWindow(window);
 }
 
 void Game::setupImGuiContext()
 {
-
-
-
     graphicsContext.initImGuiGPU();
 
     // ImGui_ImplSDL3_InitForSDLRenderer(window,renderer);
@@ -96,7 +100,7 @@ void Game::render()
 
     sceneManager.debugView();
     graphicsContext.debugView();
-
+    Logger::getLogger().draw();
     graphicsContext.endFrame();
 }
 

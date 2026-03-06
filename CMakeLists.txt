@@ -8,7 +8,7 @@ Project("DungeonCrawler"
     LANGUAGES C CXX
     )
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_executable(${PROJECT_NAME})
@@ -23,9 +23,11 @@ target_sources(${PROJECT_NAME}
     PUBLIC
     src/main.cpp
     src/Engine/game.cpp
+    src/Engine/logger.cpp
     src/Engine/Scenes/SceneManager.cpp
     src/Engine/Scenes/testScene.cpp
-    src/Engine/graphicsContext.cpp
+    src/Engine/Graphics/graphicsContext.cpp
+    src/Engine/Graphics/spriteBatch.cpp
     )
 
 set(VENDOR_DIR "${PROJECT_SOURCE_DIR}/vendor")
@@ -43,3 +45,7 @@ target_link_libraries(${PROJECT_NAME}
     SDL3_ttf::SDL3_ttf
     imgui
     )
+
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/assets $<TARGET_FILE_DIR:${PROJECT_NAME}>/assets
+)

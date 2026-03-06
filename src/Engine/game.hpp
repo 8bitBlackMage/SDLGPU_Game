@@ -1,6 +1,6 @@
 #pragma once 
 #include <SDL3/SDL.h>
-#include "Engine/graphicsContext.hpp"
+#include "Engine/Graphics/graphicsContext.hpp"
 
 
 #include "Engine/Scenes/sceneManager.hpp"
