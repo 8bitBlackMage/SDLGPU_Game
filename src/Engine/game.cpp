@@ -10,10 +10,12 @@
 #include "logger.hpp"
 
 Game::Game():
-    graphicsContext()
+    graphicsContext(),
+    spriteBatch()
 {
     setupSDLContext();
     setupImGuiContext();
+    //spriteBatch.init(&graphicsContext);
     running = true;
 }
 
@@ -63,7 +65,7 @@ void Game::setupSDLContext()
 
     graphicsContext.initContext(window);
 
-    SpriteBatch test(&graphicsContext);
+   
 
     SDL_ShowWindow(window);
 }

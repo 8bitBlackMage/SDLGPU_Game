@@ -4,6 +4,20 @@
 #include <filesystem>
 #include <map>
 
+class SpriteBatch;
+
+struct Texture{
+    SDL_GPUTexture * texture;
+    int width,height;
+};
+
+struct FrameContext{
+    SDL_GPUDevice * device;
+    SDL_GPUCommandBuffer * commandBuffer;
+    SDL_GPUTexture* swapchainTexture;
+    SDL_GPUViewport viewport;
+};
+
 /// @brief Wrapper around SDL Renderer Functions to simplify rendering. 
 ///        With potential of replacing renderer with different underlying framework in future.
 class GraphicsContext{
@@ -16,14 +30,13 @@ class GraphicsContext{
 
     void debugView();
 
-
     void startFrame();
 
+    FrameContext * getFrameContext() {return &frameContext;}
 
     void endFrame();
 
-    SDL_GPUTexture*  loadTexture(std::string filename);
-
+    Texture  loadTexture(std::string filename);
 
     SDL_GPUShader * loadShader(std::string filename, 	
                                Uint32 samplerCount, 
@@ -38,8 +51,13 @@ class GraphicsContext{
     SDL_GPUDevice * device;
     SDL_GPUSampler * sampler;
     float lastFrameRate;
-    bool theme;
+
+    FrameContext frameContext;
+
+    SpriteBatch * testBatch;
+
+    SDL_GPUTexture* renderTexture;
 
     //texture storage pool
-    std::map<std::string, SDL_GPUTexture*> textureStorage;
+    std::map<std::string, Texture> textureStorage;
 };

@@ -9,13 +9,14 @@
 #include <iostream>
 #include <Engine/logger.hpp>
 
+#include "spriteBatch.hpp"
+
 void ImDrawCallback_ImplSDLGPU3_SetSampler(const ImDrawList* parent_list, const ImDrawCmd* cmd) 
 {
     ImGui_ImplSDLGPU3_RenderState* state = (ImGui_ImplSDLGPU3_RenderState*)ImGui::GetPlatformIO().Renderer_RenderState;
     SDL_GPUSampler* sampler = cmd->UserCallbackData ? (SDL_GPUSampler*)cmd->UserCallbackData : state->SamplerNearest;
     state->SamplerCurrent = sampler;
 }
-
 
 GraphicsContext::GraphicsContext()
 {
@@ -62,7 +63,25 @@ void GraphicsContext::initContext(SDL_Window* windowIn)
         .address_mode_w = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE,
     };
     
+    auto textureFormat = SDL_GetGPUSwapchainTextureFormat(device,window);
+    auto textureCreateInfo = (SDL_GPUTextureCreateInfo){
+            .height = 480,
+            .width =  640,
+            .num_levels = 1,
+            .layer_count_or_depth = 1,
+            .format = textureFormat,
+            .sample_count = SDL_GPU_SAMPLECOUNT_1,
+            .type = SDL_GPU_TEXTURETYPE_2D,
+            .usage = SDL_GPU_TEXTUREUSAGE_SAMPLER
+    };
+    renderTexture = SDL_CreateGPUTexture(device, &textureCreateInfo);
+
+
     sampler = SDL_CreateGPUSampler(device, &samplerCreateInfo);
+
+    testBatch = new SpriteBatch();
+
+    testBatch->init(this);
 }
 
 void GraphicsContext::initImGuiGPU()
@@ -121,8 +140,10 @@ void GraphicsContext::debugView()
         {
             ImGui::Text("%s",texture.first.c_str());
             ImGui::SameLine();
-            ImGui::Text("%p", texture.second);
-            ImGui::Image((ImTextureID)(intptr_t)texture.second,{200,200});
+            ImGui::Text("Width: %ipx, Height %ipx", texture.second.width, texture.second.height);
+            ImGui::SameLine();
+            ImGui::Text(" Address: %p", texture.second.texture);
+            ImGui::Image((ImTextureID)(intptr_t)texture.second.texture,{200,200});
         }
         ImGui::EndChild();
     }
@@ -136,59 +157,70 @@ void GraphicsContext::startFrame()
     ImGui::NewFrame();
     ImGui::DockSpaceOverViewport();
     ImGui::Begin("GameWindow");
-    //#TODO Add game window viewport
+
+    frameContext.device = device;
+    frameContext.commandBuffer = SDL_AcquireGPUCommandBuffer(device); // Acquire a GPU command buffer
+
+    frameContext.swapchainTexture = renderTexture;
+
+    testBatch->draw(&frameContext);
+
+    ImGui::Image(renderTexture,{640,480});
+
+    float mainScale = SDL_GetDisplayContentScale(SDL_GetPrimaryDisplay());
+    
+
+    SDL_WaitAndAcquireGPUSwapchainTexture(frameContext.commandBuffer, window, &frameContext.swapchainTexture, nullptr, nullptr); // Acquire a swapchain texture
+
+
+    
     ImGui::End();
+    testBatch->drawDebugInfo();
 }
 
 void GraphicsContext::endFrame()
 {
-        ImGui::EndFrame();
-        ImGui::UpdatePlatformWindows();
-        // Rendering
-        ImGui::Render();
-        ImDrawData* draw_data = ImGui::GetDrawData();
-        const bool is_minimized = (draw_data->DisplaySize.x <= 0.0f || draw_data->DisplaySize.y <= 0.0f);
+    
+    ImGui::EndFrame();
+    ImGui::UpdatePlatformWindows();
+    // Rendering
+    ImGui::Render();
+    ImDrawData* draw_data = ImGui::GetDrawData();
+    const bool is_minimized = (draw_data->DisplaySize.x <= 0.0f || draw_data->DisplaySize.y <= 0.0f);
+    if (frameContext.swapchainTexture != nullptr && !is_minimized)
+    {
+        // This is mandatory: call ImGui_ImplSDLGPU3_PrepareDrawData() to upload the vertex/index buffer!
+        ImGui_ImplSDLGPU3_PrepareDrawData(draw_data, frameContext.commandBuffer);
 
-        SDL_GPUCommandBuffer* command_buffer = SDL_AcquireGPUCommandBuffer(device); // Acquire a GPU command buffer
+        SDL_GPUColorTargetInfo target_info = {};
+        target_info.texture = frameContext.swapchainTexture;
+        target_info.clear_color = SDL_FColor { 0,0,0,0};
+        target_info.load_op = SDL_GPU_LOADOP_CLEAR;
+        target_info.store_op = SDL_GPU_STOREOP_STORE;
+        target_info.mip_level = 0;
+        target_info.layer_or_depth_plane = 0;
+        target_info.cycle = true;
+        SDL_GPURenderPass* render_pass = SDL_BeginGPURenderPass(frameContext.commandBuffer, &target_info, 1, nullptr);
 
-        SDL_GPUTexture* swapchain_texture;
-        SDL_WaitAndAcquireGPUSwapchainTexture(command_buffer, window, &swapchain_texture, nullptr, nullptr); // Acquire a swapchain texture
+        //Render ImGui
+        ImGui_ImplSDLGPU3_RenderDrawData(draw_data, frameContext.commandBuffer, render_pass);
 
-        if (swapchain_texture != nullptr && !is_minimized)
-        {
-            // This is mandatory: call ImGui_ImplSDLGPU3_PrepareDrawData() to upload the vertex/index buffer!
-            ImGui_ImplSDLGPU3_PrepareDrawData(draw_data, command_buffer);
+       SDL_EndGPURenderPass(render_pass);
+    }
 
-            // Setup and start a render pass
-            SDL_GPUColorTargetInfo target_info = {};
-            target_info.texture = swapchain_texture;
-            target_info.clear_color = SDL_FColor { 0,0,0,0};
-            target_info.load_op = SDL_GPU_LOADOP_CLEAR;
-            target_info.store_op = SDL_GPU_STOREOP_STORE;
-            target_info.mip_level = 0;
-            target_info.layer_or_depth_plane = 0;
-            target_info.cycle = false;
-            SDL_GPURenderPass* render_pass = SDL_BeginGPURenderPass(command_buffer, &target_info, 1, nullptr);
-
-            // Render ImGui
-            ImGui_ImplSDLGPU3_RenderDrawData(draw_data, command_buffer, render_pass);
-
-            SDL_EndGPURenderPass(render_pass);
-        }
-
-        // Submit the command buffer
-        SDL_SubmitGPUCommandBuffer(command_buffer);
+    // Submit the command buffer
+    SDL_SubmitGPUCommandBuffer(frameContext.commandBuffer);
 }
 
-SDL_GPUTexture *GraphicsContext::loadTexture(std::string filename)
+Texture GraphicsContext::loadTexture(std::string filename)
 {
     if(!device)
     {
         Logger::log("Device not initialised");
-        return nullptr;
+        return Texture{};
     }
 
-    if(textureStorage[filename] != nullptr)
+    if(textureStorage[filename].texture != nullptr)
     {
         Logger::log("pulling", filename, "from cache");
         return textureStorage[filename];
@@ -258,16 +290,18 @@ SDL_GPUTexture *GraphicsContext::loadTexture(std::string filename)
 
     SDL_ReleaseGPUTransferBuffer(device, transferBuffer);
 
-    SDL_DestroySurface(surface);
-
     if(tex == nullptr)
     {
         Logger::log("failed to load texture:", SDL_GetError());
     }
 
-    textureStorage[filename] = tex;
+    Texture ret = {tex, surface->w, surface->h };
 
-    return tex;
+    textureStorage[filename] = ret;
+
+    SDL_DestroySurface(surface);
+    
+    return ret;
 
 }
 

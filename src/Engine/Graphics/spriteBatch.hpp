@@ -2,7 +2,7 @@
 #include "graphicsContext.hpp"
 
 struct SpriteData {
-    float x,y;
+    float x,y,z;
     float rotation;
     float w,h;
     float paddingA, paddingB;
@@ -12,16 +12,23 @@ struct SpriteData {
 
 class SpriteBatch{
     public:
-    SpriteBatch(GraphicsContext * context);
+    SpriteBatch();
     
+    void init(GraphicsContext * context);
+    
+    void draw(FrameContext * context);
+
+    void drawDebugInfo();
 
     private:
     SDL_GPUGraphicsPipeline * RenderPipeline;
     SDL_GPUSampler * sampler;
-    SDL_GPUTexture * texture;
+    Texture  texture;
 
     SDL_GPUTransferBuffer* transferBuffer;
     SDL_GPUBuffer * dataBuffer;
 
     GraphicsContext * context;
+
+    int spritesToDraw = 256;
 };
