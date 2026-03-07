@@ -160,6 +160,11 @@ void GraphicsContext::startFrame()
 
     testBatch->draw (&frameContext);
 
+    auto windowWidth = ImGui::GetWindowSize().x;
+    auto windowHeight = ImGui::GetWindowSize().y;
+
+    ImGui::SetCursorPos( {(windowWidth - 640) /2, (windowHeight - 480) /2}  );
+
     ImGui::Image (renderTexture, { 640, 480 });
 
     float mainScale = SDL_GetDisplayContentScale (SDL_GetPrimaryDisplay());
