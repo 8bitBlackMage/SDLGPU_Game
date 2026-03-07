@@ -1,11 +1,12 @@
-#pragma once 
-#include <SDL3/SDL.h>
+#pragma once
 #include "Engine/Graphics/graphicsContext.hpp"
 #include "Engine/Graphics/spriteBatch.hpp"
-
 #include "Engine/Scenes/sceneManager.hpp"
+
+#include <SDL3/SDL.h>
 /// @brief Class that holds the core Game Data, such as the SDL contexts, scene graph and event handling.
-class Game final {
+class Game final
+{
 public:
     /// @brief Standard Constructor
     Game();
@@ -24,8 +25,8 @@ private:
     GraphicsContext graphicsContext;
     SpriteBatch spriteBatch;
 
-    SDL_Window * window;
-    SDL_Renderer * renderer;
-    SDL_Texture * texture;
+    SDL_Window* window;
+    SDL_Renderer* renderer;
+    SDL_Texture* texture;
     bool running;
 };

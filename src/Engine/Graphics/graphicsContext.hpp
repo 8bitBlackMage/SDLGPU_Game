@@ -6,29 +6,32 @@
 
 class SpriteBatch;
 
-/// @brief Thin wrapper around SDL GPU Texture. 
-struct Texture{
-    SDL_GPUTexture * texture;
-    int width,height;
+/// @brief Thin wrapper around SDL GPU Texture.
+struct Texture
+{
+    SDL_GPUTexture* texture;
+    int width, height;
 };
 
-/// @brief Struct containing per frame data, used for rendering. 
-struct FrameContext{
-    SDL_GPUDevice * device;
-    SDL_GPUCommandBuffer * commandBuffer;
+/// @brief Struct containing per frame data, used for rendering.
+struct FrameContext
+{
+    SDL_GPUDevice* device;
+    SDL_GPUCommandBuffer* commandBuffer;
     SDL_GPUTexture* swapchainTexture;
     SDL_GPUViewport viewport;
 };
 
-/// @brief Wrapper around SDL Renderer Functions to simplify rendering. 
+/// @brief Wrapper around SDL Renderer Functions to simplify rendering.
 ///        With potential of replacing renderer with different underlying framework in future.
-class GraphicsContext{
-    public:
+class GraphicsContext
+{
+public:
     GraphicsContext();
 
     /// @brief Sets up SDL GPU device state, must be called first otherwise no other functions will work.
     /// @param window pointer to SDL Window
-    void initContext(SDL_Window* window);
+    void initContext (SDL_Window* window);
 
     /// @brief Sets up ImGUI context.
     void initImGuiGPU();
@@ -41,15 +44,15 @@ class GraphicsContext{
 
     /// @brief Gets the Frame Context struct for a frame.
     /// @return Struct containing this frames data.
-    FrameContext * getFrameContext() {return &frameContext;}
+    FrameContext* getFrameContext() { return &frameContext; }
 
-    /// @brief submits render passes to the GPU. 
+    /// @brief submits render passes to the GPU.
     void endFrame();
 
     /// @brief Loads a texture from disk into GPU memory.
     /// @param filename Filename of img.
     /// @return Texture struct.
-    Texture  loadTexture(std::string filename);
+    Texture loadTexture (std::string filename);
 
     /// @brief Loads shader into GPU memory to be bound to render pipeline.
     /// @param filename Filename of shader.
@@ -58,30 +61,29 @@ class GraphicsContext{
     /// @param storageBufferCount Number of Storage Buffers used by shader.
     /// @param storageTextureCount Number of Textures used by shader.
     /// @return GPU Shader pointer.
-    SDL_GPUShader * loadShader(std::string filename, 	
-                               Uint32 samplerCount, 
+    SDL_GPUShader* loadShader (std::string filename,
+                               Uint32 samplerCount,
                                Uint32 uniformBufferCount,
-	                           Uint32 storageBufferCount,
-	                           Uint32 storageTextureCount);
+                               Uint32 storageBufferCount,
+                               Uint32 storageTextureCount);
 
     /// @brief Getter for SDL Device.
     /// @return pointer to device.
-    SDL_GPUDevice* getDevice() {return device;}
+    SDL_GPUDevice* getDevice() { return device; }
 
     /// @brief Getter for SDL Window.
     /// @return pointer to window.
-    SDL_Window*    getWindow() {return window;}
+    SDL_Window* getWindow() { return window; }
 
-
-    private:
-    SDL_Window * window;
-    SDL_GPUDevice * device;
-    SDL_GPUSampler * sampler;
+private:
+    SDL_Window* window;
+    SDL_GPUDevice* device;
+    SDL_GPUSampler* sampler;
     float lastFrameRate;
 
     FrameContext frameContext;
 
-    SpriteBatch * testBatch;
+    SpriteBatch* testBatch;
 
     SDL_GPUTexture* renderTexture;
 
