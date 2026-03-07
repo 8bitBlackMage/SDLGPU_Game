@@ -13,7 +13,7 @@ void SpriteBatch::init(GraphicsContext *context)
     if(context == nullptr)
     {
             return;
-            std::cerr << "Invalid GPU Context provided" << std::endl;
+            Logger::log( "Invalid GPU Context provided");
     }
 
     SDL_GPUShader * vert = context->loadShader("spritebatch.vert",0,1,1,0);

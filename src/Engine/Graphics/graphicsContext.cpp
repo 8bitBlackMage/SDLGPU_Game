@@ -382,7 +382,7 @@ SDL_GPUShader *GraphicsContext::loadShader(std::string filename, Uint32 samplerC
     SDL_GPUShader * shader = SDL_CreateGPUShader(device, &createInfo);
     if(shader == nullptr)
     {
-        std::cerr << "failed to create shader";
+        Logger::log( "failed to create shader", SDL_GetError);
         SDL_free(code);
         return nullptr;
     }
