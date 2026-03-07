@@ -28,6 +28,7 @@ target_sources(${PROJECT_NAME}
     src/Engine/Scenes/testScene.cpp
     src/Engine/Graphics/graphicsContext.cpp
     src/Engine/Graphics/spriteBatch.cpp
+    src/Engine/Graphics/matricies.cpp
     )
 
 set(VENDOR_DIR "${PROJECT_SOURCE_DIR}/vendor")

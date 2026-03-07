@@ -87,6 +87,7 @@ static float vCoords[4] = { 0.0f, 0.0f, 0.5f, 0.5f };
 
 void SpriteBatch::draw(FrameContext * frameContext)
 {
+    float timeAtStart = SDL_GetTicks();
     Matrix4x4 cameraMatrix = Matrix4x4::CreateOrthographicOffCenter(
         0,
         640,
@@ -206,13 +207,16 @@ void SpriteBatch::draw(FrameContext * frameContext)
     );
 
     SDL_EndGPURenderPass(renderPass);
+    float timeAtEnd = SDL_GetTicks();
 
+    renderTime = timeAtEnd - timeAtStart;
 }
 
 void SpriteBatch::drawDebugInfo()
 {
     ImGui::Begin("SpriteBatch");
     {
+        ImGui::Text("Render time: %.3fms", renderTime);
         ImGui::SliderInt("Sprites",&spritesToDraw,0,SPRITE_COUNT);
         ImGui::End();
     }

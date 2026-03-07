@@ -31,4 +31,5 @@ class SpriteBatch{
     GraphicsContext * context;
 
     int spritesToDraw = 256;
+    float renderTime;
 };
