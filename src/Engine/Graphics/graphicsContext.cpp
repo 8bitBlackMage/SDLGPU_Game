@@ -83,7 +83,7 @@ void GraphicsContext::shutdown()
 {
     for (auto& texture : textureStorage)
     {
-        Logger::log ("Releaseing", texture.first);
+        Logger::log ("Releasing", texture.first);
         SDL_ReleaseGPUTexture (device, texture.second.texture);
     }
 
@@ -119,16 +119,6 @@ void GraphicsContext::initImGuiGPU()
 
 void GraphicsContext::debugView()
 {
-    ImGui::Begin ("debug");
-    {
-        ImGuiIO& io = ImGui::GetIO();
-
-        float average = (io.Framerate + lastFrameRate) / 2;
-        ImGui::Text ("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / average, average);
-
-        average = io.Framerate;
-    }
-    ImGui::End();
     ImGui::Begin ("Graphics Context");
     ImGui::Text ("Driver Name: %s", SDL_GetGPUDeviceDriver (device));
     auto properties = SDL_GetGPUDeviceProperties (device);

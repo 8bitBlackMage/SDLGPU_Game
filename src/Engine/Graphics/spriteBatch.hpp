@@ -24,7 +24,7 @@ public:
     /// @param context Pointer to the Frame Context.
     void render (FrameContext* context);
 
-    void drawDebugInfo();
+    void debugView();
 
 private:
     SDL_GPUGraphicsPipeline* RenderPipeline;

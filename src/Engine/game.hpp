@@ -26,7 +26,6 @@ private:
     SpriteBatch spriteBatch;
 
     SDL_Window* window;
-    SDL_Renderer* renderer;
     SDL_Texture* texture;
     bool running;
 };

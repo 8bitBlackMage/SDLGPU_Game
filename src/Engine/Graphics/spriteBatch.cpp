@@ -202,7 +202,7 @@ void SpriteBatch::render (FrameContext* frameContext)
     renderTime = timeAtEnd - timeAtStart;
 }
 
-void SpriteBatch::drawDebugInfo()
+void SpriteBatch::debugView()
 {
     ImGui::Begin ("SpriteBatch");
     {
