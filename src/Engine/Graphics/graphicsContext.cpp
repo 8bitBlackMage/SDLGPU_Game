@@ -79,15 +79,16 @@ void GraphicsContext::initContext (SDL_Window* windowIn)
     sampler = SDL_CreateGPUSampler (device, &samplerCreateInfo);
 }
 
-void GraphicsContext::shutdown() {
-    for(auto & texture: textureStorage)
+void GraphicsContext::shutdown()
+{
+    for (auto& texture : textureStorage)
     {
-        Logger::log("Releaseing", texture.first);
-        SDL_ReleaseGPUTexture(device,texture.second.texture);
+        Logger::log ("Releaseing", texture.first);
+        SDL_ReleaseGPUTexture (device, texture.second.texture);
     }
 
-    SDL_ReleaseGPUSampler(device,sampler);
-    SDL_ReleaseGPUTexture(device,renderTexture);
+    SDL_ReleaseGPUSampler (device, sampler);
+    SDL_ReleaseGPUTexture (device, renderTexture);
 }
 
 void GraphicsContext::initImGuiGPU()
@@ -171,11 +172,10 @@ void GraphicsContext::startFrame()
     auto windowWidth = ImGui::GetWindowSize().x;
     auto windowHeight = ImGui::GetWindowSize().y;
     {
-    ImGui::GetWindowDrawList()->AddCallback(ImDrawCallback_ImplSDLGPU3_SetSampler,nullptr);
-    ImGui::SetCursorPos( {(windowWidth - 640) /2, (windowHeight - 480) /2}  );
-    ImGui::Image (renderTexture, { 640, 480 });
+        ImGui::GetWindowDrawList()->AddCallback (ImDrawCallback_ImplSDLGPU3_SetSampler, nullptr);
+        ImGui::SetCursorPos ({ (windowWidth - 640) / 2, (windowHeight - 480) / 2 });
+        ImGui::Image (renderTexture, { 640, 480 });
     }
-
 
     ImGui::End();
 }

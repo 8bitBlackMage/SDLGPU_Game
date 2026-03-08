@@ -105,16 +105,17 @@ void SpriteBatch::render (FrameContext* frameContext)
     }
 
     SpriteData* data = (SpriteData*) SDL_MapGPUTransferBuffer (frameContext->device,
-                                                               transferBuffer, true);
-    
-    for (uint32_t y = 0; y < 480 / 32; y++)  
-    {                                                         
+                                                               transferBuffer,
+                                                               true);
+
+    for (uint32_t y = 0; y < 480 / 32; y++)
+    {
         for (uint32_t x = 0; x < 640 / 32; x++)
         {
-            int i = (x * 640/32) + y;
+            int i = (x * 640 / 32) + y;
             Sint32 ravioli = SDL_rand (4);
-            data[i].x = x*32;
-            data[i].y = y*32;
+            data[i].x = x * 32;
+            data[i].y = y * 32;
             data[i].z = 0;
             data[i].rotation = SDL_randf() * SDL_PI_F * 2;
             data[i].w = 32;

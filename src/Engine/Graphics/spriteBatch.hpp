@@ -25,6 +25,7 @@ public:
     void render (FrameContext* context);
 
     void drawDebugInfo();
+
 private:
     SDL_GPUGraphicsPipeline* RenderPipeline;
     SDL_GPUSampler* sampler;
