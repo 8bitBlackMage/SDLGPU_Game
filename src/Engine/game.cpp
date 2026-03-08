@@ -4,7 +4,7 @@
 #include <imgui_impl_sdl3.h>
 #include <imgui_impl_sdlrenderer3.h>
 
-#include "Graphics/spriteBatch.hpp"
+#include "Graphics/Sprites/spriteBatch.hpp"
 #include <iostream>
 
 #include "logger.hpp"
@@ -77,6 +77,8 @@ void Game::handleEvents()
 void Game::render()
 {
     graphicsContext.startFrame();
+
+    spriteBatch.draw (&sprite);
 
     spriteBatch.render (graphicsContext.getFrameContext());
 

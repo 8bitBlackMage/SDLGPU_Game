@@ -1,15 +1,9 @@
 #pragma once
-#include "graphicsContext.hpp"
+#include "../graphicsContext.hpp"
+#include "sprite.hpp"
+#include <queue>
 
-struct SpriteData
-{
-    float x, y, z;
-    float rotation;
-    float w, h;
-    float paddingA, paddingB;
-    float textureU, textureV, textureW, textureH;
-    float r, g, b, a;
-};
+class Sprite;
 
 class SpriteBatch
 {
@@ -20,13 +14,19 @@ public:
     /// @param context Pointer to the Graphics Context.
     void init (GraphicsContext* context);
 
+    void draw (Sprite* sprite);
+
     /// @brief Renders the SpriteBatch data to the screen, should only be called once per frame.
     /// @param context Pointer to the Frame Context.
     void render (FrameContext* context);
 
     void debugView();
 
+    friend class Sprite;
+
 private:
+    std::queue<Sprite*> spriteQueue;
+
     SDL_GPUGraphicsPipeline* RenderPipeline;
     SDL_GPUSampler* sampler;
     Texture texture;
@@ -37,5 +37,6 @@ private:
     GraphicsContext* context;
 
     int spritesToDraw = 256;
-    float renderTime;
+    float renderTime[500];
+    int renderTimeIndex;
 };

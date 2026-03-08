@@ -81,7 +81,6 @@ private:
     SDL_Window* window;
     SDL_GPUDevice* device;
     SDL_GPUSampler* sampler;
-    float lastFrameRate;
 
     FrameContext frameContext;
 

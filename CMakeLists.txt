@@ -29,7 +29,8 @@ target_sources(${PROJECT_NAME}
     src/Engine/Scenes/SceneManager.cpp
     src/Engine/Scenes/testScene.cpp
     src/Engine/Graphics/graphicsContext.cpp
-    src/Engine/Graphics/spriteBatch.cpp
+    src/Engine/Graphics/Sprites/spriteBatch.cpp
+    src/Engine/Graphics/Sprites/sprite.cpp
     src/Engine/Graphics/matricies.cpp
     )
 

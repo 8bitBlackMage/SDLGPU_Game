@@ -1,6 +1,6 @@
 #include "spriteBatch.hpp"
-#include "../logger.hpp"
-#include "matricies.hpp"
+#include "../../logger.hpp"
+#include "../matricies.hpp"
 #include <iostream>
 
 const size_t SPRITE_COUNT = 65536;
@@ -56,7 +56,7 @@ void SpriteBatch::init (GraphicsContext* context)
 
     auto transferBufferCreateInfo = (SDL_GPUTransferBufferCreateInfo) {
         .usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD,
-        .size = SPRITE_COUNT * sizeof (SpriteData)
+        .size = SPRITE_COUNT * sizeof (Sprite::SpriteData)
     };
 
     transferBuffer = SDL_CreateGPUTransferBuffer (context->getDevice(), &transferBufferCreateInfo);
@@ -67,12 +67,20 @@ void SpriteBatch::init (GraphicsContext* context)
 
     auto bufferCreateInfo = (SDL_GPUBufferCreateInfo) {
         .usage = SDL_GPU_BUFFERUSAGE_GRAPHICS_STORAGE_READ,
-        .size = SPRITE_COUNT * sizeof (SpriteData)
+        .size = SPRITE_COUNT * sizeof (Sprite::SpriteData)
     };
 
     dataBuffer = SDL_CreateGPUBuffer (context->getDevice(), &bufferCreateInfo);
 
     texture = context->loadTexture ("ravioli_atlas.bmp");
+}
+
+void SpriteBatch::draw (Sprite* sprite)
+{
+    if (sprite != nullptr)
+    {
+        spriteQueue.push (sprite);
+    }
 }
 
 static float uCoords[4] = { 0.0f, 0.5f, 0.0f, 0.5f };
@@ -104,31 +112,37 @@ void SpriteBatch::render (FrameContext* frameContext)
         return;
     }
 
-    SpriteData* data = (SpriteData*) SDL_MapGPUTransferBuffer (frameContext->device,
-                                                               transferBuffer,
-                                                               true);
+    Sprite::SpriteData* data = (Sprite::SpriteData*) SDL_MapGPUTransferBuffer (frameContext->device,
+                                                                               transferBuffer,
+                                                                               true);
 
-    for (uint32_t y = 0; y < 480 / 32; y++)
+    // for (uint32_t y = 0; y < 480 / 32; y++)
+    // {
+    //     for (uint32_t x = 0; x < 640 / 32; x++)
+    //     {
+    //         int i = (x * 640 / 32) + y;
+    //         Sint32 ravioli = SDL_rand (4);
+    //         data[i].x = x * 32;
+    //         data[i].y = y * 32;
+    //         data[i].z = 0;
+    //         data[i].rotation = SDL_randf() * SDL_PI_F * 2;
+    //         data[i].w = 32;
+    //         data[i].h = 32;
+    //         data[i].textureU = uCoords[1];
+    //         data[i].textureV = vCoords[1];
+    //         data[i].textureW = 0.5f;
+    //         data[i].textureH = 0.5f;
+    //         data[i].r = 1.0f;
+    //         data[i].g = 1.0f;
+    //         data[i].b = 1.0f;
+    //         data[i].a = 1.0f;
+    //     }
+    // }
+    int i = 0;
+    for (; ! spriteQueue.empty(); spriteQueue.pop())
     {
-        for (uint32_t x = 0; x < 640 / 32; x++)
-        {
-            int i = (x * 640 / 32) + y;
-            Sint32 ravioli = SDL_rand (4);
-            data[i].x = x * 32;
-            data[i].y = y * 32;
-            data[i].z = 0;
-            data[i].rotation = SDL_randf() * SDL_PI_F * 2;
-            data[i].w = 32;
-            data[i].h = 32;
-            data[i].textureU = uCoords[1];
-            data[i].textureV = vCoords[1];
-            data[i].textureW = 0.5f;
-            data[i].textureH = 0.5f;
-            data[i].r = 1.0f;
-            data[i].g = 1.0f;
-            data[i].b = 1.0f;
-            data[i].a = 1.0f;
-        }
+        data[i] = spriteQueue.front()->inner;
+        i++;
     }
     SDL_UnmapGPUTransferBuffer (frameContext->device, transferBuffer);
 
@@ -141,7 +155,7 @@ void SpriteBatch::render (FrameContext* frameContext)
     auto bufferRegion = (SDL_GPUBufferRegion) {
         .buffer = dataBuffer,
         .offset = 0,
-        .size = SPRITE_COUNT * sizeof (SpriteData)
+        .size = SPRITE_COUNT * sizeof (Sprite::SpriteData)
     };
 
     SDL_UploadToGPUBuffer (
@@ -199,14 +213,18 @@ void SpriteBatch::render (FrameContext* frameContext)
     SDL_EndGPURenderPass (renderPass);
     float timeAtEnd = SDL_GetTicksNS();
 
-    renderTime = timeAtEnd - timeAtStart;
+    // renderTime[renderTimeIndex] = (timeAtEnd - timeAtStart);
+    // renderTimeIndex++;
+    // if (renderTimeIndex >= 500)
+    // {
+    //     renderTimeIndex = 0;
+    // }
 }
 
 void SpriteBatch::debugView()
 {
     ImGui::Begin ("SpriteBatch");
     {
-        ImGui::Text ("Render time: %.3fns", renderTime);
         ImGui::SliderInt ("Sprites", &spritesToDraw, 0, 428);
         ImGui::End();
     }

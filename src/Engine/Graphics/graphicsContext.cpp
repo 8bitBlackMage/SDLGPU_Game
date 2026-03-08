@@ -120,6 +120,9 @@ void GraphicsContext::initImGuiGPU()
 void GraphicsContext::debugView()
 {
     ImGui::Begin ("Graphics Context");
+
+    auto io = ImGui::GetIO();
+
     ImGui::Text ("Driver Name: %s", SDL_GetGPUDeviceDriver (device));
     auto properties = SDL_GetGPUDeviceProperties (device);
     (SDL_EnumerateProperties (properties, [] (void* userdata, SDL_PropertiesID prop, const char* name)
