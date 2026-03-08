@@ -78,9 +78,9 @@ void SpriteBatch::init (GraphicsContext* context)
 static float uCoords[4] = { 0.0f, 0.5f, 0.0f, 0.5f };
 static float vCoords[4] = { 0.0f, 0.0f, 0.5f, 0.5f };
 
-void SpriteBatch::draw (FrameContext* frameContext)
+void SpriteBatch::render (FrameContext* frameContext)
 {
-    float timeAtStart = SDL_GetTicks();
+    float timeAtStart = SDL_GetTicksNS();
     Matrix4x4 cameraMatrix = Matrix4x4::CreateOrthographicOffCenter (
         0,
         640,
@@ -105,27 +105,30 @@ void SpriteBatch::draw (FrameContext* frameContext)
     }
 
     SpriteData* data = (SpriteData*) SDL_MapGPUTransferBuffer (frameContext->device,
-                                                               transferBuffer,
-                                                               true);
-    for (uint32_t i = 0; i < spritesToDraw; i++)
-    {
-        Sint32 ravioli = SDL_rand (4);
-        data[i].x = (float) (SDL_rand (640));
-        data[i].y = (float) (SDL_rand (480));
-        data[i].z = 0;
-        data[i].rotation = SDL_randf() * SDL_PI_F * 2;
-        data[i].w = 32;
-        data[i].h = 32;
-        data[i].textureU = uCoords[ravioli];
-        data[i].textureV = vCoords[ravioli];
-        data[i].textureW = 0.5f;
-        data[i].textureH = 0.5f;
-        data[i].r = 1.0f;
-        data[i].g = 1.0f;
-        data[i].b = 1.0f;
-        data[i].a = 1.0f;
+                                                               transferBuffer, true);
+    
+    for (uint32_t y = 0; y < 480 / 32; y++)  
+    {                                                         
+        for (uint32_t x = 0; x < 640 / 32; x++)
+        {
+            int i = (x * 640/32) + y;
+            Sint32 ravioli = SDL_rand (4);
+            data[i].x = x*32;
+            data[i].y = y*32;
+            data[i].z = 0;
+            data[i].rotation = SDL_randf() * SDL_PI_F * 2;
+            data[i].w = 32;
+            data[i].h = 32;
+            data[i].textureU = uCoords[1];
+            data[i].textureV = vCoords[1];
+            data[i].textureW = 0.5f;
+            data[i].textureH = 0.5f;
+            data[i].r = 1.0f;
+            data[i].g = 1.0f;
+            data[i].b = 1.0f;
+            data[i].a = 1.0f;
+        }
     }
-
     SDL_UnmapGPUTransferBuffer (frameContext->device, transferBuffer);
 
     SDL_GPUCopyPass* copyPass = SDL_BeginGPUCopyPass (frameContext->commandBuffer);
@@ -193,7 +196,7 @@ void SpriteBatch::draw (FrameContext* frameContext)
         0);
 
     SDL_EndGPURenderPass (renderPass);
-    float timeAtEnd = SDL_GetTicks();
+    float timeAtEnd = SDL_GetTicksNS();
 
     renderTime = timeAtEnd - timeAtStart;
 }
@@ -202,8 +205,8 @@ void SpriteBatch::drawDebugInfo()
 {
     ImGui::Begin ("SpriteBatch");
     {
-        ImGui::Text ("Render time: %.3fms", renderTime);
-        ImGui::SliderInt ("Sprites", &spritesToDraw, 0, SPRITE_COUNT);
+        ImGui::Text ("Render time: %.3fns", renderTime);
+        ImGui::SliderInt ("Sprites", &spritesToDraw, 0, 428);
         ImGui::End();
     }
 }

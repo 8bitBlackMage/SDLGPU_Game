@@ -9,8 +9,6 @@
 #include <Engine/logger.hpp>
 #include <iostream>
 
-#include "spriteBatch.hpp"
-
 void ImDrawCallback_ImplSDLGPU3_SetSampler (const ImDrawList* parent_list, const ImDrawCmd* cmd)
 {
     ImGui_ImplSDLGPU3_RenderState* state = (ImGui_ImplSDLGPU3_RenderState*) ImGui::GetPlatformIO().Renderer_RenderState;
@@ -20,6 +18,11 @@ void ImDrawCallback_ImplSDLGPU3_SetSampler (const ImDrawList* parent_list, const
 
 GraphicsContext::GraphicsContext()
 {
+}
+
+GraphicsContext::~GraphicsContext()
+{
+    shutdown();
 }
 
 void GraphicsContext::initContext (SDL_Window* windowIn)
@@ -74,10 +77,17 @@ void GraphicsContext::initContext (SDL_Window* windowIn)
     renderTexture = SDL_CreateGPUTexture (device, &textureCreateInfo);
 
     sampler = SDL_CreateGPUSampler (device, &samplerCreateInfo);
+}
 
-    testBatch = new SpriteBatch();
+void GraphicsContext::shutdown() {
+    for(auto & texture: textureStorage)
+    {
+        Logger::log("Releaseing", texture.first);
+        SDL_ReleaseGPUTexture(device,texture.second.texture);
+    }
 
-    testBatch->init (this);
+    SDL_ReleaseGPUSampler(device,sampler);
+    SDL_ReleaseGPUTexture(device,renderTexture);
 }
 
 void GraphicsContext::initImGuiGPU()
@@ -158,25 +168,21 @@ void GraphicsContext::startFrame()
 
     frameContext.swapchainTexture = renderTexture;
 
-    testBatch->draw (&frameContext);
-
     auto windowWidth = ImGui::GetWindowSize().x;
     auto windowHeight = ImGui::GetWindowSize().y;
-
+    {
+    ImGui::GetWindowDrawList()->AddCallback(ImDrawCallback_ImplSDLGPU3_SetSampler,nullptr);
     ImGui::SetCursorPos( {(windowWidth - 640) /2, (windowHeight - 480) /2}  );
-
     ImGui::Image (renderTexture, { 640, 480 });
+    }
 
-    float mainScale = SDL_GetDisplayContentScale (SDL_GetPrimaryDisplay());
-
-    SDL_WaitAndAcquireGPUSwapchainTexture (frameContext.commandBuffer, window, &frameContext.swapchainTexture, nullptr, nullptr); // Acquire a swapchain texture
 
     ImGui::End();
-    testBatch->drawDebugInfo();
 }
 
 void GraphicsContext::endFrame()
 {
+    SDL_WaitAndAcquireGPUSwapchainTexture (frameContext.commandBuffer, window, &frameContext.swapchainTexture, nullptr, nullptr); // Acquire a swapchain texture
     ImGui::EndFrame();
     ImGui::UpdatePlatformWindows();
     // Rendering

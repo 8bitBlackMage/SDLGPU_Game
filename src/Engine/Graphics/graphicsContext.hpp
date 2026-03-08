@@ -4,8 +4,6 @@
 #include <filesystem>
 #include <map>
 
-class SpriteBatch;
-
 /// @brief Thin wrapper around SDL GPU Texture.
 struct Texture
 {
@@ -24,14 +22,18 @@ struct FrameContext
 
 /// @brief Wrapper around SDL Renderer Functions to simplify rendering.
 ///        With potential of replacing renderer with different underlying framework in future.
-class GraphicsContext
+class GraphicsContext final
 {
 public:
     GraphicsContext();
 
+    ~GraphicsContext();
+
     /// @brief Sets up SDL GPU device state, must be called first otherwise no other functions will work.
     /// @param window pointer to SDL Window
     void initContext (SDL_Window* window);
+
+    void shutdown();
 
     /// @brief Sets up ImGUI context.
     void initImGuiGPU();
@@ -82,8 +84,6 @@ private:
     float lastFrameRate;
 
     FrameContext frameContext;
-
-    SpriteBatch* testBatch;
 
     SDL_GPUTexture* renderTexture;
 

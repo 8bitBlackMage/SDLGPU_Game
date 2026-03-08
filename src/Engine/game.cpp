@@ -65,6 +65,7 @@ void Game::setupSDLContext()
 
     graphicsContext.initContext(window);
 
+    spriteBatch.init(&graphicsContext);
    
 
     SDL_ShowWindow(window);
@@ -99,6 +100,7 @@ void Game::render()
 {
     graphicsContext.startFrame();
 
+    spriteBatch.render(graphicsContext.getFrameContext());
 
     sceneManager.debugView();
     graphicsContext.debugView();
