@@ -22,7 +22,7 @@ void Game::run()
     while (running)
     {
         handleEvents();
-
+        sprite.setX (sprite.getX() + 1.0f);
         render();
     }
 }

@@ -49,7 +49,8 @@ Output main(uint id: SV_VertexID)
 
     float2 coord = vertexPos[vert];
     coord *= sprite.Scale;
-    float2x2 Rotation = {c,s,-s, c};
+    float2x2 rotation = {c,s,-s, c};
+    coord = mul(coord, rotation);
 
     float3 coordWithDepth = float3(coord +sprite.Position.xy, sprite.Position.z);
 
