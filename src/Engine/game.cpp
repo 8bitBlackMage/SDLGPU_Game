@@ -5,8 +5,6 @@
 #include <imgui_impl_sdlrenderer3.h>
 
 #include "Graphics/Sprites/spriteBatch.hpp"
-#include <iostream>
-
 #include "logger.hpp"
 
 Game::Game() : graphicsContext(),
@@ -22,7 +20,6 @@ void Game::run()
     while (running)
     {
         handleEvents();
-        sprite.setX (sprite.getX() + 1.0f);
         render();
     }
 }

@@ -2,12 +2,12 @@
 
 #include <SDL3_image/SDL_image.h>
 
+#include <filesystem>
 #include <imgui.h>
 #include <imgui_impl_sdl3.h>
 #include <imgui_impl_sdlgpu3.h>
 
 #include <Engine/logger.hpp>
-#include <iostream>
 
 void ImDrawCallback_ImplSDLGPU3_SetSampler (const ImDrawList* parent_list, const ImDrawCmd* cmd)
 {

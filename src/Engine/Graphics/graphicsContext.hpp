@@ -1,7 +1,6 @@
 #pragma once
 #include <SDL3/SDL.h>
 
-#include <filesystem>
 #include <map>
 
 /// @brief Thin wrapper around SDL GPU Texture.
