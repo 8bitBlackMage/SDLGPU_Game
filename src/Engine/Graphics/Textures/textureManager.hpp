@@ -30,7 +30,7 @@ public:
     void debugView();
 
 private:
-    Vec2 solve();
+    Vec2<int> solve();
 
     Vec4<float> pixelToUV (int x, int y, int w, int h);
 
@@ -58,7 +58,7 @@ private:
 
     std::vector<TextureData> textures;
 
-    Vec2 textureSize;
+    Vec2<int> textureSize;
     SDL_GPUTexture* texture;
 
     int zoomFactor = 4;

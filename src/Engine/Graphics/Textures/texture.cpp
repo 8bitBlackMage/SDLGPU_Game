@@ -1,5 +1,6 @@
-#include "Engine/Graphics/Textures/textureManager.hpp"
 #include <Engine/Graphics/Textures/texture.hpp>
+#include <Engine/Graphics/Textures/textureManager.hpp>
+#include <Engine/Utils/vectorTypes.hpp>
 
 Texture::Texture()
 {
@@ -44,4 +45,12 @@ const float Texture::getH() const
     auto textureSizePixelH = static_cast<float> (manager->textureSize.y);
 
     return (yPixels + height) / textureSizePixelH;
+}
+
+const Vec2<float> Texture::translatePixelToUV (int x, int y) const
+{
+    return {
+        static_cast<float> (x) / static_cast<float> (manager->textureSize.x),
+        static_cast<float> (y) / static_cast<float> (manager->textureSize.y)
+    };
 }

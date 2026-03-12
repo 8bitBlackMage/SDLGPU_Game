@@ -7,10 +7,16 @@ class Sprite
 public:
     Sprite();
     Sprite (Texture t, int x = 0, int y = 0);
-    Sprite (Texture t, int x, int y, int u, int v, int w, int h);
+    Sprite (Texture t, int x, int y, int width, int height, int u, int v, int w, int h);
 
     void setTexture (Texture texture);
-    void setTextureFromPortion (Texture texture, int u, int v, int w, int h);
+    void setTextureFromPortion (Texture texture,
+                                int width,
+                                int height,
+                                int u,
+                                int v,
+                                int w,
+                                int h);
 
     friend class SpriteBatch;
 

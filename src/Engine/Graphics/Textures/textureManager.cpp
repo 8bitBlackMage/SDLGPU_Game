@@ -150,7 +150,7 @@ void TextureManager::debugView()
     ImGui::End();
 }
 
-Vec2 TextureManager::solve()
+Vec2<int> TextureManager::solve()
 {
     constexpr bool allow_flip = true;
     const auto runtime_flipping_mode = rectpack2D::flipping_option::ENABLED;
@@ -182,7 +182,7 @@ Vec2 TextureManager::solve()
             report_unsuccessful,
             runtime_flipping_mode));
 
-    return Vec2 (result_size);
+    return Vec2 (result_size.w, result_size.h);
 }
 
 Vec4<float> TextureManager::pixelToUV (int x, int y, int w, int h)

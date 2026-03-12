@@ -1,13 +1,13 @@
 #pragma once
 #include <rectpack2D/rect_structs.h>
 
+template <typename t>
 class Vec2
 {
 public:
-    int x, y;
+    t x, y;
 
-    Vec2 (int xIn = 0, int yIn = 0);
-    Vec2 (rectpack2D::rect_wh rect);
+    Vec2 (t xIn = 0, t yIn = 0) : x (xIn), y (yIn) {}
 };
 
 template <typename t>

@@ -18,7 +18,7 @@ Game::Game() : graphicsContext(),
     auto tex = graphicsContext.getTextureManager()->loadTexture ("ravioli_atlas.bmp");
     graphicsContext.getTextureManager()->endBatchUpload (&graphicsContext);
 
-    sprite = Sprite (tex, 0, 0);
+    sprite = Sprite (tex, 0, 0, 32, 32, 0, 0, 16, 16);
 }
 
 void Game::run()

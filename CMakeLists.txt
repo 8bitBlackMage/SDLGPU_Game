@@ -29,11 +29,11 @@ target_sources(${PROJECT_NAME}
     src/Engine/Scenes/SceneManager.cpp
     src/Engine/Scenes/testScene.cpp
     src/Engine/Graphics/graphicsContext.cpp
-    src/Engine/Graphics/textureManager.cpp
+    src/Engine/Graphics/Textures/textureManager.cpp
+    src/Engine/Graphics/Textures/texture.cpp
     src/Engine/Graphics/Sprites/spriteBatch.cpp
     src/Engine/Graphics/Sprites/sprite.cpp
     src/Engine/Utils/matricies.cpp
-    src/Engine/Utils/vectorTypes.cpp
     )
 
 set(VENDOR_DIR "${PROJECT_SOURCE_DIR}/vendor")
