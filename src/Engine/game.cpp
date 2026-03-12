@@ -4,8 +4,9 @@
 #include <imgui_impl_sdl3.h>
 #include <imgui_impl_sdlrenderer3.h>
 
+#include "Engine/Graphics/graphicsContext.hpp"
+#include "Engine/Utils/logger.hpp"
 #include "Graphics/Sprites/spriteBatch.hpp"
-#include "logger.hpp"
 
 Game::Game() : graphicsContext(),
                spriteBatch()
@@ -13,6 +14,13 @@ Game::Game() : graphicsContext(),
     setupSDLContext();
     setupImGuiContext();
     running = true;
+
+    textureManager.beginBatchUpload (&graphicsContext);
+    textureManager.loadTexture ("ravioli_atlas.bmp");
+    textureManager.loadTexture ("Sprite-0001.png");
+    textureManager.loadTexture ("PixelPackTOPDOWN8BIT.png");
+    textureManager.loadTexture ("tileset.png");
+    textureManager.endBatchUpload (&graphicsContext);
 }
 
 void Game::run()
@@ -75,13 +83,14 @@ void Game::render()
 {
     graphicsContext.startFrame();
 
-    spriteBatch.draw (&sprite);
+    //spriteBatch.draw (&sprite);
 
-    spriteBatch.render (graphicsContext.getFrameContext());
+    //spriteBatch.render (graphicsContext.getFrameContext());
 
     sceneManager.debugView();
     graphicsContext.debugView();
     spriteBatch.debugView();
+    textureManager.debugView();
     Logger::getLogger().draw();
     graphicsContext.endFrame();
 }

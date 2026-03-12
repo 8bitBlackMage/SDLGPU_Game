@@ -1,7 +1,6 @@
 #include "spriteBatch.hpp"
-#include "../../logger.hpp"
-#include "../matricies.hpp"
-#include <iostream>
+#include "../../Utils/matricies.hpp"
+#include "Engine/Utils/logger.hpp"
 
 const size_t SPRITE_COUNT = 65536;
 
@@ -72,7 +71,7 @@ void SpriteBatch::init (GraphicsContext* context)
 
     dataBuffer = SDL_CreateGPUBuffer (context->getDevice(), &bufferCreateInfo);
 
-    texture = context->loadTexture ("ravioli_atlas.bmp");
+    //texture = context->loadTexture ("ravioli_atlas.bmp");
 }
 
 void SpriteBatch::draw (Sprite* sprite)

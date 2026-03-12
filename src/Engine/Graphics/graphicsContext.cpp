@@ -7,7 +7,7 @@
 #include <imgui_impl_sdl3.h>
 #include <imgui_impl_sdlgpu3.h>
 
-#include <Engine/logger.hpp>
+#include <Engine/Utils/logger.hpp>
 
 void ImDrawCallback_ImplSDLGPU3_SetSampler (const ImDrawList* parent_list, const ImDrawCmd* cmd)
 {
@@ -205,95 +205,6 @@ void GraphicsContext::endFrame()
 
     // Submit the command buffer
     SDL_SubmitGPUCommandBuffer (frameContext.commandBuffer);
-}
-
-Texture GraphicsContext::loadTexture (std::string filename)
-{
-    if (! device)
-    {
-        Logger::log ("Device not initialised");
-        return Texture {};
-    }
-
-    if (textureStorage[filename].texture != nullptr)
-    {
-        Logger::log ("pulling", filename, "from cache");
-        return textureStorage[filename];
-    }
-
-    Logger::log ("Loading Texture from:", filename);
-
-    SDL_GPUCommandBuffer* uploadCmdBuf = SDL_AcquireGPUCommandBuffer (device);
-    SDL_GPUCopyPass* copyPass = SDL_BeginGPUCopyPass (uploadCmdBuf);
-
-    std::filesystem::path imgpath = "assets/images/" + filename;
-
-    auto surface = IMG_Load (imgpath.c_str());
-
-    if (surface == nullptr)
-    {
-        Logger::log ("failed to load", filename, "from disk");
-    }
-
-    SDL_GPUTextureCreateInfo texCreateInfo = {};
-    texCreateInfo.type = SDL_GPU_TEXTURETYPE_2D;
-    texCreateInfo.format = SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM;
-    texCreateInfo.usage = SDL_GPU_TEXTUREUSAGE_SAMPLER;
-    texCreateInfo.width = surface->w;
-    texCreateInfo.height = surface->h;
-    texCreateInfo.layer_count_or_depth = 1;
-    texCreateInfo.num_levels = 1;
-    texCreateInfo.sample_count = SDL_GPU_SAMPLECOUNT_1;
-
-    auto tex = SDL_CreateGPUTexture (device, &texCreateInfo);
-
-    SDL_GPUTransferBufferCreateInfo transferBufferCreateInfo = {};
-    transferBufferCreateInfo.usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD;
-    transferBufferCreateInfo.size = surface->w * surface->h * 4;
-    SDL_GPUTransferBuffer* transferBuffer = SDL_CreateGPUTransferBuffer (device, &transferBufferCreateInfo);
-
-    uint32_t uploadPitch = surface->pitch;
-    void* texturePointer = SDL_MapGPUTransferBuffer (device, transferBuffer, true);
-
-    for (int y = 0; y < surface->h; y++)
-    {
-        memcpy ((void*) ((uintptr_t) texturePointer + y * uploadPitch), (char*) surface->pixels + y * uploadPitch, uploadPitch);
-    }
-
-    SDL_UnmapGPUTransferBuffer (device, transferBuffer);
-
-    SDL_GPUTextureTransferInfo transferInfo = {};
-    transferInfo.offset = 0;
-    transferInfo.transfer_buffer = transferBuffer;
-
-    SDL_GPUTextureRegion textureRegion = {};
-    textureRegion.texture = tex;
-    textureRegion.x = (Uint32) 0;
-    textureRegion.y = (Uint32) 0;
-    textureRegion.w = (Uint32) surface->w;
-    textureRegion.h = (Uint32) surface->h;
-    textureRegion.d = 1;
-
-    SDL_GPUCommandBuffer* cmd = SDL_AcquireGPUCommandBuffer (device);
-    SDL_GPUCopyPass* copy_pass = SDL_BeginGPUCopyPass (cmd);
-    SDL_UploadToGPUTexture (copy_pass, &transferInfo, &textureRegion, false);
-    SDL_EndGPUCopyPass (copy_pass);
-    SDL_SubmitGPUCommandBuffer (cmd);
-
-    SDL_ReleaseGPUTransferBuffer (device, transferBuffer);
-
-    if (tex == nullptr)
-    {
-        Logger::log ("failed to load texture:", SDL_GetError());
-    }
-
-    Texture ret = { tex, surface->w, surface->h };
-
-    textureStorage[filename] = ret;
-
-    SDL_DestroySurface (surface);
-
-    return ret;
 }
 
 SDL_GPUShader* GraphicsContext::loadShader (std::string filename, Uint32 samplerCount, Uint32 uniformBufferCount, Uint32 storageBufferCount, Uint32 storageTextureCount)

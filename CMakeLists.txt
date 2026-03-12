@@ -25,13 +25,15 @@ target_sources(${PROJECT_NAME}
     PUBLIC
     src/main.cpp
     src/Engine/game.cpp
-    src/Engine/logger.cpp
+    src/Engine/Utils/logger.cpp
     src/Engine/Scenes/SceneManager.cpp
     src/Engine/Scenes/testScene.cpp
     src/Engine/Graphics/graphicsContext.cpp
+    src/Engine/Graphics/textureManager.cpp
     src/Engine/Graphics/Sprites/spriteBatch.cpp
     src/Engine/Graphics/Sprites/sprite.cpp
-    src/Engine/Graphics/matricies.cpp
+    src/Engine/Utils/matricies.cpp
+    src/Engine/Utils/vectorTypes.cpp
     )
 
 set(VENDOR_DIR "${PROJECT_SOURCE_DIR}/vendor")
@@ -39,6 +41,7 @@ add_subdirectory(${VENDOR_DIR}/SDL)
 add_subdirectory(${VENDOR_DIR}/SDL_image)
 add_subdirectory(${VENDOR_DIR}/SDL_ttf)
 add_subdirectory(${VENDOR_DIR}/imgui)
+add_subdirectory(${VENDOR_DIR}/rectpack2D)
 
 target_include_directories(${PROJECT_NAME} INTERFACE ${VENDOR_DIR}/imgui)
 
@@ -47,6 +50,7 @@ target_link_libraries(${PROJECT_NAME}
     SDL3::SDL3
     SDL3_image::SDL3_image
     SDL3_ttf::SDL3_ttf
+    rectpack2D
     imgui
     )
 

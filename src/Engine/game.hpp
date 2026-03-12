@@ -1,5 +1,6 @@
 #pragma once
 #include "Engine/Graphics/graphicsContext.hpp"
+#include "Engine/Graphics/textureManager.hpp"
 #include "Engine/Scenes/sceneManager.hpp"
 #include "Graphics/Sprites/spriteBatch.hpp"
 
@@ -23,6 +24,7 @@ private:
 
     SceneManager sceneManager;
     GraphicsContext graphicsContext;
+    TextureManager textureManager;
 
     Sprite sprite;
     SpriteBatch spriteBatch;

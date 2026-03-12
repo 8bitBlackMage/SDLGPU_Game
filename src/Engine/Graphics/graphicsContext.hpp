@@ -1,14 +1,8 @@
 #pragma once
 #include <SDL3/SDL.h>
 
+#include "textureManager.hpp"
 #include <map>
-
-/// @brief Thin wrapper around SDL GPU Texture.
-struct Texture
-{
-    SDL_GPUTexture* texture;
-    int width, height;
-};
 
 /// @brief Struct containing per frame data, used for rendering.
 struct FrameContext
@@ -50,11 +44,6 @@ public:
     /// @brief submits render passes to the GPU.
     void endFrame();
 
-    /// @brief Loads a texture from disk into GPU memory.
-    /// @param filename Filename of img.
-    /// @return Texture struct.
-    Texture loadTexture (std::string filename);
-
     /// @brief Loads shader into GPU memory to be bound to render pipeline.
     /// @param filename Filename of shader.
     /// @param samplerCount Number of Texture Samplers used by shader
@@ -82,7 +71,6 @@ private:
     SDL_GPUSampler* sampler;
 
     FrameContext frameContext;
-
     SDL_GPUTexture* renderTexture;
 
     //texture storage pool

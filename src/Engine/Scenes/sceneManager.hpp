@@ -1,9 +1,9 @@
 #pragma once
+#include <functional>
 #include <map>
 #include <memory>
 
 #include "scene.hpp"
-#include <functional>
 
 /// @brief This object handles the lifetime and operation of scenes, along with displaying debugging info.
 class SceneManager final
