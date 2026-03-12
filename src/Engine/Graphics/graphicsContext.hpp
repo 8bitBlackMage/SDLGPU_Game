@@ -1,7 +1,6 @@
 #pragma once
-#include <Engine/Graphics/textureManager.hpp>
+#include <Engine/Graphics/Textures/textureManager.hpp>
 #include <SDL3/SDL.h>
-#include <map>
 
 /// @brief Struct containing per frame data, used for rendering.
 struct FrameContext
@@ -10,6 +9,7 @@ struct FrameContext
     SDL_GPUCommandBuffer* commandBuffer;
     SDL_GPUTexture* swapchainTexture;
     SDL_GPUViewport viewport;
+    TextureManager* textureManager;
 };
 
 /// @brief Wrapper around SDL Renderer Functions to simplify rendering.
@@ -64,6 +64,8 @@ public:
     /// @return pointer to window.
     SDL_Window* getWindow() { return window; }
 
+    inline TextureManager* getTextureManager() { return &textureManager; }
+
 private:
     SDL_Window* window;
     SDL_GPUDevice* device;
@@ -72,6 +74,5 @@ private:
     FrameContext frameContext;
     SDL_GPUTexture* renderTexture;
 
-    //texture storage pool
-    std::map<std::string, Texture> textureStorage;
+    TextureManager textureManager;
 };

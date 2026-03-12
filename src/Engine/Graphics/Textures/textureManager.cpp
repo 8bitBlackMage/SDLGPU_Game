@@ -1,4 +1,4 @@
-#include <Engine/Graphics/textureManager.hpp>
+#include <Engine/Graphics/Textures/textureManager.hpp>
 
 #include <Engine/Graphics/graphicsContext.hpp>
 #include <Engine/Utils/logger.hpp>
@@ -7,6 +7,7 @@
 #include <SDL3_image/SDL_image.h>
 #include <filesystem>
 #include <imgui.h>
+#include <map>
 #include <rectpack2D/finders_interface.h>
 
 TextureManager::TextureManager() : texture (nullptr)
@@ -24,12 +25,9 @@ void TextureManager::beginBatchUpload (GraphicsContext* context)
 
 Texture TextureManager::loadTexture (std::string filename)
 {
-    //1. append file name to list
-    //2. generate texture struct with pointer to where texture
-    //3. hand back ID pertaining to inner data that can be refernced at a later date.
     Logger::log ("Appending:", filename, "to texture list");
     textures.push_back (TextureData (filename));
-    return Texture {};
+    return Texture (textures.size() - 1, this);
 }
 
 void TextureManager::endBatchUpload (GraphicsContext* context)

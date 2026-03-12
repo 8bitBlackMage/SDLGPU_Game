@@ -1,6 +1,6 @@
 #pragma once
+#include <Engine/Graphics/Textures/textureManager.hpp>
 #include <Engine/Graphics/graphicsContext.hpp>
-#include <Engine/Graphics/textureManager.hpp>
 #include <Engine/Scenes/sceneManager.hpp>
 #include <Graphics/Sprites/spriteBatch.hpp>
 #include <SDL3/SDL.h>
@@ -23,7 +23,6 @@ private:
 
     SceneManager sceneManager;
     GraphicsContext graphicsContext;
-    TextureManager textureManager;
 
     Sprite sprite;
     SpriteBatch spriteBatch;

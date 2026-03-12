@@ -14,12 +14,11 @@ Game::Game() : graphicsContext(),
     setupImGuiContext();
     running = true;
 
-    textureManager.beginBatchUpload (&graphicsContext);
-    textureManager.loadTexture ("ravioli_atlas.bmp");
-    textureManager.loadTexture ("Sprite-0001.png");
-    textureManager.loadTexture ("PixelPackTOPDOWN8BIT.png");
-    textureManager.loadTexture ("tileset.png");
-    textureManager.endBatchUpload (&graphicsContext);
+    graphicsContext.getTextureManager()->beginBatchUpload (&graphicsContext);
+    auto tex = graphicsContext.getTextureManager()->loadTexture ("ravioli_atlas.bmp");
+    graphicsContext.getTextureManager()->endBatchUpload (&graphicsContext);
+
+    sprite = Sprite (tex, 0, 0);
 }
 
 void Game::run()
@@ -82,14 +81,13 @@ void Game::render()
 {
     graphicsContext.startFrame();
 
-    //spriteBatch.draw (&sprite);
+    spriteBatch.draw (&sprite);
 
-    //spriteBatch.render (graphicsContext.getFrameContext());
+    spriteBatch.render (graphicsContext.getFrameContext());
 
     sceneManager.debugView();
     graphicsContext.debugView();
     spriteBatch.debugView();
-    textureManager.debugView();
     Logger::getLogger().draw();
     graphicsContext.endFrame();
 }

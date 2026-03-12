@@ -71,8 +71,6 @@ void SpriteBatch::init (GraphicsContext* context)
     };
 
     dataBuffer = SDL_CreateGPUBuffer (context->getDevice(), &bufferCreateInfo);
-
-    //texture = context->loadTexture ("ravioli_atlas.bmp");
 }
 
 void SpriteBatch::draw (Sprite* sprite)
@@ -83,11 +81,13 @@ void SpriteBatch::draw (Sprite* sprite)
     }
 }
 
-static float uCoords[4] = { 0.0f, 0.5f, 0.0f, 0.5f };
-static float vCoords[4] = { 0.0f, 0.0f, 0.5f, 0.5f };
-
 void SpriteBatch::render (FrameContext* frameContext)
 {
+    if (frameContext->textureManager->getRawGPUTexture() == nullptr)
+    {
+        return;
+    }
+
     float timeAtStart = SDL_GetTicksNS();
     Matrix4x4 cameraMatrix = Matrix4x4::CreateOrthographicOffCenter (
         0,
@@ -116,28 +116,6 @@ void SpriteBatch::render (FrameContext* frameContext)
                                                                                transferBuffer,
                                                                                true);
 
-    // for (uint32_t y = 0; y < 480 / 32; y++)
-    // {
-    //     for (uint32_t x = 0; x < 640 / 32; x++)
-    //     {
-    //         int i = (x * 640 / 32) + y;
-    //         Sint32 ravioli = SDL_rand (4);
-    //         data[i].x = x * 32;
-    //         data[i].y = y * 32;
-    //         data[i].z = 0;
-    //         data[i].rotation = SDL_randf() * SDL_PI_F * 2;
-    //         data[i].w = 32;
-    //         data[i].h = 32;
-    //         data[i].textureU = uCoords[1];
-    //         data[i].textureV = vCoords[1];
-    //         data[i].textureW = 0.5f;
-    //         data[i].textureH = 0.5f;
-    //         data[i].r = 1.0f;
-    //         data[i].g = 1.0f;
-    //         data[i].b = 1.0f;
-    //         data[i].a = 1.0f;
-    //     }
-    // }
     int i = 0;
     for (; ! spriteQueue.empty(); spriteQueue.pop())
     {
@@ -188,7 +166,7 @@ void SpriteBatch::render (FrameContext* frameContext)
         1);
 
     auto samplerBinding = (SDL_GPUTextureSamplerBinding) {
-        .texture = texture.texture,
+        .texture = frameContext->textureManager->getRawGPUTexture(),
         .sampler = sampler
     };
 
@@ -212,13 +190,6 @@ void SpriteBatch::render (FrameContext* frameContext)
 
     SDL_EndGPURenderPass (renderPass);
     float timeAtEnd = SDL_GetTicksNS();
-
-    // renderTime[renderTimeIndex] = (timeAtEnd - timeAtStart);
-    // renderTimeIndex++;
-    // if (renderTimeIndex >= 500)
-    // {
-    //     renderTimeIndex = 0;
-    // }
 }
 
 void SpriteBatch::debugView()

@@ -1,25 +1,17 @@
 #pragma once
+#include <Engine/Graphics/Textures/texture.hpp>
 #include <Engine/Utils/vectorTypes.hpp>
 #include <SDL3/SDL.h>
 #include <vector>
 
 class GraphicsContext;
 
-/// @brief Thin wrapper around SDL GPU Texture.
-struct Texture
-{
-    SDL_GPUTexture* texture;
-    size_t id;
-    int x, y;
-    int width, height;
-
-    rectpack2D::rect_xywhf rect;
-};
-
 ///@brief Object to handle optimised loading of textures into GPU programming.
 class TextureManager
 {
 public:
+    friend class Texture;
+
     TextureManager();
 
     ///@brief Call at the start of a scene to begin loading.
@@ -31,6 +23,9 @@ public:
 
     ///@brief Call at the end of a scene to finalize and up
     void endBatchUpload (GraphicsContext* context);
+
+    ///@brief gets the raw handle of the texture pointer, this should only be used when binding to a pipeline.
+    inline SDL_GPUTexture* getRawGPUTexture() { return texture; }
 
     void debugView();
 

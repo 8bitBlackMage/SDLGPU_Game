@@ -1,69 +1,26 @@
+#include "Engine/Graphics/Textures/texture.hpp"
 #include <Engine/Graphics/Sprites/sprite.hpp>
 
-Sprite::Sprite()
+Sprite::Sprite() {}
+
+Sprite::Sprite (Texture t, int x, int y)
 {
-    SDL_srand (SDL_GetPerformanceCounter());
-    inner = (SpriteData) {
-        .x = 32,
-        .y = 32,
-        .z = 0,
-        .rotation = SDL_randf() * SDL_PI_F * 2,
-        .w = 32,
-        .h = 32,
-        .textureU = 0.5f,
-        .textureV = 0.5f,
-        .textureW = 0.5f,
-        .textureH = 0.5f,
-        .r = 1.0f,
-        .g = 1.0f,
-        .b = 1.0f,
-        .a = 1.0f,
-    };
+    setTexture (t);
+}
+Sprite::Sprite (Texture t, int x, int y, int u, int v, int w, int h)
+{
 }
 
-void Sprite::setX (float newX) noexcept
+void Sprite::setTexture (Texture t)
 {
-    inner.x = newX;
+    texture = t;
+    inner.w = texture.getWidth();
+    inner.h = texture.getHeight();
+    inner.textureU = texture.getU();
+    inner.textureV = texture.getV();
+    inner.textureW = texture.getW();
+    inner.textureH = texture.getH();
 }
-
-float Sprite::getX() const noexcept
+void Sprite::setTextureFromPortion (Texture texture, int u, int v, int w, int h)
 {
-    return inner.x;
-}
-
-void Sprite::setY (float newY) noexcept
-{
-    inner.y = newY;
-}
-
-float Sprite::getY() const noexcept
-{
-    return inner.y;
-}
-
-void Sprite::setPostion (float x, float y) noexcept
-{
-    inner.x = x;
-    inner.y = y;
-}
-
-SDL_FRect Sprite::getTextureBounds() const noexcept
-{
-    return SDL_FRect { inner.textureU, inner.textureV, inner.textureW, inner.textureH };
-}
-
-void Sprite::setTextureBounds (SDL_FRect rect) noexcept
-{
-    inner.textureU = rect.x;
-    inner.textureV = rect.y;
-    inner.textureW = rect.w;
-    inner.textureH = rect.h;
-}
-
-void Sprite::setTextureBounds (float x, float y, float w, float h) noexcept
-{
-    inner.textureU = x;
-    inner.textureV = y;
-    inner.textureW = w;
-    inner.textureH = h;
 }

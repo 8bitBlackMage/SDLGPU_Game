@@ -1,3 +1,4 @@
+#include "Engine/Graphics/Textures/textureManager.hpp"
 #include <Engine/Graphics/graphicsContext.hpp>
 
 #include <Engine/Utils/logger.hpp>
@@ -79,12 +80,6 @@ void GraphicsContext::initContext (SDL_Window* windowIn)
 
 void GraphicsContext::shutdown()
 {
-    for (auto& texture : textureStorage)
-    {
-        Logger::log ("Releasing", texture.first);
-        SDL_ReleaseGPUTexture (device, texture.second.texture);
-    }
-
     SDL_ReleaseGPUSampler (device, sampler);
     SDL_ReleaseGPUTexture (device, renderTexture);
 }
@@ -130,21 +125,9 @@ void GraphicsContext::debugView()
         ImGui::GetWindowDrawList()->AddCallback(ImDrawCallback_ImplSDLGPU3_SetSampler,nullptr);
         ImGui::Text("%s",SDL_GetStringProperty(prop,name,"")); },
                               nullptr));
-    if (ImGui::CollapsingHeader ("Textures", ImGuiTreeNodeFlags_DefaultOpen))
-    {
-        ImGui::BeginChild ("Scrolling");
-        for (auto& texture : textureStorage)
-        {
-            ImGui::Text ("%s", texture.first.c_str());
-            ImGui::SameLine();
-            ImGui::Text ("Width: %ipx, Height %ipx", texture.second.width, texture.second.height);
-            ImGui::SameLine();
-            ImGui::Text (" Address: %p", texture.second.texture);
-            ImGui::Image ((ImTextureID) (intptr_t) texture.second.texture, { 200, 200 });
-        }
-        ImGui::EndChild();
-    }
+
     ImGui::End();
+    textureManager.debugView();
 }
 
 void GraphicsContext::startFrame()
@@ -157,7 +140,7 @@ void GraphicsContext::startFrame()
 
     frameContext.device = device;
     frameContext.commandBuffer = SDL_AcquireGPUCommandBuffer (device); // Acquire a GPU command buffer
-
+    frameContext.textureManager = &textureManager;
     frameContext.swapchainTexture = renderTexture;
 
     auto windowWidth = ImGui::GetWindowSize().x;

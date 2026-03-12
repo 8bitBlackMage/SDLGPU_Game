@@ -1,6 +1,6 @@
 #pragma once
 #include "../graphicsContext.hpp"
-#include "sprite.hpp"
+#include <Engine/Graphics/Sprites/sprite.hpp>
 #include <queue>
 
 class Sprite;
@@ -33,8 +33,6 @@ private:
 
     SDL_GPUTransferBuffer* transferBuffer;
     SDL_GPUBuffer* dataBuffer;
-
-    GraphicsContext* context;
 
     int spritesToDraw = 256;
     float renderTime[500];
