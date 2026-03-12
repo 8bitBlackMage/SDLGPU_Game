@@ -1,6 +1,7 @@
-#include "spriteBatch.hpp"
-#include "../../Utils/matricies.hpp"
-#include "Engine/Utils/logger.hpp"
+#include <Engine/Graphics/Sprites/spriteBatch.hpp>
+
+#include <Engine/Utils/logger.hpp>
+#include <Engine/Utils/matricies.hpp>
 
 const size_t SPRITE_COUNT = 65536;
 

@@ -1,11 +1,9 @@
-#include "textureManager.hpp"
-#include "Engine/Graphics/graphicsContext.hpp"
-#include "Engine/Utils/logger.hpp"
-#include "Engine/Utils/vectorTypes.hpp"
+#include <Engine/Graphics/textureManager.hpp>
 
-#include <SDL3/SDL_gpu.h>
-#include <SDL3/SDL_surface.h>
-#include <SDL3/SDL_timer.h>
+#include <Engine/Graphics/graphicsContext.hpp>
+#include <Engine/Utils/logger.hpp>
+#include <Engine/Utils/vectorTypes.hpp>
+#include <SDL3/SDL.h>
 #include <SDL3_image/SDL_image.h>
 #include <filesystem>
 #include <imgui.h>

@@ -1,12 +1,11 @@
-#include "game.hpp"
+#include <Engine/game.hpp>
 
+#include <Engine/Graphics/graphicsContext.hpp>
+#include <Engine/Utils/logger.hpp>
+#include <Graphics/Sprites/spriteBatch.hpp>
 #include <imgui.h>
 #include <imgui_impl_sdl3.h>
 #include <imgui_impl_sdlrenderer3.h>
-
-#include "Engine/Graphics/graphicsContext.hpp"
-#include "Engine/Utils/logger.hpp"
-#include "Graphics/Sprites/spriteBatch.hpp"
 
 Game::Game() : graphicsContext(),
                spriteBatch()

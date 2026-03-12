@@ -1,5 +1,5 @@
 #pragma once
-#include "scene.hpp"
+#include <Engine/Scenes/scene.hpp>
 
 class TestScene : public Scene
 {

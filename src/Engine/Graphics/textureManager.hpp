@@ -1,9 +1,8 @@
 #pragma once
-#include "Engine/Utils/vectorTypes.hpp"
-
-#include <SDL3/SDL_gpu.h>
-#include <rectpack2D/rect_structs.h>
+#include <Engine/Utils/vectorTypes.hpp>
+#include <SDL3/SDL.h>
 #include <vector>
+
 class GraphicsContext;
 
 /// @brief Thin wrapper around SDL GPU Texture.

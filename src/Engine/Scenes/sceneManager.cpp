@@ -1,6 +1,6 @@
-#include "sceneManager.hpp"
-#include "testScene.hpp"
+#include <Engine/Scenes/sceneManager.hpp>
 
+#include <Engine/Scenes/testScene.hpp>
 #include <imgui.h>
 
 SceneManager::SceneManager() : currentSceneName (emptySceneName)

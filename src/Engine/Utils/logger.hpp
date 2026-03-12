@@ -1,10 +1,9 @@
 #pragma once
-#include <imgui.h>
-#include <sstream>
-
 #include <ctime>
+#include <imgui.h>
 #include <iomanip>
 #include <iostream>
+#include <sstream>
 
 class Logger
 {

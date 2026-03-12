@@ -1,5 +1,5 @@
-#include "vectorTypes.hpp"
-#include "rectpack2D/rect_structs.h"
+#include <Engine/Utils/vectorTypes.hpp>
+#include <rectpack2D/rect_structs.h>
 
 Vec2::Vec2 (int xIn, int yIn) : x (xIn),
                                 y (yIn)

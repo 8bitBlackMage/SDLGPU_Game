@@ -3,7 +3,7 @@
 #include <map>
 #include <memory>
 
-#include "scene.hpp"
+#include <Engine/Scenes/scene.hpp>
 
 /// @brief This object handles the lifetime and operation of scenes, along with displaying debugging info.
 class SceneManager final

@@ -1,7 +1,6 @@
 #pragma once
+#include <Engine/Graphics/textureManager.hpp>
 #include <SDL3/SDL.h>
-
-#include "textureManager.hpp"
 #include <map>
 
 /// @brief Struct containing per frame data, used for rendering.
