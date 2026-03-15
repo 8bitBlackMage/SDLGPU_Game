@@ -28,8 +28,10 @@ target_sources(${PROJECT_NAME}
     src/Engine/Utils/logger.cpp
     src/Engine/Scenes/SceneManager.cpp
     src/Engine/Scenes/testScene.cpp
+    src/Engine/Scenes/tileMapScene.cpp
     src/Engine/Graphics/graphicsContext.cpp
     src/Engine/Graphics/Textures/textureManager.cpp
+    src/Engine/Graphics/TileMap/tileMapRenderer.cpp
     src/Engine/Graphics/Textures/texture.cpp
     src/Engine/Graphics/Sprites/spriteBatch.cpp
     src/Engine/Graphics/Sprites/sprite.cpp
@@ -43,7 +45,10 @@ add_subdirectory(${VENDOR_DIR}/SDL_ttf)
 add_subdirectory(${VENDOR_DIR}/imgui)
 add_subdirectory(${VENDOR_DIR}/rectpack2D)
 
-target_include_directories(${PROJECT_NAME} INTERFACE ${VENDOR_DIR}/imgui)
+get_directory_property(current_settings COMPILE_OPTIONS)
+add_compile_options(-w)
+add_subdirectory(${VENDOR_DIR}/LDtkLoader) #until they fix their warnings
+set_directory_properties(PROPERTIES COMPILE_OPTIONS "${current_settings}")
 
 target_link_libraries(${PROJECT_NAME}
     PRIVATE 
@@ -52,6 +57,7 @@ target_link_libraries(${PROJECT_NAME}
     SDL3_ttf::SDL3_ttf
     rectpack2D
     imgui
+    LDtkLoader::LDtkLoader
     )
 
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD

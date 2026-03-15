@@ -29,7 +29,6 @@ private:
 
     SDL_GPUGraphicsPipeline* RenderPipeline;
     SDL_GPUSampler* sampler;
-    Texture texture;
 
     SDL_GPUTransferBuffer* transferBuffer;
     SDL_GPUBuffer* dataBuffer;

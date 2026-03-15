@@ -1,4 +1,5 @@
 #pragma once
+#include "Engine/Graphics/TileMap/tileMapRenderer.hpp"
 #include <Engine/Graphics/Textures/textureManager.hpp>
 #include <Engine/Graphics/graphicsContext.hpp>
 #include <Engine/Scenes/sceneManager.hpp>
@@ -26,6 +27,8 @@ private:
 
     Sprite sprite;
     SpriteBatch spriteBatch;
+
+    TileMapRenderer tileRenderer;
 
     SDL_Window* window;
     SDL_Texture* texture;

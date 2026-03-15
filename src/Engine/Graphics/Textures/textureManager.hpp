@@ -2,8 +2,9 @@
 #include <Engine/Graphics/Textures/texture.hpp>
 #include <Engine/Utils/vectorTypes.hpp>
 #include <SDL3/SDL.h>
+#include <map>
+#include <string>
 #include <vector>
-
 class GraphicsContext;
 
 ///@brief Object to handle optimised loading of textures into GPU programming.
@@ -24,6 +25,8 @@ public:
     ///@brief Call at the end of a scene to finalize and up
     void endBatchUpload (GraphicsContext* context);
 
+    Texture getTextureForFile (std::string filename);
+
     ///@brief gets the raw handle of the texture pointer, this should only be used when binding to a pipeline.
     inline SDL_GPUTexture* getRawGPUTexture() { return texture; }
 
@@ -38,7 +41,7 @@ private:
     class TextureData
     {
     public:
-        TextureData (std::string file) : fileName (file)
+        TextureData (std::string file, size_t idHandle) : fileName (file), id (idHandle)
         {
         }
 
@@ -53,13 +56,18 @@ private:
         }
 
         std::string fileName;
+        unsigned int id;
         rectpack2D::rect_xywhf bounds;
     };
-
+    std::map<size_t, size_t> hashedFileNames;
     std::vector<TextureData> textures;
+
+    TextureData* getData (size_t id) { return &textures[hashedFileNames[id]]; }
 
     Vec2<int> textureSize;
     SDL_GPUTexture* texture;
 
     int zoomFactor = 4;
+
+    bool uploading;
 };

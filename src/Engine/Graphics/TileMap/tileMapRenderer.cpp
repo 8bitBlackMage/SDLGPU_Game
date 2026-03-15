@@ -1,25 +1,31 @@
+#include "LDtkLoader/DataTypes.hpp"
+#include "LDtkLoader/Layer.hpp"
+#include "LDtkLoader/Level.hpp"
+#include "SDL3/SDL_error.h"
 #include "SDL3/SDL_gpu.h"
-#include <Engine/Graphics/Sprites/spriteBatch.hpp>
-
+#include <Engine/Graphics/TileMap/tileMapRenderer.hpp>
+#include <Engine/Graphics/graphicsContext.hpp>
 #include <Engine/Utils/logger.hpp>
+
 #include <Engine/Utils/matricies.hpp>
+#include <cstddef>
+#include <cstring>
+#include <filesystem>
 
-const size_t SPRITE_COUNT = 65536;
-
-SpriteBatch::SpriteBatch()
+TileMapRenderer::TileMapRenderer()
 {
 }
 
-void SpriteBatch::init (GraphicsContext* context)
+void TileMapRenderer::init (GraphicsContext* context)
 {
     if (context == nullptr)
     {
-        return;
         Logger::log ("Invalid GPU Context provided");
+        return;
     }
 
-    SDL_GPUShader* vert = context->loadShader ("spritebatch.vert", 0, 1, 1, 0);
-    SDL_GPUShader* frag = context->loadShader ("spritebatch.frag", 1, 0, 0, 0);
+    SDL_GPUShader* vert = context->loadShader ("tilemap.vert", 0, 1, 1, 0);
+    SDL_GPUShader* frag = context->loadShader ("tilemap.frag", 1, 0, 0, 0);
 
     auto createInfo = (SDL_GPUGraphicsPipelineCreateInfo) {
         .target_info = (SDL_GPUGraphicsPipelineTargetInfo) {
@@ -40,6 +46,10 @@ void SpriteBatch::init (GraphicsContext* context)
     };
 
     RenderPipeline = SDL_CreateGPUGraphicsPipeline (context->getDevice(), &createInfo);
+    if (! RenderPipeline)
+    {
+        Logger::log ("Failed to create Render Pipeline: ", SDL_GetError());
+    }
 
     SDL_ReleaseGPUShader (context->getDevice(), vert);
     SDL_ReleaseGPUShader (context->getDevice(), frag);
@@ -54,35 +64,65 @@ void SpriteBatch::init (GraphicsContext* context)
     };
 
     sampler = SDL_CreateGPUSampler (context->getDevice(), &samplerCreateInfo);
+}
+
+void TileMapRenderer::loadTileMap (const ldtk::Level& level, GraphicsContext* context)
+{
+    for (auto layer = level.allLayers().rbegin(); layer != level.allLayers().rend(); layer++)
+    {
+        if (layer->getType() == ldtk::LayerType::Tiles)
+        {
+            std::filesystem::path path = layer->getTileset().path;
+            auto texture = context->getTextureManager()->getTextureForFile (path.filename());
+            for (auto& tile : layer->allTiles())
+            {
+                auto data = Tile {};
+                auto texRect = tile.getTextureRect();
+                auto uvwh = texture.getSubRectUV (texRect.x, texRect.y, texRect.width, texRect.height);
+
+                data.x = tile.getPosition().x;
+                data.y = tile.getPosition().y;
+
+                data.w = tile.layer->getCellSize();
+                data.h = tile.layer->getCellSize();
+
+                data.textureU = uvwh.x;
+                data.textureV = uvwh.y;
+                data.textureW = uvwh.w;
+                data.textureH = uvwh.h;
+
+                data.a = tile.alpha;
+                tileData.push_back (data);
+            }
+        }
+    }
+
+    const uint32_t size = static_cast<Uint32> (tileData.size() * sizeof (Tile));
 
     auto transferBufferCreateInfo = (SDL_GPUTransferBufferCreateInfo) {
         .usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD,
-        .size = SPRITE_COUNT * sizeof (Sprite::SpriteData)
+        .size = size
     };
-
+    Logger::log ("attempting to create Transfer buffer of size:", size, "bytes");
     transferBuffer = SDL_CreateGPUTransferBuffer (context->getDevice(), &transferBufferCreateInfo);
     if (transferBuffer == nullptr)
     {
         Logger::log ("failed to create transfer buffer", SDL_GetError());
     }
-
+    Logger::log ("attempting to create GPU buffer of size:", size, "bytes");
     auto bufferCreateInfo = (SDL_GPUBufferCreateInfo) {
         .usage = SDL_GPU_BUFFERUSAGE_GRAPHICS_STORAGE_READ,
-        .size = SPRITE_COUNT * sizeof (Sprite::SpriteData)
+        .size = size
     };
 
     dataBuffer = SDL_CreateGPUBuffer (context->getDevice(), &bufferCreateInfo);
-}
-
-void SpriteBatch::draw (Sprite* sprite)
-{
-    if (sprite != nullptr)
+    if (dataBuffer == nullptr)
     {
-        spriteQueue.push (sprite);
+        Logger::log ("failed to create data buffer", SDL_GetError());
     }
 }
 
-void SpriteBatch::render (FrameContext* frameContext)
+void TileMapRenderer::draw (FrameContext* frameContext)
 {
     if (frameContext->textureManager->getRawGPUTexture() == nullptr)
     {
@@ -92,14 +132,15 @@ void SpriteBatch::render (FrameContext* frameContext)
     float timeAtStart = SDL_GetTicksNS();
     Matrix4x4 cameraMatrix = Matrix4x4::CreateOrthographicOffCenter (
         0,
-        640,
-        480,
+        320,
+        240,
         0,
         0,
         -1);
 
     if (! frameContext->device)
     {
+        Logger::log ("Invalid Device", SDL_GetError());
         return;
     }
 
@@ -110,19 +151,16 @@ void SpriteBatch::render (FrameContext* frameContext)
 
     if (frameContext->swapchainTexture == nullptr)
     {
+        Logger::log ("Invalid SwapChain Texture", SDL_GetError());
         return;
     }
 
-    Sprite::SpriteData* data = (Sprite::SpriteData*) SDL_MapGPUTransferBuffer (frameContext->device,
-                                                                               transferBuffer,
-                                                                               true);
+    Tile* data = (Tile*) SDL_MapGPUTransferBuffer (frameContext->device,
+                                                   transferBuffer,
+                                                   false);
 
-    int i = 0;
-    for (; ! spriteQueue.empty(); spriteQueue.pop())
-    {
-        data[i] = spriteQueue.front()->inner;
-        i++;
-    }
+    std::memcpy (data, tileData.data(), sizeof (Tile) * tileData.size());
+
     SDL_UnmapGPUTransferBuffer (frameContext->device, transferBuffer);
 
     SDL_GPUCopyPass* copyPass = SDL_BeginGPUCopyPass (frameContext->commandBuffer);
@@ -131,10 +169,13 @@ void SpriteBatch::render (FrameContext* frameContext)
         .offset = 0,
         .transfer_buffer = transferBuffer
     };
+
+    const auto tileSize = tileData.size() * sizeof (Tile);
+
     auto bufferRegion = (SDL_GPUBufferRegion) {
         .buffer = dataBuffer,
         .offset = 0,
-        .size = SPRITE_COUNT * sizeof (Sprite::SpriteData)
+        .size = static_cast<Uint32> (tileSize)
     };
 
     SDL_UploadToGPUBuffer (
@@ -160,6 +201,7 @@ void SpriteBatch::render (FrameContext* frameContext)
         nullptr);
 
     SDL_BindGPUGraphicsPipeline (renderPass, RenderPipeline);
+
     SDL_BindGPUVertexStorageBuffers (
         renderPass,
         0,
@@ -182,22 +224,15 @@ void SpriteBatch::render (FrameContext* frameContext)
         0,
         &cameraMatrix,
         sizeof (Matrix4x4));
+
     SDL_DrawGPUPrimitives (
         renderPass,
-        spritesToDraw * 6,
+        tileData.size() * 6,
         1,
         0,
         0);
 
     SDL_EndGPURenderPass (renderPass);
-    float timeAtEnd = SDL_GetTicksNS();
-}
 
-void SpriteBatch::debugView()
-{
-    ImGui::Begin ("SpriteBatch");
-    {
-        ImGui::SliderInt ("Sprites", &spritesToDraw, 0, 428);
-        ImGui::End();
-    }
+    float timeAtEnd = SDL_GetTicksNS();
 }

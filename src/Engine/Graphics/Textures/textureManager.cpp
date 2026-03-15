@@ -1,3 +1,5 @@
+#include "Engine/Graphics/Textures/texture.hpp"
+#include "SDL3/SDL_gpu.h"
 #include <Engine/Graphics/Textures/textureManager.hpp>
 
 #include <Engine/Graphics/graphicsContext.hpp>
@@ -5,12 +7,14 @@
 #include <Engine/Utils/vectorTypes.hpp>
 #include <SDL3/SDL.h>
 #include <SDL3_image/SDL_image.h>
+#include <cassert>
+#include <cstdlib>
+#include <ctime>
 #include <filesystem>
 #include <imgui.h>
 #include <map>
 #include <rectpack2D/finders_interface.h>
-
-TextureManager::TextureManager() : texture (nullptr)
+TextureManager::TextureManager() : texture (nullptr), uploading (false)
 {
 }
 
@@ -20,14 +24,25 @@ void TextureManager::beginBatchUpload (GraphicsContext* context)
     {
         Logger::log ("Flushing old texture cache");
         SDL_ReleaseGPUTexture (context->getDevice(), texture);
+        textures.clear();
+        hashedFileNames.clear();
     }
+    uploading = true;
 }
 
 Texture TextureManager::loadTexture (std::string filename)
 {
-    Logger::log ("Appending:", filename, "to texture list");
-    textures.push_back (TextureData (filename));
-    return Texture (textures.size() - 1, this);
+    assert (uploading == true);
+    std::hash<std::string> hash;
+    unsigned int id = hash (filename);
+    if (! hashedFileNames.contains (id))
+    {
+        Logger::log ("Appending:", filename, "to texture list");
+        textures.push_back (TextureData (filename, id));
+        hashedFileNames[id] = textures.size() - 1;
+    }
+    Logger::log ("Texture:", filename, "at ID:", id);
+    return Texture (id, this);
 }
 
 void TextureManager::endBatchUpload (GraphicsContext* context)
@@ -54,7 +69,7 @@ void TextureManager::endBatchUpload (GraphicsContext* context)
 
     SDL_GPUTextureCreateInfo texCreateInfo = {};
     texCreateInfo.type = SDL_GPU_TEXTURETYPE_2D;
-    texCreateInfo.format = SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM;
+    texCreateInfo.format = SDL_GPU_TEXTUREFORMAT_B8G8R8A8_UNORM;
     texCreateInfo.usage = SDL_GPU_TEXTUREUSAGE_SAMPLER;
     texCreateInfo.width = textureSize.x;
     texCreateInfo.height = textureSize.y;
@@ -111,6 +126,19 @@ void TextureManager::endBatchUpload (GraphicsContext* context)
     auto timeTaken = timeAtEnd - timeAtStart;
 
     Logger::log ("Generation complete, took:", timeTaken, "ms");
+    uploading = false;
+}
+
+Texture TextureManager::getTextureForFile (std::string filename)
+{
+    std::hash<std::string> hash;
+    unsigned int id = hash (filename);
+    if (hashedFileNames.contains (id))
+    {
+        return Texture { id, this };
+    }
+    assert (false);
+    return Texture {};
 }
 
 void TextureManager::debugView()
@@ -126,6 +154,7 @@ void TextureManager::debugView()
                              t.get_rect().w,
                              t.get_rect().h);
         ImGui::Text ("Width: %ipx, Height %ipx", t.get_rect().w, t.get_rect().h);
+        ImGui::Text ("ID: %u", (int) t.id);
         ImGui::Image ((ImTextureID) (intptr_t) texture,
                       { 200, 200 },
                       { uv.x, uv.y },

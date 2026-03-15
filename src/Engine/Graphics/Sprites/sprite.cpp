@@ -34,12 +34,10 @@ void Sprite::setTextureFromPortion (Texture t, int width, int height, int u, int
     inner.w = width;
     inner.h = height;
 
-    auto uv = texture.translatePixelToUV (u, v);
-    auto wh = texture.translatePixelToUV (w, h);
+    auto uvwh = texture.getSubRectUV (u, v, w, h);
 
-    inner.textureU = uv.x;
-    inner.textureV = uv.y;
-
-    inner.textureW = wh.x;
-    inner.textureH = wh.y;
+    inner.textureU = uvwh.x;
+    inner.textureV = uvwh.y;
+    inner.textureW = uvwh.w;
+    inner.textureH = uvwh.h;
 }

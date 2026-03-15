@@ -9,6 +9,8 @@ class Texture
 {
 public:
     Texture();
+    const int getX() const;
+    const int getY() const;
     const int getHeight() const;
     const int getWidth() const;
 
@@ -18,10 +20,11 @@ public:
     const float getH() const;
 
     const Vec2<float> translatePixelToUV (int x, int y) const;
+    const Vec4<float> getSubRectUV (int u, int v, int w, int h) const;
 
 private:
     friend class TextureManager;
     Texture (size_t idIn, TextureManager* managerIn);
-    size_t id;
+    unsigned int id;
     TextureManager* manager;
 };

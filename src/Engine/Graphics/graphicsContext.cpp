@@ -1,4 +1,5 @@
 #include "Engine/Graphics/Textures/textureManager.hpp"
+#include "SDL3/SDL_error.h"
 #include <Engine/Graphics/graphicsContext.hpp>
 
 #include <Engine/Utils/logger.hpp>
@@ -137,6 +138,7 @@ void GraphicsContext::startFrame()
     ImGui::NewFrame();
     ImGui::DockSpaceOverViewport();
     ImGui::Begin ("GameWindow");
+    ImGui::GetWindowDrawList()->AddCallback (ImDrawCallback_ImplSDLGPU3_SetSampler, nullptr);
 
     frameContext.device = device;
     frameContext.commandBuffer = SDL_AcquireGPUCommandBuffer (device); // Acquire a GPU command buffer
@@ -146,7 +148,6 @@ void GraphicsContext::startFrame()
     auto windowWidth = ImGui::GetWindowSize().x;
     auto windowHeight = ImGui::GetWindowSize().y;
     {
-        ImGui::GetWindowDrawList()->AddCallback (ImDrawCallback_ImplSDLGPU3_SetSampler, nullptr);
         ImGui::SetCursorPos ({ (windowWidth - 640) / 2, (windowHeight - 480) / 2 });
         ImGui::Image (renderTexture, { 640, 480 });
     }
@@ -221,19 +222,19 @@ SDL_GPUShader* GraphicsContext::loadShader (std::string filename, Uint32 sampler
     {
         format = SDL_GPU_SHADERFORMAT_SPIRV;
         entryPoint = "main";
-        shaderpath = "assets/shaders/compiled/spriv/" + filename + ".spv";
+        shaderpath = "assets/shaders/compiled/SPIRV/" + filename + ".spv";
     }
     else if (backendFormats & SDL_GPU_SHADERFORMAT_MSL)
     {
         format = SDL_GPU_SHADERFORMAT_MSL;
         entryPoint = "main0";
-        shaderpath = "assets/shaders/compiled/msl/" + filename + ".msl";
+        shaderpath = "assets/shaders/compiled/MSL/" + filename + ".msl";
     }
     else if (backendFormats & SDL_GPU_SHADERFORMAT_DXIL)
     {
         format = SDL_GPU_SHADERFORMAT_DXIL;
-        entryPoint = "main0";
-        shaderpath = "assets/shaders/compiled/msl/" + filename + ".dxil";
+        entryPoint = "main";
+        shaderpath = "assets/shaders/compiled/DXIL/" + filename + ".dxil";
     }
     else
     {
@@ -246,7 +247,7 @@ SDL_GPUShader* GraphicsContext::loadShader (std::string filename, Uint32 sampler
 
     if (code == nullptr)
     {
-        Logger::getLogger().appendToLog ("Failed to load shader from disk");
+        Logger::log ("Failed to load shader from disk", SDL_GetError());
         return nullptr;
     }
 

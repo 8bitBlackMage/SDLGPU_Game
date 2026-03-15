@@ -1,13 +1,19 @@
 #include <Engine/Scenes/sceneManager.hpp>
+#include <Engine/Scenes/tileMapScene.hpp>
 
 #include <Engine/Scenes/testScene.hpp>
 #include <imgui.h>
+#include <memory>
 
 SceneManager::SceneManager() : currentSceneName (emptySceneName)
 {
     factories["test_scene"] = []
     {
         return std::make_unique<TestScene>();
+    };
+    factories["tile_scene"] = []
+    {
+        return std::make_unique<TileMapScene>();
     };
 }
 
@@ -42,7 +48,9 @@ void SceneManager::debugView()
     ImGui::Text ("Current Scene : %s", currentSceneName.c_str());
     for (auto& sceneType : factories)
     {
+        ImGui::PushID (sceneType.first.c_str());
         ImGui::Button ("Enable");
+        ImGui::PopID();
         ImGui::SameLine();
         ImGui::Text ("%s", sceneType.first.c_str());
     }
