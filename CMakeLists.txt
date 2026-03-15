@@ -30,6 +30,7 @@ target_sources(${PROJECT_NAME}
     src/Engine/Scenes/testScene.cpp
     src/Engine/Scenes/tileMapScene.cpp
     src/Engine/Graphics/graphicsContext.cpp
+    src/Engine/Graphics/camera.cpp
     src/Engine/Graphics/Textures/textureManager.cpp
     src/Engine/Graphics/TileMap/tileMapRenderer.cpp
     src/Engine/Graphics/Textures/texture.cpp

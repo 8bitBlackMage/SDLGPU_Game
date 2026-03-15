@@ -90,13 +90,6 @@ void SpriteBatch::render (FrameContext* frameContext)
     }
 
     float timeAtStart = SDL_GetTicksNS();
-    Matrix4x4 cameraMatrix = Matrix4x4::CreateOrthographicOffCenter (
-        0,
-        640,
-        480,
-        0,
-        0,
-        -1);
 
     if (! frameContext->device)
     {
@@ -180,7 +173,7 @@ void SpriteBatch::render (FrameContext* frameContext)
     SDL_PushGPUVertexUniformData (
         frameContext->commandBuffer,
         0,
-        &cameraMatrix,
+        &frameContext->cameraMatrix,
         sizeof (Matrix4x4));
     SDL_DrawGPUPrimitives (
         renderPass,

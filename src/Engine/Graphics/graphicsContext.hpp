@@ -1,4 +1,5 @@
 #pragma once
+#include "Engine/Utils/matricies.hpp"
 #include <Engine/Graphics/Textures/textureManager.hpp>
 #include <SDL3/SDL.h>
 
@@ -8,7 +9,7 @@ struct FrameContext
     SDL_GPUDevice* device;
     SDL_GPUCommandBuffer* commandBuffer;
     SDL_GPUTexture* swapchainTexture;
-    SDL_GPUViewport viewport;
+    Matrix4x4 cameraMatrix;
     TextureManager* textureManager;
 };
 

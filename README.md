@@ -14,5 +14,6 @@ WIP 2D game engine using SDL3 and SDLGPU
 * SDL3_TTF
 * Dear Imgui
 * RectPack2D
+* LTDKLoader
 
 Proudly AI Free

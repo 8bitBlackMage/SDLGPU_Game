@@ -4,6 +4,7 @@
 #include <Engine/Graphics/graphicsContext.hpp>
 #include <Engine/Scenes/sceneManager.hpp>
 #include <Graphics/Sprites/spriteBatch.hpp>
+#include <Graphics/camera.hpp>
 #include <SDL3/SDL.h>
 /// @brief Class that holds the core Game Data, such as the SDL contexts, scene graph and event handling.
 class Game final
@@ -29,6 +30,8 @@ private:
     SpriteBatch spriteBatch;
 
     TileMapRenderer tileRenderer;
+
+    Camera camera;
 
     SDL_Window* window;
     SDL_Texture* texture;

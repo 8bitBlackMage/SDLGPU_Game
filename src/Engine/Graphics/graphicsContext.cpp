@@ -1,4 +1,5 @@
 #include "Engine/Graphics/Textures/textureManager.hpp"
+#include "Engine/Utils/matricies.hpp"
 #include "SDL3/SDL_error.h"
 #include <Engine/Graphics/graphicsContext.hpp>
 
@@ -77,6 +78,14 @@ void GraphicsContext::initContext (SDL_Window* windowIn)
     renderTexture = SDL_CreateGPUTexture (device, &textureCreateInfo);
 
     sampler = SDL_CreateGPUSampler (device, &samplerCreateInfo);
+
+    frameContext.cameraMatrix = Matrix4x4::CreateOrthographicOffCenter (
+        0,
+        320,
+        240,
+        0,
+        0,
+        -1);
 }
 
 void GraphicsContext::shutdown()
@@ -116,15 +125,15 @@ void GraphicsContext::debugView()
     ImGui::Begin ("Graphics Context");
 
     auto io = ImGui::GetIO();
-
+    ImGui::Text ("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
     ImGui::Text ("Driver Name: %s", SDL_GetGPUDeviceDriver (device));
     auto properties = SDL_GetGPUDeviceProperties (device);
     (SDL_EnumerateProperties (properties, [] (void* userdata, SDL_PropertiesID prop, const char* name)
                               {
-        ImGui::Text("%s", name);
+        ImGui::Text ("%s", name);
         ImGui::SameLine();
-        ImGui::GetWindowDrawList()->AddCallback(ImDrawCallback_ImplSDLGPU3_SetSampler,nullptr);
-        ImGui::Text("%s",SDL_GetStringProperty(prop,name,"")); },
+        ImGui::GetWindowDrawList()->AddCallback (ImDrawCallback_ImplSDLGPU3_SetSampler, nullptr);
+        ImGui::Text ("%s", SDL_GetStringProperty (prop, name, "")); },
                               nullptr));
 
     ImGui::End();

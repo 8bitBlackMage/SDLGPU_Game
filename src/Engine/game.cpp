@@ -1,4 +1,10 @@
+#include "Engine/Graphics/camera.hpp"
 #include "LDtkLoader/Project.hpp"
+#include "SDL3/SDL_events.h"
+#include "SDL3/SDL_keyboard.h"
+#include "SDL3/SDL_keycode.h"
+#include "SDL3/SDL_oldnames.h"
+#include "SDL3/SDL_scancode.h"
 #include <Engine/game.hpp>
 
 #include <Engine/Graphics/graphicsContext.hpp>
@@ -9,7 +15,8 @@
 #include <imgui_impl_sdlrenderer3.h>
 
 Game::Game() : graphicsContext(),
-               spriteBatch()
+               spriteBatch(),
+               camera (320, 240)
 {
     setupSDLContext();
     setupImGuiContext();
@@ -52,7 +59,7 @@ void Game::setupSDLContext()
     auto tex2 = graphicsContext.getTextureManager()->loadTexture ("PixelPackTOPDOWN8BIT.png");
     graphicsContext.getTextureManager()->endBatchUpload (&graphicsContext);
 
-    sprite = Sprite (tex, 0, 0, 32, 32, 0, 0, 16, 16);
+    sprite = Sprite (tex, 0, 0, 16, 16, 0, 0, 16, 16);
 
     ldtk::Project project;
     project.loadFromFile ("assets/levels/GdungeonCrawler.ldtk");
@@ -79,15 +86,37 @@ void Game::handleEvents()
                 running = false;
                 //#TODO create more sophisticated running shutdown logic
                 break;
+
             default:
                 break;
         }
+    }
+
+    const bool* keyStates = SDL_GetKeyboardState (NULL);
+
+    if (keyStates[SDL_SCANCODE_LEFT])
+    {
+        camera.setX (camera.getX() - 1);
+    }
+    if (keyStates[SDL_SCANCODE_RIGHT])
+    {
+        camera.setX (camera.getX() + 1);
+    }
+    if (keyStates[SDL_SCANCODE_UP])
+    {
+        camera.setY (camera.getY() - 1);
+    }
+    if (keyStates[SDL_SCANCODE_DOWN])
+    {
+        camera.setY (camera.getY() + 1);
     }
 }
 
 void Game::render()
 {
     graphicsContext.startFrame();
+    //#TODO put proper interface in here for this.
+    graphicsContext.getFrameContext()->cameraMatrix = camera.getCurrentMatrix();
 
     tileRenderer.draw (graphicsContext.getFrameContext());
 

@@ -130,14 +130,6 @@ void TileMapRenderer::draw (FrameContext* frameContext)
     }
 
     float timeAtStart = SDL_GetTicksNS();
-    Matrix4x4 cameraMatrix = Matrix4x4::CreateOrthographicOffCenter (
-        0,
-        320,
-        240,
-        0,
-        0,
-        -1);
-
     if (! frameContext->device)
     {
         Logger::log ("Invalid Device", SDL_GetError());
@@ -222,7 +214,7 @@ void TileMapRenderer::draw (FrameContext* frameContext)
     SDL_PushGPUVertexUniformData (
         frameContext->commandBuffer,
         0,
-        &cameraMatrix,
+        &frameContext->cameraMatrix,
         sizeof (Matrix4x4));
 
     SDL_DrawGPUPrimitives (
