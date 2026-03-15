@@ -120,6 +120,40 @@ void TileMapRenderer::loadTileMap (const ldtk::Level& level, GraphicsContext* co
     {
         Logger::log ("failed to create data buffer", SDL_GetError());
     }
+
+    Tile* data = (Tile*) SDL_MapGPUTransferBuffer (context->getDevice(),
+                                                   transferBuffer,
+                                                   false);
+
+    std::memcpy (data, tileData.data(), sizeof (Tile) * tileData.size());
+
+    SDL_UnmapGPUTransferBuffer (context->getDevice(), transferBuffer);
+
+    auto commandBuffer = SDL_AcquireGPUCommandBuffer (context->getDevice());
+    SDL_GPUCopyPass* copyPass = SDL_BeginGPUCopyPass (commandBuffer);
+
+    auto transferBufferLocation = (SDL_GPUTransferBufferLocation) {
+        .offset = 0,
+        .transfer_buffer = transferBuffer
+    };
+
+    const auto tileSize = tileData.size() * sizeof (Tile);
+
+    auto bufferRegion = (SDL_GPUBufferRegion) {
+        .buffer = dataBuffer,
+        .offset = 0,
+        .size = static_cast<Uint32> (tileSize)
+    };
+
+    SDL_UploadToGPUBuffer (
+        copyPass,
+        &transferBufferLocation,
+        &bufferRegion,
+        true);
+
+    SDL_EndGPUCopyPass (copyPass);
+
+    SDL_SubmitGPUCommandBuffer (commandBuffer);
 }
 
 void TileMapRenderer::draw (FrameContext* frameContext)
@@ -147,41 +181,10 @@ void TileMapRenderer::draw (FrameContext* frameContext)
         return;
     }
 
-    Tile* data = (Tile*) SDL_MapGPUTransferBuffer (frameContext->device,
-                                                   transferBuffer,
-                                                   false);
-
-    std::memcpy (data, tileData.data(), sizeof (Tile) * tileData.size());
-
-    SDL_UnmapGPUTransferBuffer (frameContext->device, transferBuffer);
-
-    SDL_GPUCopyPass* copyPass = SDL_BeginGPUCopyPass (frameContext->commandBuffer);
-
-    auto transferBufferLocation = (SDL_GPUTransferBufferLocation) {
-        .offset = 0,
-        .transfer_buffer = transferBuffer
-    };
-
-    const auto tileSize = tileData.size() * sizeof (Tile);
-
-    auto bufferRegion = (SDL_GPUBufferRegion) {
-        .buffer = dataBuffer,
-        .offset = 0,
-        .size = static_cast<Uint32> (tileSize)
-    };
-
-    SDL_UploadToGPUBuffer (
-        copyPass,
-        &transferBufferLocation,
-        &bufferRegion,
-        true);
-
-    SDL_EndGPUCopyPass (copyPass);
-
     auto colourTargetInfo = (SDL_GPUColorTargetInfo) {
         .texture = frameContext->swapchainTexture,
         .cycle = false,
-        .load_op = SDL_GPU_LOADOP_LOAD,
+        .load_op = SDL_GPU_LOADOP_CLEAR,
         .store_op = SDL_GPU_STOREOP_STORE,
         .clear_color { 0, 0, 0, 1 }
     };

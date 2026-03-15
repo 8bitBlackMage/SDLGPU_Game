@@ -1,6 +1,7 @@
 #include "Engine/Graphics/Textures/textureManager.hpp"
 #include "Engine/Utils/matricies.hpp"
 #include "SDL3/SDL_error.h"
+#include "SDL3/SDL_gpu.h"
 #include <Engine/Graphics/graphicsContext.hpp>
 
 #include <Engine/Utils/logger.hpp>
@@ -49,7 +50,7 @@ void GraphicsContext::initContext (SDL_Window* windowIn)
         Logger::log ("Created Device:", SDL_GetGPUDeviceDriver (device));
     }
 
-    if (! SDL_SetGPUSwapchainParameters (device, window, SDL_GPU_SWAPCHAINCOMPOSITION_SDR, SDL_GPU_PRESENTMODE_VSYNC))
+    if (! SDL_SetGPUSwapchainParameters (device, window, SDL_GPU_SWAPCHAINCOMPOSITION_SDR, SDL_GPU_PRESENTMODE_IMMEDIATE))
     {
         Logger::log ("SDL GPU SwapChain setup failed: ", SDL_GetError());
         exit (-1);
@@ -59,9 +60,9 @@ void GraphicsContext::initContext (SDL_Window* windowIn)
         .min_filter = SDL_GPU_FILTER_NEAREST,
         .max_anisotropy = SDL_GPU_FILTER_NEAREST,
         .mipmap_mode = SDL_GPU_SAMPLERMIPMAPMODE_NEAREST,
-        .address_mode_u = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE,
-        .address_mode_v = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE,
-        .address_mode_w = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE,
+        .address_mode_u = SDL_GPU_SAMPLERADDRESSMODE_REPEAT,
+        .address_mode_v = SDL_GPU_SAMPLERADDRESSMODE_REPEAT,
+        .address_mode_w = SDL_GPU_SAMPLERADDRESSMODE_REPEAT,
     };
 
     auto textureFormat = SDL_GetGPUSwapchainTextureFormat (device, window);
@@ -109,7 +110,7 @@ void GraphicsContext::initImGuiGPU()
     ImGui_ImplSDLGPU3_InitInfo initInfo = {};
     initInfo.Device = device;
     initInfo.ColorTargetFormat = SDL_GetGPUSwapchainTextureFormat (device, window);
-    initInfo.PresentMode = SDL_GPU_PRESENTMODE_VSYNC;
+    initInfo.PresentMode = SDL_GPU_PRESENTMODE_IMMEDIATE;
     ImGui_ImplSDLGPU3_Init (&initInfo);
 
     ImGuiStyle& style = ImGui::GetStyle();
