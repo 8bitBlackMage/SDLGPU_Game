@@ -2,9 +2,9 @@
 #include "LDtkLoader/Project.hpp"
 #include "SDL3/SDL_events.h"
 #include "SDL3/SDL_keyboard.h"
-#include "SDL3/SDL_keycode.h"
 #include "SDL3/SDL_oldnames.h"
 #include "SDL3/SDL_scancode.h"
+#include "SDL3/SDL_timer.h"
 #include <Engine/game.hpp>
 
 #include <Engine/Graphics/graphicsContext.hpp>
@@ -25,9 +25,12 @@ Game::Game() : graphicsContext(),
 
 void Game::run()
 {
+    lastFrameTime = currentFrameTime;
+    currentFrameTime = SDL_GetTicks();
+    float delta = (currentFrameTime - lastFrameTime) / 1000;
     while (running)
     {
-        handleEvents();
+        handleEvents (delta);
         render();
     }
 }
@@ -74,7 +77,7 @@ void Game::setupImGuiContext()
     graphicsContext.initImGuiGPU();
 }
 
-void Game::handleEvents()
+void Game::handleEvents (float delta)
 {
     SDL_Event event;
     while (SDL_PollEvent (&event))
@@ -94,21 +97,22 @@ void Game::handleEvents()
 
     const bool* keyStates = SDL_GetKeyboardState (NULL);
 
+    auto speed = (1.0 * delta);
     if (keyStates[SDL_SCANCODE_LEFT])
     {
-        camera.setX (camera.getX() - 1);
+        camera.setX (camera.getX() - speed);
     }
     if (keyStates[SDL_SCANCODE_RIGHT])
     {
-        camera.setX (camera.getX() + 1);
+        camera.setX (camera.getX() + speed);
     }
     if (keyStates[SDL_SCANCODE_UP])
     {
-        camera.setY (camera.getY() - 1);
+        camera.setY (camera.getY() - speed);
     }
     if (keyStates[SDL_SCANCODE_DOWN])
     {
-        camera.setY (camera.getY() + 1);
+        camera.setY (camera.getY() + speed);
     }
 }
 

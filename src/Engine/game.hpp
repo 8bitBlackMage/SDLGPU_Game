@@ -18,7 +18,7 @@ public:
 private:
     void setupSDLContext();
     void setupImGuiContext();
-    void handleEvents();
+    void handleEvents (float delta);
     void render();
 
     void shutdown();
@@ -36,4 +36,7 @@ private:
     SDL_Window* window;
     SDL_Texture* texture;
     bool running;
+
+    float currentFrameTime;
+    float lastFrameTime;
 };
