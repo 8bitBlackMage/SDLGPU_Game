@@ -17,3 +17,6 @@
 [submodule "vendor/LDtkLoader"]
 	path = vendor/LDtkLoader
 	url = https://github.com/Madour/LDtkLoader.git
+[submodule "vendor/asset-packer"]
+	path = vendor/asset-packer
+	url = git@github.com:8bitBlackMage/asset-packer.git
