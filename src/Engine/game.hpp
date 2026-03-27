@@ -17,6 +17,7 @@ public:
 
 private:
     void setupSDLContext();
+    void loadAssets();
     void setupImGuiContext();
     void handleEvents (float delta);
     void render();

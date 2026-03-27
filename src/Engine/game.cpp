@@ -2,10 +2,10 @@
 #include "LDtkLoader/Project.hpp"
 #include "SDL3/SDL_events.h"
 #include "SDL3/SDL_keyboard.h"
-#include "SDL3/SDL_oldnames.h"
 #include "SDL3/SDL_scancode.h"
 #include "SDL3/SDL_timer.h"
 #include <Engine/game.hpp>
+#include <pack-reader.hpp>
 
 #include <Engine/Graphics/graphicsContext.hpp>
 #include <Engine/Utils/logger.hpp>
@@ -59,14 +59,12 @@ void Game::setupSDLContext()
 
     graphicsContext.getTextureManager()->beginBatchUpload (&graphicsContext);
     auto tex = graphicsContext.getTextureManager()->loadTexture ("ravioli_atlas.bmp");
-    auto tex2 = graphicsContext.getTextureManager()->loadTexture ("PixelPackTOPDOWN8BIT.png");
     graphicsContext.getTextureManager()->endBatchUpload (&graphicsContext);
 
     sprite = Sprite (tex, 0, 0, 16, 16, 0, 0, 16, 16);
 
     ldtk::Project project;
     project.loadFromFile ("assets/levels/GdungeonCrawler.ldtk");
-
     tileRenderer.loadTileMap (project.getWorld().getLevel (0), &graphicsContext);
 
     SDL_ShowWindow (window);

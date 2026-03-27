@@ -9,18 +9,18 @@ class Texture
 {
 public:
     Texture();
-    const int getX() const;
-    const int getY() const;
-    const int getHeight() const;
-    const int getWidth() const;
+    int getX() const;
+    int getY() const;
+    int getHeight() const;
+    int getWidth() const;
 
-    const float getU() const;
-    const float getV() const;
-    const float getW() const;
-    const float getH() const;
+    float getU() const;
+    float getV() const;
+    float getW() const;
+    float getH() const;
 
-    const Vec2<float> translatePixelToUV (int x, int y) const;
-    const Vec4<float> getSubRectUV (int u, int v, int w, int h) const;
+    Vec2<float> translatePixelToUV (int x, int y) const;
+    Vec4<float> getSubRectUV (int u, int v, int w, int h) const;
 
 private:
     friend class TextureManager;

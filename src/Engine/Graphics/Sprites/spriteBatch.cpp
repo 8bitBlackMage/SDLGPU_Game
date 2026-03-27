@@ -21,19 +21,25 @@ void SpriteBatch::init (GraphicsContext* context)
     SDL_GPUShader* vert = context->loadShader ("spritebatch.vert", 0, 1, 1, 0);
     SDL_GPUShader* frag = context->loadShader ("spritebatch.frag", 1, 0, 0, 0);
 
-    auto createInfo = (SDL_GPUGraphicsPipelineCreateInfo) {
-        .target_info = (SDL_GPUGraphicsPipelineTargetInfo) {
+    auto colourTargetDesc = SDL_GPUColorTargetDescription {
+        .format = SDL_GetGPUSwapchainTextureFormat (context->getDevice(), context->getWindow()),
+        .blend_state = {
+
+            .enable_blend = true,
+            .color_blend_op = SDL_GPU_BLENDOP_ADD,
+            .alpha_blend_op = SDL_GPU_BLENDOP_ADD,
+            .src_color_blendfactor = SDL_GPU_BLENDFACTOR_SRC_ALPHA,
+            .dst_color_blendfactor = SDL_GPU_BLENDFACTOR_ONE_MINUS_SRC_ALPHA,
+            .src_alpha_blendfactor = SDL_GPU_BLENDFACTOR_SRC_ALPHA,
+            .dst_alpha_blendfactor = SDL_GPU_BLENDFACTOR_ONE_MINUS_SRC_ALPHA,
+        }
+    };
+    auto createInfo = SDL_GPUGraphicsPipelineCreateInfo {
+        .target_info = SDL_GPUGraphicsPipelineTargetInfo {
             .num_color_targets = 1,
-            .color_target_descriptions = (SDL_GPUColorTargetDescription[]) { { .format = SDL_GetGPUSwapchainTextureFormat (context->getDevice(), context->getWindow()),
-                                                                               .blend_state = {
-                                                                                   .enable_blend = true,
-                                                                                   .color_blend_op = SDL_GPU_BLENDOP_ADD,
-                                                                                   .alpha_blend_op = SDL_GPU_BLENDOP_ADD,
-                                                                                   .src_color_blendfactor = SDL_GPU_BLENDFACTOR_SRC_ALPHA,
-                                                                                   .dst_color_blendfactor = SDL_GPU_BLENDFACTOR_ONE_MINUS_SRC_ALPHA,
-                                                                                   .src_alpha_blendfactor = SDL_GPU_BLENDFACTOR_SRC_ALPHA,
-                                                                                   .dst_alpha_blendfactor = SDL_GPU_BLENDFACTOR_ONE_MINUS_SRC_ALPHA,
-                                                                               } } } },
+            .color_target_descriptions = &colourTargetDesc,
+
+        },
         .primitive_type = SDL_GPU_PRIMITIVETYPE_TRIANGLELIST,
         .vertex_shader = vert,
         .fragment_shader = frag
@@ -44,7 +50,7 @@ void SpriteBatch::init (GraphicsContext* context)
     SDL_ReleaseGPUShader (context->getDevice(), vert);
     SDL_ReleaseGPUShader (context->getDevice(), frag);
 
-    auto samplerCreateInfo = (SDL_GPUSamplerCreateInfo) {
+    auto samplerCreateInfo = SDL_GPUSamplerCreateInfo {
         .min_filter = SDL_GPU_FILTER_NEAREST,
         .max_anisotropy = SDL_GPU_FILTER_NEAREST,
         .mipmap_mode = SDL_GPU_SAMPLERMIPMAPMODE_NEAREST,
@@ -55,7 +61,7 @@ void SpriteBatch::init (GraphicsContext* context)
 
     sampler = SDL_CreateGPUSampler (context->getDevice(), &samplerCreateInfo);
 
-    auto transferBufferCreateInfo = (SDL_GPUTransferBufferCreateInfo) {
+    auto transferBufferCreateInfo = SDL_GPUTransferBufferCreateInfo {
         .usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD,
         .size = SPRITE_COUNT * sizeof (Sprite::SpriteData)
     };
@@ -66,7 +72,7 @@ void SpriteBatch::init (GraphicsContext* context)
         Logger::log ("failed to create transfer buffer", SDL_GetError());
     }
 
-    auto bufferCreateInfo = (SDL_GPUBufferCreateInfo) {
+    auto bufferCreateInfo = SDL_GPUBufferCreateInfo {
         .usage = SDL_GPU_BUFFERUSAGE_GRAPHICS_STORAGE_READ,
         .size = SPRITE_COUNT * sizeof (Sprite::SpriteData)
     };
@@ -88,8 +94,6 @@ void SpriteBatch::render (FrameContext* frameContext)
     {
         return;
     }
-
-    float timeAtStart = SDL_GetTicksNS();
 
     if (! frameContext->device)
     {
@@ -120,11 +124,11 @@ void SpriteBatch::render (FrameContext* frameContext)
 
     SDL_GPUCopyPass* copyPass = SDL_BeginGPUCopyPass (frameContext->commandBuffer);
 
-    auto transferBufferLocation = (SDL_GPUTransferBufferLocation) {
+    auto transferBufferLocation = SDL_GPUTransferBufferLocation {
         .offset = 0,
         .transfer_buffer = transferBuffer
     };
-    auto bufferRegion = (SDL_GPUBufferRegion) {
+    auto bufferRegion = SDL_GPUBufferRegion {
         .buffer = dataBuffer,
         .offset = 0,
         .size = SPRITE_COUNT * sizeof (Sprite::SpriteData)
@@ -138,7 +142,7 @@ void SpriteBatch::render (FrameContext* frameContext)
 
     SDL_EndGPUCopyPass (copyPass);
 
-    auto colourTargetInfo = (SDL_GPUColorTargetInfo) {
+    auto colourTargetInfo = SDL_GPUColorTargetInfo {
         .texture = frameContext->swapchainTexture,
         .cycle = false,
         .load_op = SDL_GPU_LOADOP_LOAD,
@@ -159,7 +163,7 @@ void SpriteBatch::render (FrameContext* frameContext)
         &dataBuffer,
         1);
 
-    auto samplerBinding = (SDL_GPUTextureSamplerBinding) {
+    auto samplerBinding = SDL_GPUTextureSamplerBinding {
         .texture = frameContext->textureManager->getRawGPUTexture(),
         .sampler = sampler
     };
@@ -183,7 +187,6 @@ void SpriteBatch::render (FrameContext* frameContext)
         0);
 
     SDL_EndGPURenderPass (renderPass);
-    float timeAtEnd = SDL_GetTicksNS();
 }
 
 void SpriteBatch::debugView()

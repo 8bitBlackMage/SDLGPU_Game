@@ -12,43 +12,41 @@ Texture::Texture (size_t idIn,
 
 {
 }
-const int Texture::getX() const { return manager->getData (id)->bounds.x; }
-const int Texture::getY() const { return manager->getData (id)->bounds.x; }
-const int Texture::getHeight() const { return manager->getData (id)->bounds.w; }
-const int Texture::getWidth() const { return manager->getData (id)->bounds.h; }
+int Texture::getX() const { return manager->getData (id)->bounds.x; }
+int Texture::getY() const { return manager->getData (id)->bounds.x; }
+int Texture::getHeight() const { return manager->getData (id)->bounds.w; }
+int Texture::getWidth() const { return manager->getData (id)->bounds.h; }
 
-const float Texture::getU() const
+float Texture::getU() const
 {
     auto xPixels = static_cast<float> (manager->getData (id)->bounds.x);
     auto textureSizePixelW = static_cast<float> (manager->textureSize.x);
 
     return xPixels / textureSizePixelW;
 }
-const float Texture::getV() const
+float Texture::getV() const
 {
     auto yPixels = static_cast<float> (manager->getData (id)->bounds.y);
     auto textureSizePixelH = static_cast<float> (manager->textureSize.y);
 
     return yPixels / textureSizePixelH;
 }
-const float Texture::getW() const
+float Texture::getW() const
 {
-    auto xPixels = static_cast<float> (manager->getData (id)->bounds.x);
     auto width = static_cast<float> (manager->getData (id)->bounds.w);
     auto textureSizePixelW = static_cast<float> (manager->textureSize.x);
 
     return (width) / textureSizePixelW;
 }
-const float Texture::getH() const
+float Texture::getH() const
 {
-    auto yPixels = static_cast<float> (manager->getData (id)->bounds.y);
     auto height = static_cast<float> (manager->getData (id)->bounds.h);
     auto textureSizePixelH = static_cast<float> (manager->textureSize.y);
 
     return (height) / textureSizePixelH;
 }
 
-const Vec2<float> Texture::translatePixelToUV (int x, int y) const
+Vec2<float> Texture::translatePixelToUV (int x, int y) const
 {
     return {
         static_cast<float> (x) / static_cast<float> (manager->textureSize.x),
@@ -56,7 +54,7 @@ const Vec2<float> Texture::translatePixelToUV (int x, int y) const
     };
 }
 
-const Vec4<float> Texture::getSubRectUV (int u, int v, int w, int h) const
+Vec4<float> Texture::getSubRectUV (int u, int v, int w, int h) const
 {
     auto parentX = manager->getData (id)->bounds.x;
     auto parentY = manager->getData (id)->bounds.y;

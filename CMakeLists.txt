@@ -11,9 +11,15 @@ Project("DungeonCrawler"
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set(CMAKE_COMPILE_WARNING_AS_ERROR ON)
-
 add_executable(${PROJECT_NAME} MACOSX_BUNDLE)
+
+if(MSVC)
+  target_compile_options(${PROJECT_NAME} PRIVATE /W4 /WX)
+else()
+  target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic -Werror)
+endif()
+
+
 
 target_include_directories(${PROJECT_NAME}
     PUBLIC
@@ -45,6 +51,7 @@ add_subdirectory(${VENDOR_DIR}/SDL_image)
 add_subdirectory(${VENDOR_DIR}/SDL_ttf)
 add_subdirectory(${VENDOR_DIR}/imgui)
 add_subdirectory(${VENDOR_DIR}/rectpack2D)
+add_subdirectory(${VENDOR_DIR}/asset-packer)
 
 get_directory_property(current_settings COMPILE_OPTIONS)
 add_compile_options(-w)
@@ -59,6 +66,7 @@ target_link_libraries(${PROJECT_NAME}
     rectpack2D
     imgui
     LDtkLoader::LDtkLoader
+    lib-asset-packer
     )
 
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD

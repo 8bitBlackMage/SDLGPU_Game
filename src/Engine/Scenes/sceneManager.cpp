@@ -17,7 +17,7 @@ SceneManager::SceneManager() : currentSceneName (emptySceneName)
     };
 }
 
-void SceneManager::changeScene (const std::string& sceneName, bool playSceneTransition)
+void SceneManager::changeScene (const std::string&, bool)
 {
 }
 

@@ -8,7 +8,7 @@ Matrix4x4 Matrix4x4::CreateOrthographicOffCenter (
     float zNearPlane,
     float zFarPlane)
 {
-    return (Matrix4x4) {
+    return Matrix4x4 {
         2.0f / (right - left),
         0,
         0,

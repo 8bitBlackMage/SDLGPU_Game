@@ -11,7 +11,7 @@
 #include <imgui_impl_sdl3.h>
 #include <imgui_impl_sdlgpu3.h>
 
-void ImDrawCallback_ImplSDLGPU3_SetSampler (const ImDrawList* parent_list, const ImDrawCmd* cmd)
+void ImDrawCallback_ImplSDLGPU3_SetSampler (const ImDrawList* /*parent_list*/, const ImDrawCmd* cmd)
 {
     ImGui_ImplSDLGPU3_RenderState* state = (ImGui_ImplSDLGPU3_RenderState*) ImGui::GetPlatformIO().Renderer_RenderState;
     SDL_GPUSampler* sampler = cmd->UserCallbackData ? (SDL_GPUSampler*) cmd->UserCallbackData : state->SamplerNearest;
@@ -56,7 +56,7 @@ void GraphicsContext::initContext (SDL_Window* windowIn)
         exit (-1);
     }
 
-    auto samplerCreateInfo = (SDL_GPUSamplerCreateInfo) {
+    auto samplerCreateInfo = SDL_GPUSamplerCreateInfo {
         .min_filter = SDL_GPU_FILTER_NEAREST,
         .max_anisotropy = SDL_GPU_FILTER_NEAREST,
         .mipmap_mode = SDL_GPU_SAMPLERMIPMAPMODE_NEAREST,
@@ -66,7 +66,7 @@ void GraphicsContext::initContext (SDL_Window* windowIn)
     };
 
     auto textureFormat = SDL_GetGPUSwapchainTextureFormat (device, window);
-    auto textureCreateInfo = (SDL_GPUTextureCreateInfo) {
+    auto textureCreateInfo = SDL_GPUTextureCreateInfo {
         .height = 480,
         .width = 640,
         .num_levels = 1,
@@ -129,7 +129,7 @@ void GraphicsContext::debugView()
     ImGui::Text ("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
     ImGui::Text ("Driver Name: %s", SDL_GetGPUDeviceDriver (device));
     auto properties = SDL_GetGPUDeviceProperties (device);
-    (SDL_EnumerateProperties (properties, [] (void* userdata, SDL_PropertiesID prop, const char* name)
+    (SDL_EnumerateProperties (properties, [] (void*, SDL_PropertiesID prop, const char* name)
                               {
         ImGui::Text ("%s", name);
         ImGui::SameLine();

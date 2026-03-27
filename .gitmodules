@@ -7,10 +7,15 @@
 [submodule "vendor/SDL_ttf"]
 	path = vendor/SDL_ttf
 	url = https://github.com/libsdl-org/SDL_ttf.git
-
 [submodule "vendor/imgui/imgui"]
 	path = vendor/imgui/imgui
 	url = https://github.com/ocornut/imgui.git
 [submodule "vendor/LDtkLoader"]
 	path = vendor/LDtkLoader
 	url = https://github.com/Madour/LDtkLoader.git
+[submodule "vendor/rectpack2D"]
+	path = vendor/rectpack2D
+	url = https://github.com/TeamHypersomnia/rectpack2D.git
+[submodule "vendor/asset-packer"]
+	path = vendor/asset-packer
+	url = https://github.com/8bitBlackMage/asset-packer.git
