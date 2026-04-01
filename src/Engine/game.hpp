@@ -2,7 +2,6 @@
 #include "Engine/Graphics/TileMap/tileMapRenderer.hpp"
 #include <Engine/Graphics/Textures/textureManager.hpp>
 #include <Engine/Graphics/graphicsContext.hpp>
-#include <Engine/Scenes/sceneManager.hpp>
 #include <Graphics/Sprites/spriteBatch.hpp>
 #include <Graphics/camera.hpp>
 #include <SDL3/SDL.h>
@@ -24,7 +23,6 @@ private:
 
     void shutdown();
 
-    SceneManager sceneManager;
     GraphicsContext graphicsContext;
 
     Sprite sprite;

@@ -57,16 +57,17 @@ void Game::setupSDLContext()
 
     tileRenderer.init (&graphicsContext);
 
+    ldtk::Project project;
+    project.loadFromFile ("assets/levels/GdungeonCrawler.ldtk");
+
     graphicsContext.getTextureManager()->beginBatchUpload (&graphicsContext);
     auto tex = graphicsContext.getTextureManager()->loadTexture ("ravioli_atlas.bmp");
-    graphicsContext.getTextureManager()->endBatchUpload (&graphicsContext);
+    tileRenderer.preLoadTextures (project, &graphicsContext);
 
     sprite = Sprite (tex, 0, 0, 16, 16, 0, 0, 16, 16);
 
-    ldtk::Project project;
-    project.loadFromFile ("assets/levels/GdungeonCrawler.ldtk");
+    graphicsContext.getTextureManager()->endBatchUpload (&graphicsContext);
     tileRenderer.loadTileMap (project.getWorld().getLevel (0), &graphicsContext);
-
     SDL_ShowWindow (window);
 }
 
@@ -126,7 +127,6 @@ void Game::render()
 
     spriteBatch.render (graphicsContext.getFrameContext());
 
-    sceneManager.debugView();
     graphicsContext.debugView();
     spriteBatch.debugView();
     Logger::getLogger().draw();

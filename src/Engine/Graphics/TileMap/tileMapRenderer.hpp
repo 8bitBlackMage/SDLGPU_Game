@@ -1,4 +1,5 @@
 #pragma once
+#include "LDtkLoader/Project.hpp"
 #include <Engine/Graphics/Textures/texture.hpp>
 #include <Engine/Graphics/graphicsContext.hpp>
 #include <LDtkLoader/Level.hpp>
@@ -10,7 +11,7 @@ class TileMapRenderer
 public:
     TileMapRenderer();
     void init (GraphicsContext* context);
-
+    void preLoadTextures (const ldtk::Project& project, GraphicsContext* context);
     void loadTileMap (const ldtk::Level& level, GraphicsContext* context);
 
     void draw (FrameContext* frameContext);

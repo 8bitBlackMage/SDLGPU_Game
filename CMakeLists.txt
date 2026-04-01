@@ -32,9 +32,6 @@ target_sources(${PROJECT_NAME}
     src/main.cpp
     src/Engine/game.cpp
     src/Engine/Utils/logger.cpp
-    src/Engine/Scenes/SceneManager.cpp
-    src/Engine/Scenes/testScene.cpp
-    src/Engine/Scenes/tileMapScene.cpp
     src/Engine/Graphics/graphicsContext.cpp
     src/Engine/Graphics/camera.cpp
     src/Engine/Graphics/Textures/textureManager.cpp

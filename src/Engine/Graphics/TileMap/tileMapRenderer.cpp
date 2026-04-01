@@ -1,11 +1,13 @@
 #include "LDtkLoader/DataTypes.hpp"
 #include "LDtkLoader/Layer.hpp"
 #include "LDtkLoader/Level.hpp"
+#include "LDtkLoader/Project.hpp"
 #include "SDL3/SDL_error.h"
 #include "SDL3/SDL_gpu.h"
 #include <Engine/Graphics/TileMap/tileMapRenderer.hpp>
 #include <Engine/Graphics/graphicsContext.hpp>
 #include <Engine/Utils/logger.hpp>
+#include <filesystem>
 
 #include <Engine/Utils/matricies.hpp>
 #include <cstddef>
@@ -69,6 +71,15 @@ void TileMapRenderer::init (GraphicsContext* context)
     };
 
     sampler = SDL_CreateGPUSampler (context->getDevice(), &samplerCreateInfo);
+}
+
+void TileMapRenderer::preLoadTextures (const ldtk::Project& project, GraphicsContext* context)
+{
+    for (const auto& tileset : project.allTilesets())
+    {
+        auto fileName = std::filesystem::path (tileset.path).filename();
+        context->getTextureManager()->loadTexture (fileName);
+    }
 }
 
 void TileMapRenderer::loadTileMap (const ldtk::Level& level, GraphicsContext* context)
