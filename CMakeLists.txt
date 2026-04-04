@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 3.23)
 
-
-
 Project("DungeonCrawler"
     VERSION 1.0
     DESCRIPTION "SDL Top Down"
@@ -42,29 +40,10 @@ target_sources(${PROJECT_NAME}
     src/Engine/Utils/matricies.cpp
     )
 
-set(VENDOR_DIR "${PROJECT_SOURCE_DIR}/vendor")
-add_subdirectory(${VENDOR_DIR}/SDL)
-add_subdirectory(${VENDOR_DIR}/SDL_image)
-add_subdirectory(${VENDOR_DIR}/SDL_ttf)
-add_subdirectory(${VENDOR_DIR}/imgui)
-add_subdirectory(${VENDOR_DIR}/rectpack2D)
-add_subdirectory(${VENDOR_DIR}/asset-packer)
 
-get_directory_property(current_settings COMPILE_OPTIONS)
-add_compile_options(-w)
-add_subdirectory(${VENDOR_DIR}/LDtkLoader) #until they fix their warnings
-set_directory_properties(PROPERTIES COMPILE_OPTIONS "${current_settings}")
+include(fetch_dependencies.cmake)
 
-target_link_libraries(${PROJECT_NAME}
-    PRIVATE 
-    SDL3::SDL3
-    SDL3_image::SDL3_image
-    SDL3_ttf::SDL3_ttf
-    rectpack2D
-    imgui
-    LDtkLoader::LDtkLoader
-    lib-asset-packer
-    )
+target_link_libraries(${PROJECT_NAME} PRIVATE dependencies )
 
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/assets $<TARGET_FILE_DIR:${PROJECT_NAME}>/assets

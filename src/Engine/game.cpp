@@ -5,7 +5,6 @@
 #include "SDL3/SDL_scancode.h"
 #include "SDL3/SDL_timer.h"
 #include <Engine/game.hpp>
-#include <pack-reader.hpp>
 
 #include <Engine/Graphics/graphicsContext.hpp>
 #include <Engine/Utils/logger.hpp>
