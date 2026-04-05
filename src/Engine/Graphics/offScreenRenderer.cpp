@@ -1,9 +1,11 @@
 #include "Engine/Utils/vectorTypes.hpp"
 #include "SDL3/SDL_gpu.h"
 #include "SDL3/SDL_stdinc.h"
+#include "SDL3/SDL_video.h"
 #include <Engine/Graphics/offScreenRenderer.hpp>
 #include <Engine/Utils/logger.hpp>
 #include <Graphics/graphicsContext.hpp>
+#include <IntegerScaling.h>
 #include <cstddef>
 
 void OffScreenRenderer::init (GraphicsContext* context)
@@ -152,18 +154,14 @@ void OffScreenRenderer::render (FrameContext* frameContext, SDL_GPUTexture* rend
 
     SDL_GetWindowSize (frameContext->window, &winWidth, &winHeight);
 
-    float floatWinWidth = (float) winWidth;
-    float floatWinHeight = (float) winHeight;
+    auto size = MaratTanalin::IntegerScaling::calculateSize (
+        static_cast<Uint32> (winWidth),
+        static_cast<Uint32> (winHeight),
+        static_cast<Uint32> (renderTextureSize.x),
+        static_cast<Uint32> (renderTextureSize.y));
 
-    float wScale = floatWinWidth / renderTextureSize.x;
-    float hScale = floatWinHeight / renderTextureSize.y;
-
-    float scaleFactor = floor (std::min (wScale, hScale));
-
-    float xOffset = (floatWinWidth - renderTextureSize.x * scaleFactor) / 2;
-    float yOffset = (floatWinHeight - renderTextureSize.y * scaleFactor) / 2;
-    float scaledWidth = renderTextureSize.x * scaleFactor;
-    float scaledHeight = renderTextureSize.y * scaleFactor;
+    float xOffset = floor ((static_cast<float> (winWidth) - static_cast<float> (size.width)) / 2.0f);
+    float yOffset = floor ((static_cast<float> (winHeight) - static_cast<float> (size.height)) / 2.0f);
 
     auto transferData = (Vec4<float>*) SDL_MapGPUTransferBuffer (
         frameContext->device,
@@ -171,9 +169,9 @@ void OffScreenRenderer::render (FrameContext* frameContext, SDL_GPUTexture* rend
         false);
 
     transferData[0] = { xOffset, yOffset, 0.0f, 0.0f };
-    transferData[1] = { xOffset + scaledWidth, yOffset, 1.0f, 0.0f };
-    transferData[2] = { xOffset, yOffset + scaledHeight, 0.0f, 1.0f };
-    transferData[3] = { xOffset + scaledWidth, yOffset + scaledHeight, 1.0f, 1.0f };
+    transferData[1] = { xOffset + size.width, yOffset, 1.0f, 0.0f };
+    transferData[2] = { xOffset, yOffset + size.height, 0.0f, 1.0f };
+    transferData[3] = { xOffset + size.width, yOffset + size.height, 1.0f, 1.0f };
 
     Uint16* indexData = (Uint16*) &transferData[4];
     indexData[0] = 0;
@@ -215,7 +213,7 @@ void OffScreenRenderer::render (FrameContext* frameContext, SDL_GPUTexture* rend
     SDL_UploadToGPUBuffer (copyPass, &indexTransferLocation, &indexBufferRegion, false);
     SDL_EndGPUCopyPass (copyPass);
 
-    auto colourTargetInfo = SDL_GPUColorTargetInfo { .texture = frameContext->swapchainTexture, .cycle = false, .load_op = SDL_GPU_LOADOP_LOAD, .store_op = SDL_GPU_STOREOP_STORE, .clear_color { 0, 0, 0, 1 } };
+    auto colourTargetInfo = SDL_GPUColorTargetInfo { .texture = frameContext->swapchainTexture, .cycle = false, .load_op = SDL_GPU_LOADOP_CLEAR, .store_op = SDL_GPU_STOREOP_STORE, .clear_color { 0, 0, 0, 1 } };
 
     SDL_GPURenderPass* renderPass = SDL_BeginGPURenderPass (
         frameContext->commandBuffer,

@@ -1,5 +1,6 @@
 #include "Engine/Utils/matricies.hpp"
 #include <Engine/Graphics/camera.hpp>
+#include <cmath>
 
 Camera::Camera (float initialW, float initialH) : x (0),
                                                   y (0),
@@ -12,10 +13,10 @@ Camera::Camera (float initialW, float initialH) : x (0),
 
 Matrix4x4 Camera::getCurrentMatrix()
 {
-    return Matrix4x4::CreateOrthographicOffCenter (x,
-                                                   x + w,
-                                                   y + h,
-                                                   y,
+    return Matrix4x4::CreateOrthographicOffCenter (std::round (x),
+                                                   std::round (x + w),
+                                                   std::round (y + h),
+                                                   std::round (y),
                                                    zNearPlane,
                                                    zFarPlane);
 }

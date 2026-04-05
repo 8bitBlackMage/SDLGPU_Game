@@ -26,7 +26,7 @@ public:
 
     /// @brief Sets up SDL GPU device state, must be called first otherwise no other functions will work.
     /// @param window pointer to SDL Window
-    void initContext (SDL_Window* window, float renderW = 800, float renderH = 600);
+    void initContext (SDL_Window* window, float renderW = 320, float renderH = 240);
 
     ///@brief Sets the size of the Render Texture.
     ///@param w width of the texture in pixels.

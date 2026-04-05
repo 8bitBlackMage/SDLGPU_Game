@@ -82,11 +82,30 @@ target_sources(imgui
 target_link_libraries(imgui PUBLIC SDL3::SDL3)
 
 
+FetchContent_Declare(
+    integer-scaling
+    GIT_REPOSITORY "https://github.com/Marat-Tanalin/integer-scaling.git"
+    GIT_TAG "master"
+    EXCLUDE_FROM_ALL
+)
+FetchContent_MakeAvailable(integer-scaling)
+
+add_library(integer-scaling)
+
+target_include_directories(integer-scaling PUBLIC ${integer-scaling_SOURCE_DIR}/cpp)
+
+target_sources(integer-scaling 
+    PUBLIC
+    ${integer-scaling_SOURCE_DIR}/cpp/IntegerScaling.cpp
+)
+
+
 add_library(dependencies INTERFACE)
 
 target_link_libraries(dependencies INTERFACE 
     SDL3::SDL3
     SDL3_image::SDL3_image
+    integer-scaling
     SDL3_ttf::SDL3_ttf
     rectpack2D
     imgui

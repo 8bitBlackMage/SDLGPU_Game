@@ -70,14 +70,14 @@ bool GraphicsContext::setRenderTextureSize (float w, float h)
 {
     auto textureFormat = SDL_GetGPUSwapchainTextureFormat (device, window);
     auto textureCreateInfo = SDL_GPUTextureCreateInfo {
-        .height = static_cast<Uint32> (w) * 2,
-        .width = static_cast<Uint32> (h) * 2,
+        .height = static_cast<Uint32> (h),
+        .width = static_cast<Uint32> (w),
         .num_levels = 1,
         .layer_count_or_depth = 1,
         .format = textureFormat,
         .sample_count = SDL_GPU_SAMPLECOUNT_1,
         .type = SDL_GPU_TEXTURETYPE_2D,
-        .usage = SDL_GPU_TEXTUREUSAGE_SAMPLER
+        .usage = SDL_GPU_TEXTUREUSAGE_SAMPLER | SDL_GPU_TEXTUREUSAGE_COLOR_TARGET
     };
     renderTexture = SDL_CreateGPUTexture (device, &textureCreateInfo);
     if (renderTexture == nullptr)

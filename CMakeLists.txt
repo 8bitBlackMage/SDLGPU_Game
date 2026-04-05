@@ -9,6 +9,8 @@ Project("DungeonCrawler"
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+
 add_executable(${PROJECT_NAME})
 
 add_custom_target(ASSET_COPY

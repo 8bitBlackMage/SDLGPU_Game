@@ -2,6 +2,7 @@
 #include "LDtkLoader/Project.hpp"
 #include "SDL3/SDL_events.h"
 #include "SDL3/SDL_keyboard.h"
+#include "SDL3/SDL_oldnames.h"
 #include "SDL3/SDL_scancode.h"
 #include "SDL3/SDL_timer.h"
 #include <Engine/game.hpp>
@@ -43,7 +44,7 @@ void Game::setupSDLContext()
         exit (-1);
     }
 
-    window = SDL_CreateWindow ("Dungeon Crawler", 1920, 1080, SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIDDEN | SDL_WINDOW_HIGH_PIXEL_DENSITY);
+    window = SDL_CreateWindow ("Dungeon Crawler", 1920, 1080, SDL_WINDOW_RESIZABLE | SDL_WINDOW_FULLSCREEN | SDL_WINDOW_HIDDEN);
     if (window == nullptr)
     {
         Logger::log ("SDL WINDOW Creation failed: ", SDL_GetError());
@@ -94,7 +95,7 @@ void Game::handleEvents (float delta)
 
     const bool* keyStates = SDL_GetKeyboardState (NULL);
 
-    auto speed = (1.0 * delta);
+    auto speed = (0.5 * delta);
     if (keyStates[SDL_SCANCODE_LEFT])
     {
         camera.setX (camera.getX() - speed);
