@@ -56,7 +56,7 @@ private:
         }
 
         std::string fileName;
-        unsigned int id;
+        size_t id;
         rectpack2D::rect_xywhf bounds;
     };
     std::map<size_t, size_t> hashedFileNames;

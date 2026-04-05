@@ -126,7 +126,7 @@ void OffScreenRenderer::init (GraphicsContext* context)
     }
 }
 
-void OffScreenRenderer::render (FrameContext* frameContext, SDL_GPUTexture* renderTexture, Matrix4x4 outputMatrix)
+void OffScreenRenderer::render (FrameContext* frameContext, SDL_GPUTexture* renderTexture, Vec2<float> renderTextureSize, Matrix4x4 outputMatrix)
 {
     if (renderTexture == nullptr)
     {
@@ -155,15 +155,15 @@ void OffScreenRenderer::render (FrameContext* frameContext, SDL_GPUTexture* rend
     float floatWinWidth = (float) winWidth;
     float floatWinHeight = (float) winHeight;
 
-    float wScale = floatWinWidth / 320.f;
-    float hScale = floatWinHeight / 240.f;
+    float wScale = floatWinWidth / renderTextureSize.x;
+    float hScale = floatWinHeight / renderTextureSize.y;
 
     float scaleFactor = floor (std::min (wScale, hScale));
 
-    float xOffset = (floatWinWidth - 320 * scaleFactor) / 2;
-    float yOffset = (floatWinHeight - 240 * scaleFactor) / 2;
-    float scaledWidth = 320 * scaleFactor;
-    float scaledHeight = 240 * scaleFactor;
+    float xOffset = (floatWinWidth - renderTextureSize.x * scaleFactor) / 2;
+    float yOffset = (floatWinHeight - renderTextureSize.y * scaleFactor) / 2;
+    float scaledWidth = renderTextureSize.x * scaleFactor;
+    float scaledHeight = renderTextureSize.y * scaleFactor;
 
     auto transferData = (Vec4<float>*) SDL_MapGPUTransferBuffer (
         frameContext->device,

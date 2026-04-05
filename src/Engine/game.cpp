@@ -72,7 +72,6 @@ void Game::setupSDLContext()
 
 void Game::setupImGuiContext()
 {
-    graphicsContext.initImGuiGPU();
 }
 
 void Game::handleEvents (float delta)

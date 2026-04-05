@@ -26,15 +26,15 @@ public:
 
     /// @brief Sets up SDL GPU device state, must be called first otherwise no other functions will work.
     /// @param window pointer to SDL Window
-    void initContext (SDL_Window* window);
+    void initContext (SDL_Window* window, float renderW = 800, float renderH = 600);
+
+    ///@brief Sets the size of the Render Texture.
+    ///@param w width of the texture in pixels.
+    ///@param h height of the texture in pixels.
+    ///@returns bool if texture was created successfully.
+    bool setRenderTextureSize (float w, float h);
 
     void shutdown();
-
-    /// @brief Sets up ImGUI context.
-    void initImGuiGPU();
-
-    /// @brief Renders ImGUi Windows.
-    void debugView();
 
     /// @brief Sets up the render state for a given frame. must be called before other render calls.
     void startFrame();
@@ -77,6 +77,8 @@ private:
     SDL_GPUSampler* sampler;
 
     FrameContext frameContext;
+
+    Vec2<float> renderTextureSize;
     SDL_GPUTexture* renderTexture;
 
     TextureManager textureManager;

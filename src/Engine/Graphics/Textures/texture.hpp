@@ -25,6 +25,6 @@ public:
 private:
     friend class TextureManager;
     Texture (size_t idIn, TextureManager* managerIn);
-    unsigned int id;
+    size_t id;
     TextureManager* manager;
 };

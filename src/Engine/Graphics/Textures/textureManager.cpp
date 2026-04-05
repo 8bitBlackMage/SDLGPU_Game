@@ -34,7 +34,7 @@ Texture TextureManager::loadTexture (std::string filename)
 {
     assert (uploading == true);
     std::hash<std::string> hash;
-    unsigned int id = hash (filename);
+    size_t id = hash (filename);
     if (! hashedFileNames.contains (id))
     {
         Logger::log ("Appending:", filename, "to texture list");
@@ -132,7 +132,7 @@ void TextureManager::endBatchUpload (GraphicsContext* context)
 Texture TextureManager::getTextureForFile (std::string filename)
 {
     std::hash<std::string> hash;
-    unsigned int id = hash (filename);
+    size_t id = hash (filename);
     if (hashedFileNames.contains (id))
     {
         return Texture { id, this };

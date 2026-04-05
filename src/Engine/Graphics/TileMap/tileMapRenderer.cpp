@@ -237,7 +237,7 @@ void TileMapRenderer::draw (FrameContext* frameContext)
 
     SDL_DrawGPUPrimitives (
         renderPass,
-        tileData.size() * 6,
+        static_cast<Uint32>(tileData.size()) * 6,
         1,
         0,
         0);

@@ -18,7 +18,7 @@ GraphicsContext::~GraphicsContext()
     shutdown();
 }
 
-void GraphicsContext::initContext (SDL_Window* windowIn)
+void GraphicsContext::initContext (SDL_Window* windowIn, float renderW, float renderH)
 {
     window = windowIn;
 
@@ -56,10 +56,22 @@ void GraphicsContext::initContext (SDL_Window* windowIn)
         .address_mode_w = SDL_GPU_SAMPLERADDRESSMODE_REPEAT,
     };
 
+    if (! setRenderTextureSize (renderW, renderH))
+    {
+        Logger::log ("failed to create texture size of:", renderW, " ", renderH);
+    }
+
+    sampler = SDL_CreateGPUSampler (device, &samplerCreateInfo);
+
+    outputStage.init (this);
+}
+
+bool GraphicsContext::setRenderTextureSize (float w, float h)
+{
     auto textureFormat = SDL_GetGPUSwapchainTextureFormat (device, window);
     auto textureCreateInfo = SDL_GPUTextureCreateInfo {
-        .height = 480,
-        .width = 640,
+        .height = static_cast<Uint32> (w) * 2,
+        .width = static_cast<Uint32> (h) * 2,
         .num_levels = 1,
         .layer_count_or_depth = 1,
         .format = textureFormat,
@@ -68,33 +80,20 @@ void GraphicsContext::initContext (SDL_Window* windowIn)
         .usage = SDL_GPU_TEXTUREUSAGE_SAMPLER
     };
     renderTexture = SDL_CreateGPUTexture (device, &textureCreateInfo);
+    if (renderTexture == nullptr)
+    {
+        return false;
+    }
+    renderTextureSize.x = w;
+    renderTextureSize.y = h;
 
-    sampler = SDL_CreateGPUSampler (device, &samplerCreateInfo);
-
-    frameContext.cameraMatrix = Matrix4x4::CreateOrthographicOffCenter (
-        0,
-        320,
-        240,
-        0,
-        0,
-        -1);
-
-    outputStage.init (this);
+    return true;
 }
 
 void GraphicsContext::shutdown()
 {
     SDL_ReleaseGPUSampler (device, sampler);
     SDL_ReleaseGPUTexture (device, renderTexture);
-}
-
-void GraphicsContext::initImGuiGPU()
-{
-}
-
-void GraphicsContext::debugView()
-{
-    textureManager.debugView();
 }
 
 void GraphicsContext::startFrame()
@@ -106,11 +105,6 @@ void GraphicsContext::startFrame()
     frameContext.swapchainTexture = renderTexture;
 }
 
-float normalize (float value, float min, float max)
-{
-    return (value - min) / (max - min);
-}
-
 void GraphicsContext::endFrame()
 {
     SDL_WaitAndAcquireGPUSwapchainTexture (frameContext.commandBuffer, window, &frameContext.swapchainTexture, nullptr, nullptr); // Acquire a swapchain texture
@@ -120,7 +114,7 @@ void GraphicsContext::endFrame()
 
     auto outputMatrix = Matrix4x4::CreateOrthographicOffCenter (0, windowWidth, windowHeight, 0, 0.0f, -1.0f);
 
-    outputStage.render (&frameContext, renderTexture, outputMatrix);
+    outputStage.render (&frameContext, renderTexture, renderTextureSize, outputMatrix);
 
     // Submit the command buffer
     SDL_SubmitGPUCommandBuffer (frameContext.commandBuffer);
