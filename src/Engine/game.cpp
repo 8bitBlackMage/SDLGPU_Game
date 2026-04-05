@@ -80,7 +80,7 @@ void Game::handleEvents (float delta)
     SDL_Event event;
     while (SDL_PollEvent (&event))
     {
-        ImGui_ImplSDL3_ProcessEvent (&event);
+        //ImGui_ImplSDL3_ProcessEvent (&event);
         switch (event.type)
         {
             case SDL_EVENT_QUIT:
@@ -126,9 +126,9 @@ void Game::render()
 
     spriteBatch.render (graphicsContext.getFrameContext());
 
-    graphicsContext.debugView();
-    spriteBatch.debugView();
-    Logger::getLogger().draw();
+    // graphicsContext.debugView();
+    // spriteBatch.debugView();
+    // Logger::getLogger().draw();
     graphicsContext.endFrame();
 }
 

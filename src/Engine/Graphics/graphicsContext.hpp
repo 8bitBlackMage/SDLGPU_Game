@@ -1,4 +1,5 @@
 #pragma once
+#include "Engine/Graphics/offScreenRenderer.hpp"
 #include "Engine/Utils/matricies.hpp"
 #include <Engine/Graphics/Textures/textureManager.hpp>
 #include <SDL3/SDL.h>
@@ -6,6 +7,7 @@
 /// @brief Struct containing per frame data, used for rendering.
 struct FrameContext
 {
+    SDL_Window* window;
     SDL_GPUDevice* device;
     SDL_GPUCommandBuffer* commandBuffer;
     SDL_GPUTexture* swapchainTexture;
@@ -68,6 +70,8 @@ public:
     inline TextureManager* getTextureManager() { return &textureManager; }
 
 private:
+    OffScreenRenderer outputStage;
+
     SDL_Window* window;
     SDL_GPUDevice* device;
     SDL_GPUSampler* sampler;

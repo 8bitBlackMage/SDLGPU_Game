@@ -6,10 +6,6 @@
 
 const size_t SPRITE_COUNT = 65536;
 
-SpriteBatch::SpriteBatch()
-{
-}
-
 void SpriteBatch::init (GraphicsContext* context)
 {
     if (context == nullptr)

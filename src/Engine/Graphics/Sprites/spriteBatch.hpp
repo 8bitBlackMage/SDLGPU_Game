@@ -8,7 +8,7 @@ class Sprite;
 class SpriteBatch
 {
 public:
-    SpriteBatch();
+    SpriteBatch() = default;
 
     /// @brief Initialises the Sprite Batcher. must be called after initialising the Graphics context.
     /// @param context Pointer to the Graphics Context.
