@@ -81,6 +81,14 @@ target_sources(imgui
 
 target_link_libraries(imgui PUBLIC SDL3::SDL3)
 
+FetchContent_Declare(
+	glm
+	GIT_REPOSITORY	https://github.com/g-truc/glm.git
+	GIT_TAG 	0af55ccecd98d4e5a8d1fad7de25ba429d60e863 #refs/tags/1.0.1
+)
+
+FetchContent_MakeAvailable(glm)
+
 
 FetchContent_Declare(
     integer-scaling
@@ -107,6 +115,7 @@ target_link_libraries(dependencies INTERFACE
     SDL3_image::SDL3_image
     integer-scaling
     SDL3_ttf::SDL3_ttf
+    glm::glm
     rectpack2D
     imgui
     LDtkLoader::LDtkLoader

@@ -1,6 +1,7 @@
 #pragma once
 #include "Engine/Graphics/offScreenRenderer.hpp"
-#include "Engine/Utils/matricies.hpp"
+#include "glm/ext/matrix_float4x4.hpp"
+
 #include <Engine/Graphics/Textures/textureManager.hpp>
 #include <SDL3/SDL.h>
 
@@ -11,7 +12,7 @@ struct FrameContext
     SDL_GPUDevice* device;
     SDL_GPUCommandBuffer* commandBuffer;
     SDL_GPUTexture* swapchainTexture;
-    Matrix4x4 cameraMatrix;
+    glm::mat4x4 cameraMatrix;
     TextureManager* textureManager;
 };
 

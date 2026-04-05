@@ -2,6 +2,7 @@
 #include "SDL3/SDL_gpu.h"
 #include "SDL3/SDL_stdinc.h"
 #include "SDL3/SDL_video.h"
+#include "glm/ext/matrix_float4x4.hpp"
 #include <Engine/Graphics/offScreenRenderer.hpp>
 #include <Engine/Utils/logger.hpp>
 #include <Graphics/graphicsContext.hpp>
@@ -128,7 +129,7 @@ void OffScreenRenderer::init (GraphicsContext* context)
     }
 }
 
-void OffScreenRenderer::render (FrameContext* frameContext, SDL_GPUTexture* renderTexture, Vec2<float> renderTextureSize, Matrix4x4 outputMatrix)
+void OffScreenRenderer::render (FrameContext* frameContext, SDL_GPUTexture* renderTexture, Vec2<float> renderTextureSize, glm::mat4x4 outputMatrix)
 {
     if (renderTexture == nullptr)
     {
@@ -243,7 +244,7 @@ void OffScreenRenderer::render (FrameContext* frameContext, SDL_GPUTexture* rend
         frameContext->commandBuffer,
         0,
         &outputMatrix,
-        sizeof (Matrix4x4));
+        sizeof (glm::mat4x4));
     SDL_DrawGPUIndexedPrimitives (
         renderPass,
         6,

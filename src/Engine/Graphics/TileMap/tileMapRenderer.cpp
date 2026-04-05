@@ -4,12 +4,10 @@
 #include "LDtkLoader/Project.hpp"
 #include "SDL3/SDL_error.h"
 #include "SDL3/SDL_gpu.h"
+#include "glm/ext/matrix_float4x4.hpp"
 #include <Engine/Graphics/TileMap/tileMapRenderer.hpp>
 #include <Engine/Graphics/graphicsContext.hpp>
 #include <Engine/Utils/logger.hpp>
-#include <filesystem>
-
-#include <Engine/Utils/matricies.hpp>
 #include <cstddef>
 #include <cstring>
 #include <filesystem>
@@ -233,11 +231,11 @@ void TileMapRenderer::draw (FrameContext* frameContext)
         frameContext->commandBuffer,
         0,
         &frameContext->cameraMatrix,
-        sizeof (Matrix4x4));
+        sizeof (glm::mat4x4));
 
     SDL_DrawGPUPrimitives (
         renderPass,
-        static_cast<Uint32>(tileData.size()) * 6,
+        static_cast<Uint32> (tileData.size()) * 6,
         1,
         0,
         0);

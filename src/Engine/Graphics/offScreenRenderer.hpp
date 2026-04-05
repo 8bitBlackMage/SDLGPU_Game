@@ -3,8 +3,9 @@
 
 #include "Engine/Utils/vectorTypes.hpp"
 #include "SDL3/SDL_gpu.h"
-#include <Engine/Utils/matricies.hpp>
+#include "glm/ext/matrix_float4x4.hpp"
 #include <SDL3/SDL.h>
+#include <glm/mat4x4.hpp>
 
 class GraphicsContext;
 struct FrameContext;
@@ -15,7 +16,7 @@ public:
     OffScreenRenderer() = default;
     void init (GraphicsContext* context);
 
-    void render (FrameContext* context, SDL_GPUTexture* renderTexture, Vec2<float> renderTextureSize, Matrix4x4 outputMatrix);
+    void render (FrameContext* context, SDL_GPUTexture* renderTexture, Vec2<float> renderTextureSize, glm::mat4x4 outputMatrix);
 
 private:
     SDL_GPUGraphicsPipeline* RenderPipeline;

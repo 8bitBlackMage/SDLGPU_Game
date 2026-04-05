@@ -2,7 +2,6 @@
 #include <Engine/Graphics/Sprites/spriteBatch.hpp>
 
 #include <Engine/Utils/logger.hpp>
-#include <Engine/Utils/matricies.hpp>
 
 const size_t SPRITE_COUNT = 65536;
 
@@ -174,7 +173,7 @@ void SpriteBatch::render (FrameContext* frameContext)
         frameContext->commandBuffer,
         0,
         &frameContext->cameraMatrix,
-        sizeof (Matrix4x4));
+        sizeof (glm::mat4x4));
     SDL_DrawGPUPrimitives (
         renderPass,
         spritesToDraw * 6,

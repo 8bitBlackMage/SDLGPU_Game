@@ -48,7 +48,6 @@ target_sources(${PROJECT_NAME}
     src/Engine/Graphics/Textures/texture.cpp
     src/Engine/Graphics/Sprites/spriteBatch.cpp
     src/Engine/Graphics/Sprites/sprite.cpp
-    src/Engine/Utils/matricies.cpp
     )
 
 

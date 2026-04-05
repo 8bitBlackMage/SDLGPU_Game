@@ -1,4 +1,5 @@
-#include "Engine/Utils/matricies.hpp"
+
+#include "glm/ext/matrix_clip_space.hpp"
 #include <Engine/Graphics/camera.hpp>
 #include <cmath>
 
@@ -11,14 +12,14 @@ Camera::Camera (float initialW, float initialH) : x (0),
 {
 }
 
-Matrix4x4 Camera::getCurrentMatrix()
+glm::mat4x4 Camera::getCurrentMatrix()
 {
-    return Matrix4x4::CreateOrthographicOffCenter (std::round (x),
-                                                   std::round (x + w),
-                                                   std::round (y + h),
-                                                   std::round (y),
-                                                   zNearPlane,
-                                                   zFarPlane);
+    return glm::ortho (std::round (x),
+                       std::round (x + w),
+                       std::round (y + h),
+                       std::round (y),
+                       zNearPlane,
+                       zFarPlane);
 }
 
 void Camera::setX (float newX)

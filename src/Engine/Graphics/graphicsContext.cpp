@@ -1,9 +1,9 @@
 #include "Engine/Graphics/Textures/textureManager.hpp"
-#include "Engine/Utils/matricies.hpp"
 #include "SDL3/SDL_error.h"
 #include "SDL3/SDL_gpu.h"
 #include "SDL3/SDL_video.h"
 #include <Engine/Graphics/graphicsContext.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 #include <Engine/Utils/logger.hpp>
 #include <SDL3_image/SDL_image.h>
@@ -112,7 +112,7 @@ void GraphicsContext::endFrame()
     int windowWidth, windowHeight;
     SDL_GetWindowSize (window, &windowWidth, &windowHeight);
 
-    auto outputMatrix = Matrix4x4::CreateOrthographicOffCenter (0, windowWidth, windowHeight, 0, 0.0f, -1.0f);
+    auto outputMatrix = glm::ortho (0.0f, (float) windowWidth, (float) windowHeight, 0.0f, 0.0f, -1.0f);
 
     outputStage.render (&frameContext, renderTexture, renderTextureSize, outputMatrix);
 
