@@ -1,5 +1,6 @@
 #pragma once
 #include "Engine/Graphics/TileMap/tileMapRenderer.hpp"
+#include "Engine/editor.hpp"
 #include <Engine/Graphics/Textures/textureManager.hpp>
 #include <Engine/Graphics/graphicsContext.hpp>
 #include <Graphics/Sprites/spriteBatch.hpp>
@@ -23,6 +24,8 @@ private:
 
     void shutdown();
 
+    Editor editor;
+
     GraphicsContext graphicsContext;
 
     Sprite sprite;
@@ -35,6 +38,7 @@ private:
     SDL_Window* window;
     SDL_Texture* texture;
     bool running;
+    bool showEditor = false;
 
     float currentFrameTime;
     float lastFrameTime;

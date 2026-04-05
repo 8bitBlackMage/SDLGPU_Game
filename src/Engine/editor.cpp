@@ -37,6 +37,11 @@ void Editor::initImGuiContext (GraphicsContext* context)
     style.FontScaleDpi = mainScale;
 }
 
+void Editor::handleEvents (SDL_Event* event)
+{
+    ImGui_ImplSDL3_ProcessEvent (event);
+}
+
 void Editor::startFrame()
 {
     ImGui_ImplSDLGPU3_NewFrame();
@@ -45,61 +50,61 @@ void Editor::startFrame()
     ImGui::DockSpaceOverViewport();
 }
 
-void Editor::drawEditor()
+void Editor::drawEditor (GraphicsContext* context)
 {
-    // ImGui::Begin ("Graphics Context");
+    ImGui::Begin ("Graphics Context");
 
-    // auto io = ImGui::GetIO();
-    // ImGui::Text ("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
-    // ImGui::Text ("Driver Name: %s", SDL_GetGPUDeviceDriver (device));
-    // auto properties = SDL_GetGPUDeviceProperties (device);
-    // (SDL_EnumerateProperties (properties, [] (void*, SDL_PropertiesID prop, const char* name)
-    //                           {
-    //     ImGui::Text ("%s", name);
-    //     ImGui::SameLine();
-    //     ImGui::GetWindowDrawList()->AddCallback (ImDrawCallback_ImplSDLGPU3_SetSampler, nullptr);
-    //     ImGui::Text ("%s", SDL_GetStringProperty (prop, name, "")); },
-    //                           nullptr));
+    auto io = ImGui::GetIO();
+    ImGui::Text ("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
+    ImGui::Text ("Driver Name: %s", SDL_GetGPUDeviceDriver (context->getDevice()));
+    auto properties = SDL_GetGPUDeviceProperties (context->getDevice());
+    (SDL_EnumerateProperties (properties, [] (void*, SDL_PropertiesID prop, const char* name)
+                              {
+        ImGui::Text ("%s", name);
+        ImGui::SameLine();
+        ImGui::GetWindowDrawList()->AddCallback (ImDrawCallback_ImplSDLGPU3_SetSampler, nullptr);
+        ImGui::Text ("%s", SDL_GetStringProperty (prop, name, "")); },
+                              nullptr));
 
-    // ImGui::End();
-}
+    ImGui::End();
 
-void Editor::endFrame (FrameContext frameContext)
-{
     ImGui::Begin ("GameWindow");
     ImGui::GetWindowDrawList()->AddCallback (ImDrawCallback_ImplSDLGPU3_SetSampler, nullptr);
     auto windowWidth = ImGui::GetWindowSize().x;
     auto windowHeight = ImGui::GetWindowSize().y;
     {
         ImGui::SetCursorPos ({ (windowWidth - 640) / 2, (windowHeight - 480) / 2 });
-        // ImGui::Image (renderTexture, { 640, 480 });
+        ImGui::Image (context->getRenderTexture(), { 640, 480 });
     }
 
     ImGui::End();
+}
 
+void Editor::endFrame (FrameContext* frameContext)
+{
     ImGui::EndFrame();
     ImGui::UpdatePlatformWindows();
     // Rendering
     ImGui::Render();
     ImDrawData* draw_data = ImGui::GetDrawData();
     const bool is_minimized = (draw_data->DisplaySize.x <= 0.0f || draw_data->DisplaySize.y <= 0.0f);
-    if (frameContext.swapchainTexture != nullptr && ! is_minimized)
+    if (frameContext->swapchainTexture != nullptr && ! is_minimized)
     {
         // This is mandatory: call ImGui_ImplSDLGPU3_PrepareDrawData() to upload the vertex/index buffer!
-        ImGui_ImplSDLGPU3_PrepareDrawData (draw_data, frameContext.commandBuffer);
+        ImGui_ImplSDLGPU3_PrepareDrawData (draw_data, frameContext->commandBuffer);
 
         SDL_GPUColorTargetInfo target_info = {};
-        target_info.texture = frameContext.swapchainTexture;
+        target_info.texture = frameContext->swapchainTexture;
         target_info.clear_color = SDL_FColor { 0, 0, 0, 0 };
         target_info.load_op = SDL_GPU_LOADOP_CLEAR;
         target_info.store_op = SDL_GPU_STOREOP_STORE;
         target_info.mip_level = 0;
         target_info.layer_or_depth_plane = 0;
         target_info.cycle = true;
-        SDL_GPURenderPass* render_pass = SDL_BeginGPURenderPass (frameContext.commandBuffer, &target_info, 1, nullptr);
+        SDL_GPURenderPass* render_pass = SDL_BeginGPURenderPass (frameContext->commandBuffer, &target_info, 1, nullptr);
 
         //Render ImGui
-        ImGui_ImplSDLGPU3_RenderDrawData (draw_data, frameContext.commandBuffer, render_pass);
+        ImGui_ImplSDLGPU3_RenderDrawData (draw_data, frameContext->commandBuffer, render_pass);
 
         SDL_EndGPURenderPass (render_pass);
     }

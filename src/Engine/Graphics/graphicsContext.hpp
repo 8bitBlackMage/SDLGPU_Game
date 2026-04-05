@@ -1,5 +1,6 @@
 #pragma once
 #include "Engine/Graphics/offScreenRenderer.hpp"
+#include "SDL3/SDL_gpu.h"
 #include "glm/ext/matrix_float4x4.hpp"
 
 #include <Engine/Graphics/Textures/textureManager.hpp>
@@ -44,6 +45,10 @@ public:
     /// @return Struct containing this frames data.
     FrameContext* getFrameContext() { return &frameContext; }
 
+    void startRenderTexture();
+
+    void endRenderTexture();
+    void blitRenderTexture();
     /// @brief submits render passes to the GPU.
     void endFrame();
 
@@ -68,6 +73,8 @@ public:
     /// @return pointer to window.
     SDL_Window* getWindow() { return window; }
 
+    SDL_GPUTexture* getRenderTexture() { return renderTexture; }
+
     inline TextureManager* getTextureManager() { return &textureManager; }
 
 private:
@@ -82,5 +89,6 @@ private:
     Vec2<float> renderTextureSize;
     SDL_GPUTexture* renderTexture;
 
+    SDL_GPUTexture* swapChainTexture;
     TextureManager textureManager;
 };

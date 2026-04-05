@@ -8,9 +8,12 @@ class Editor
 public:
     Editor() = default;
     void initImGuiContext (GraphicsContext* context);
+
+    void handleEvents (SDL_Event* event);
+
     void startFrame();
-    void drawEditor();
-    void endFrame (FrameContext context);
+    void drawEditor (GraphicsContext* context);
+    void endFrame (FrameContext* context);
 };
 
 #endif //EDITOR_HPP

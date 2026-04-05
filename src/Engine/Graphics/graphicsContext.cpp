@@ -41,7 +41,7 @@ void GraphicsContext::initContext (SDL_Window* windowIn, float renderW, float re
         Logger::log ("Created Device:", SDL_GetGPUDeviceDriver (device));
     }
 
-    if (! SDL_SetGPUSwapchainParameters (device, window, SDL_GPU_SWAPCHAINCOMPOSITION_SDR, SDL_GPU_PRESENTMODE_IMMEDIATE))
+    if (! SDL_SetGPUSwapchainParameters (device, window, SDL_GPU_SWAPCHAINCOMPOSITION_SDR, SDL_GPU_PRESENTMODE_VSYNC))
     {
         Logger::log ("SDL GPU SwapChain setup failed: ", SDL_GetError());
         exit (-1);
@@ -102,22 +102,35 @@ void GraphicsContext::startFrame()
     frameContext.device = device;
     frameContext.commandBuffer = SDL_AcquireGPUCommandBuffer (device); // Acquire a GPU command buffer
     frameContext.textureManager = &textureManager;
-    frameContext.swapchainTexture = renderTexture;
+    SDL_WaitAndAcquireGPUSwapchainTexture (frameContext.commandBuffer, window, &swapChainTexture, nullptr, nullptr); // Acquire a swapchain texture
+
+    frameContext.swapchainTexture = swapChainTexture;
 }
 
 void GraphicsContext::endFrame()
 {
-    SDL_WaitAndAcquireGPUSwapchainTexture (frameContext.commandBuffer, window, &frameContext.swapchainTexture, nullptr, nullptr); // Acquire a swapchain texture
+    // Submit the command buffer
+    SDL_SubmitGPUCommandBuffer (frameContext.commandBuffer);
+}
 
+void GraphicsContext::startRenderTexture()
+{
+    frameContext.swapchainTexture = renderTexture;
+}
+
+void GraphicsContext::endRenderTexture()
+{
+    frameContext.swapchainTexture = swapChainTexture;
+}
+
+void GraphicsContext::blitRenderTexture()
+{
     int windowWidth, windowHeight;
     SDL_GetWindowSize (window, &windowWidth, &windowHeight);
 
     auto outputMatrix = glm::ortho (0.0f, (float) windowWidth, (float) windowHeight, 0.0f, 0.0f, -1.0f);
 
     outputStage.render (&frameContext, renderTexture, renderTextureSize, outputMatrix);
-
-    // Submit the command buffer
-    SDL_SubmitGPUCommandBuffer (frameContext.commandBuffer);
 }
 
 SDL_GPUShader* GraphicsContext::loadShader (std::string filename, Uint32 samplerCount, Uint32 uniformBufferCount, Uint32 storageBufferCount, Uint32 storageTextureCount)
