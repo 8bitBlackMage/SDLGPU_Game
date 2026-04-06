@@ -24,15 +24,8 @@ target_sources(${PROJECT_NAME}
     PUBLIC
     src/main.cpp
     src/game.cpp
-    src/editor.cpp
 )
 
-add_custom_target(ASSET_COPY
-    COMMAND ${CMAKE_COMMAND} -E echo "Copying Assets..."
-    COMMAND ${CMAKE_COMMAND} -E remove_directory $<TARGET_FILE_DIR:${PROJECT_NAME}>/assets
-    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/assets $<TARGET_FILE_DIR:${PROJECT_NAME}>/assets
-)
-add_dependencies(${PROJECT_NAME} ASSET_COPY)
-
+include(../asset_copy.cmake)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE Olympus)

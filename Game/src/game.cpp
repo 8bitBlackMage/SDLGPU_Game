@@ -7,8 +7,8 @@
 #include <Graphics/Sprites/spriteBatch.hpp>
 #include <Graphics/camera.hpp>
 #include <Graphics/graphicsContext.hpp>
+#include <Imgui/imguiHelpers.hpp>
 #include <Utils/logger.hpp>
-#include <editor.hpp>
 #include <imgui.h>
 #include <imgui_impl_sdl3.h>
 #include <imgui_impl_sdlrenderer3.h>
@@ -47,7 +47,7 @@ Game::Game() : graphicsContext(),
     graphicsContext.getTextureManager()->endBatchUpload (&graphicsContext);
     tileRenderer.loadTileMap (project.getWorld().getLevel (0), &graphicsContext);
 
-    editor.initImGuiContext (&graphicsContext);
+    ImGUIHelpers::initContext (&graphicsContext);
     running = true;
 }
 
@@ -68,7 +68,7 @@ void Game::handleEvents (float)
     SDL_Event event;
     while (SDL_PollEvent (&event))
     {
-        editor.handleEvents (&event);
+        ImGUIHelpers::handleEvents (&event);
         switch (event.type)
         {
             case SDL_EVENT_QUIT:
@@ -106,6 +106,36 @@ void Game::handleEvents (float)
     }
 }
 
+void Game::drawEditor()
+{
+    ImGui::Begin ("Graphics Context");
+
+    auto io = ImGui::GetIO();
+    ImGui::Text ("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
+    ImGui::Text ("Driver Name: %s", SDL_GetGPUDeviceDriver (graphicsContext.getDevice()));
+    auto properties = SDL_GetGPUDeviceProperties (graphicsContext.getDevice());
+    (SDL_EnumerateProperties (properties, [] (void*, SDL_PropertiesID prop, const char* name)
+                              {
+        ImGui::Text ("%s", name);
+        ImGui::SameLine();
+        ImGui::GetWindowDrawList()->AddCallback (ImDrawCallback_ImplSDLGPU3_SetSampler, nullptr);
+        ImGui::Text ("%s", SDL_GetStringProperty (prop, name, "")); },
+                              nullptr));
+
+    ImGui::End();
+
+    ImGui::Begin ("GameWindow");
+    ImGui::GetWindowDrawList()->AddCallback (ImDrawCallback_ImplSDLGPU3_SetSampler, nullptr);
+    auto windowWidth = ImGui::GetWindowSize().x;
+    auto windowHeight = ImGui::GetWindowSize().y;
+    {
+        ImGui::SetCursorPos ({ (windowWidth - 640) / 2, (windowHeight - 480) / 2 });
+        ImGui::Image (graphicsContext.getRenderTexture(), { 640, 480 });
+    }
+
+    ImGui::End();
+}
+
 void Game::render()
 {
     graphicsContext.startFrame();
@@ -121,9 +151,9 @@ void Game::render()
 
     if (showEditor)
     {
-        editor.startFrame();
-        editor.drawEditor (&graphicsContext);
-        editor.endFrame (graphicsContext.getFrameContext());
+        ImGUIHelpers::startFrame();
+        drawEditor();
+        ImGUIHelpers::endFrame (graphicsContext.getFrameContext());
     }
     else
     {

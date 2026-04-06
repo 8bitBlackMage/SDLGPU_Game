@@ -1,6 +1,4 @@
-#include <Graphics/graphicsContext.hpp>
-
-#include <editor.hpp>
+#include <Imgui/imguiHelpers.hpp>
 #include <imgui.h>
 #include <imgui_impl_sdl3.h>
 #include <imgui_impl_sdlgpu3.h>
@@ -12,7 +10,9 @@ void ImDrawCallback_ImplSDLGPU3_SetSampler (const ImDrawList* /*parent_list*/, c
     state->SamplerCurrent = sampler;
 }
 
-void Editor::initImGuiContext (GraphicsContext* context)
+namespace ImGUIHelpers
+{
+void initContext (GraphicsContext* context)
 {
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
@@ -38,12 +38,7 @@ void Editor::initImGuiContext (GraphicsContext* context)
     style.FontScaleDpi = mainScale;
 }
 
-void Editor::handleEvents (SDL_Event* event)
-{
-    ImGui_ImplSDL3_ProcessEvent (event);
-}
-
-void Editor::startFrame()
+void startFrame()
 {
     ImGui_ImplSDLGPU3_NewFrame();
     ImGui_ImplSDL3_NewFrame();
@@ -51,37 +46,12 @@ void Editor::startFrame()
     ImGui::DockSpaceOverViewport();
 }
 
-void Editor::drawEditor (GraphicsContext* context)
+void handleEvents (SDL_Event* event)
 {
-    ImGui::Begin ("Graphics Context");
-
-    auto io = ImGui::GetIO();
-    ImGui::Text ("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
-    ImGui::Text ("Driver Name: %s", SDL_GetGPUDeviceDriver (context->getDevice()));
-    auto properties = SDL_GetGPUDeviceProperties (context->getDevice());
-    (SDL_EnumerateProperties (properties, [] (void*, SDL_PropertiesID prop, const char* name)
-                              {
-        ImGui::Text ("%s", name);
-        ImGui::SameLine();
-        ImGui::GetWindowDrawList()->AddCallback (ImDrawCallback_ImplSDLGPU3_SetSampler, nullptr);
-        ImGui::Text ("%s", SDL_GetStringProperty (prop, name, "")); },
-                              nullptr));
-
-    ImGui::End();
-
-    ImGui::Begin ("GameWindow");
-    ImGui::GetWindowDrawList()->AddCallback (ImDrawCallback_ImplSDLGPU3_SetSampler, nullptr);
-    auto windowWidth = ImGui::GetWindowSize().x;
-    auto windowHeight = ImGui::GetWindowSize().y;
-    {
-        ImGui::SetCursorPos ({ (windowWidth - 640) / 2, (windowHeight - 480) / 2 });
-        ImGui::Image (context->getRenderTexture(), { 640, 480 });
-    }
-
-    ImGui::End();
+    ImGui_ImplSDL3_ProcessEvent (event);
 }
 
-void Editor::endFrame (FrameContext* frameContext)
+void endFrame (FrameContext* frameContext)
 {
     ImGui::EndFrame();
     ImGui::UpdatePlatformWindows();
@@ -110,3 +80,5 @@ void Editor::endFrame (FrameContext* frameContext)
         SDL_EndGPURenderPass (render_pass);
     }
 }
+
+} // namespace ImGUIHelpers

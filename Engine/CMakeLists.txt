@@ -24,9 +24,14 @@ target_sources(${PROJECT_NAME}
     src/Graphics/Textures/texture.cpp
     src/Graphics/Sprites/spriteBatch.cpp
     src/Graphics/Sprites/sprite.cpp
+    src/Imgui/imguiHelpers.cpp
 )
 
 include(../fetch_dependencies.cmake)
+
+
+
+
 
 target_link_libraries(${PROJECT_NAME}
     PUBLIC

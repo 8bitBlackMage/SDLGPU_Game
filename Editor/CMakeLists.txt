@@ -18,3 +18,13 @@ target_sources(${PROJECT_NAME}
     PUBLIC
     src/main.cpp
 )
+
+include(../asset_copy.cmake)
+
+
+
+target_link_libraries(
+    ${PROJECT_NAME}
+    PRIVATE 
+    Olympus
+)

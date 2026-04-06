@@ -1,7 +1,5 @@
 #pragma once
 
-#include <editor.hpp>
-
 #include <Graphics/Sprites/spriteBatch.hpp>
 #include <Graphics/Textures/textureManager.hpp>
 #include <Graphics/TileMap/tileMapRenderer.hpp>
@@ -19,12 +17,12 @@ public:
 private:
     void loadAssets();
 
+    void drawEditor();
+
     void handleEvents (float delta);
     void render();
 
     void shutdown();
-
-    Editor editor;
 
     GraphicsContext graphicsContext;
 

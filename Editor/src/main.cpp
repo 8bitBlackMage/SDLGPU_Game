@@ -1,7 +1,73 @@
-#include <iostream>
 
+#include "SDL3/SDL_events.h"
+#include <Graphics/graphicsContext.hpp>
+#include <Imgui/imguiHelpers.hpp>
+#include <imgui.h>
 int main()
 {
-    std::cout << "hello !" << std::endl;
-    return 0;
+    bool running = true;
+    GraphicsContext context;
+
+    context.initContext();
+    ImGUIHelpers::initContext (&context);
+    SDL_Event event;
+    while (running)
+    {
+        while (SDL_PollEvent (&event))
+        {
+            ImGUIHelpers::handleEvents (&event);
+            if (event.type == SDL_EVENT_QUIT)
+            {
+                running = false;
+            }
+        }
+
+        context.startFrame();
+        ImGUIHelpers::startFrame();
+        ImGui::BeginMainMenuBar();
+        if (ImGui::BeginMenu ("File"))
+        {
+            if (ImGui::MenuItem ("New"))
+            {
+            }
+            if (ImGui::MenuItem ("Save"))
+            {
+            }
+            if (ImGui::MenuItem ("Open"))
+            {
+            }
+            if (ImGui::MenuItem ("Quit", "Alt+F4"))
+            {
+                running = false;
+            }
+            ImGui::EndMenu();
+        }
+        if (ImGui::BeginMenu ("Edit"))
+        {
+            ImGui::EndMenu();
+        }
+        if (ImGui::BeginMenu ("Run"))
+        {
+            ImGui::EndMenu();
+        }
+
+        ImGui::EndMainMenuBar();
+
+        ImGui::Begin ("Scene");
+        ImGui::End();
+
+        ImGui::Begin ("Inspector");
+
+        ImGui::End();
+
+        ImGui::Begin ("Log");
+
+        ImGui::End();
+
+        ImGui::Begin ("Edit Tools");
+
+        ImGui::End();
+        ImGUIHelpers::endFrame (context.getFrameContext());
+        context.endFrame();
+    }
 }
