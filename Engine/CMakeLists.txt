@@ -1,0 +1,34 @@
+cmake_minimum_required(VERSION 3.28)
+
+
+Project("Olympus"
+    VERSION 1.0
+    LANGUAGES C CXX)
+
+
+add_library(${PROJECT_NAME} STATIC)
+
+target_include_directories(${PROJECT_NAME}
+    PUBLIC
+    src/
+)
+
+target_sources(${PROJECT_NAME}
+    PUBLIC
+    src/Utils/logger.cpp
+    src/Graphics/graphicsContext.cpp
+    src/Graphics/offscreenRenderer.cpp
+    src/Graphics/camera.cpp
+    src/Graphics/Textures/textureManager.cpp
+    src/Graphics/TileMap/tileMapRenderer.cpp
+    src/Graphics/Textures/texture.cpp
+    src/Graphics/Sprites/spriteBatch.cpp
+    src/Graphics/Sprites/sprite.cpp
+)
+
+include(../fetch_dependencies.cmake)
+
+target_link_libraries(${PROJECT_NAME}
+    PUBLIC
+    dependencies
+    )
