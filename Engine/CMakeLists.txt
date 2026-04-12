@@ -17,7 +17,6 @@ target_sources(${PROJECT_NAME}
     PUBLIC
     src/Utils/logger.cpp
     src/Graphics/graphicsContext.cpp
-    src/Graphics/offscreenRenderer.cpp
     src/Graphics/camera.cpp
     src/Graphics/Textures/textureManager.cpp
     src/Graphics/TileMap/tileMapRenderer.cpp

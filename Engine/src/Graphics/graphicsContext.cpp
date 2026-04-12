@@ -61,9 +61,6 @@ void GraphicsContext::initContext()
     };
 
     sampler = SDL_CreateGPUSampler (device, &samplerCreateInfo);
-
-    outputStage.init (this);
-
     SDL_ShowWindow (window);
 }
 
@@ -105,6 +102,30 @@ void GraphicsContext::startFrame()
     frameContext.textureManager = &textureManager;
     SDL_WaitAndAcquireGPUSwapchainTexture (frameContext.commandBuffer, window, &swapChainTexture, nullptr, nullptr); // Acquire a swapchain texture
 
+    int deviceW, deviceH;
+
+    SDL_GetWindowSizeInPixels (window, &deviceW, &deviceH);
+
+    float deviceRatio = (float) deviceW / (float) deviceH;
+    float virtualRatio = 320.f / 240.f;
+
+    float xScale = deviceW / 320.f;
+    float yScale = deviceH / 240.f;
+    float scale;
+    if (virtualRatio < deviceRatio)
+    {
+        scale = floor (yScale);
+    }
+    else
+    {
+        scale = floor (xScale);
+    }
+
+    float correctedW = 320 * scale;
+    float correctedH = 240 * scale;
+    float correctedX = (deviceW - correctedW) / 2.0f;
+    float correctedY = (deviceH - correctedH) / 2.0f;
+    frameContext.viewport = { correctedX, correctedY, correctedW, correctedH };
     frameContext.swapchainTexture = swapChainTexture;
 }
 
@@ -128,10 +149,6 @@ void GraphicsContext::blitRenderTexture()
 {
     int windowWidth, windowHeight;
     SDL_GetWindowSize (window, &windowWidth, &windowHeight);
-
-    auto outputMatrix = glm::ortho (0.0f, (float) windowWidth, (float) windowHeight, 0.0f, 0.0f, -1.0f);
-
-    outputStage.render (&frameContext, renderTexture, renderTextureSize, outputMatrix);
 }
 
 SDL_GPUShader* GraphicsContext::loadShader (std::string filename, Uint32 samplerCount, Uint32 uniformBufferCount, Uint32 storageBufferCount, Uint32 storageTextureCount)

@@ -1,3 +1,4 @@
+#include "SDL3/SDL_gpu.h"
 #include <Graphics/Sprites/spriteBatch.hpp>
 #include <Utils/logger.hpp>
 
@@ -167,11 +168,13 @@ void SpriteBatch::render (FrameContext* frameContext)
         &samplerBinding,
         1);
 
+    SDL_SetGPUViewport (renderPass, &frameContext->viewport);
+
     SDL_PushGPUVertexUniformData (
         frameContext->commandBuffer,
         0,
         &frameContext->cameraMatrix,
-        sizeof (glm::mat4x4));
+        sizeof (glm::mat4x4) * 2);
     SDL_DrawGPUPrimitives (
         renderPass,
         spritesToDraw * 6,

@@ -1,3 +1,6 @@
+#include "SDL3/SDL_gpu.h"
+#include "SDL3/SDL_video.h"
+
 #include <Graphics/TileMap/tileMapRenderer.hpp>
 #include <Graphics/graphicsContext.hpp>
 #include <Utils/logger.hpp>
@@ -10,7 +13,8 @@
 #include <cstddef>
 #include <cstring>
 #include <filesystem>
-#include <glm/ext/matrix_float4x4.hpp>
+#include <glm/ext/matrix_clip_space.hpp>
+#include <glm/mat4x4.hpp>
 
 TileMapRenderer::TileMapRenderer()
 {
@@ -170,6 +174,41 @@ void TileMapRenderer::loadTileMap (const ldtk::Level& level, GraphicsContext* co
     SDL_SubmitGPUCommandBuffer (commandBuffer);
 }
 
+glm::mat4x4 getFinalMatrix (FrameContext* context)
+{
+    float cameraW = 320;
+    float cameraH = 240;
+
+    int deviceW, deviceH;
+
+    SDL_GetWindowSize (context->window, &deviceW, &deviceH);
+
+    float correction;
+
+    float deviceRatio = (float) deviceW / (float) deviceH;
+    float virtualRatio = cameraW / cameraH;
+    float xCorrection = (float) deviceW / cameraW;
+    float yCorrection = (float) deviceH / cameraH;
+
+    if (virtualRatio < deviceRatio)
+    {
+        correction = yCorrection;
+    }
+    else
+    {
+        correction = xCorrection;
+    }
+
+    float left = -(float) 320 / 2.0f / correction;
+    float right = (float) 320 / 2.0f / correction;
+    float bottom = -(float) 240 / 2.0f / correction;
+    float top = (float) 240 / 2.0f / correction;
+
+    glm::mat4 projMatrix = glm::ortho<float> (left, right, bottom, top, 0.1, 100.0f);
+
+    return projMatrix * context->cameraMatrix;
+}
+
 void TileMapRenderer::draw (FrameContext* frameContext)
 {
     if (frameContext->textureManager->getRawGPUTexture() == nullptr)
@@ -226,6 +265,8 @@ void TileMapRenderer::draw (FrameContext* frameContext)
         0,
         &samplerBinding,
         1);
+
+    SDL_SetGPUViewport (renderPass, &frameContext->viewport);
 
     SDL_PushGPUVertexUniformData (
         frameContext->commandBuffer,

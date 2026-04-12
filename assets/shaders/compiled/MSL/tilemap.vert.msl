@@ -46,7 +46,7 @@ struct spvUnsafeArray
 
 struct type_UniformBlock
 {
-    float4x4 ViewProjectionMatrix;
+    float4x4 ViewMatrix;
 };
 
 struct TileData
@@ -89,7 +89,7 @@ vertex main0_out main0(constant type_UniformBlock& UniformBlock [[buffer(0)]], c
     spvUnsafeArray<float2, 4> _59 = _85;
     out.out_var_TEXCOORD0 = _59[_44[_62]];
     out.out_var_TEXCOORD1 = DataBuffer._m0[_61].Colour;
-    out.gl_Position = UniformBlock.ViewProjectionMatrix * float4((_49[_44[_62]] * DataBuffer._m0[_61].Scale) + float2(DataBuffer._m0[_61].Position[0], DataBuffer._m0[_61].Position[1]), DataBuffer._m0[_61].Position[2], 1.0);
+    out.gl_Position = UniformBlock.ViewMatrix * float4((_49[_44[_62]] * DataBuffer._m0[_61].Scale) + float2(DataBuffer._m0[_61].Position[0], DataBuffer._m0[_61].Position[1]), DataBuffer._m0[_61].Position[2], 1.0);
     return out;
 }
 

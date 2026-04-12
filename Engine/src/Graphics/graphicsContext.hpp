@@ -1,8 +1,10 @@
 #pragma once
+#include "SDL3/SDL_gpu.h"
+#include "glm/ext/matrix_float4x4.hpp"
 #include <Graphics/Textures/textureManager.hpp>
-#include <Graphics/offScreenRenderer.hpp>
 #include <SDL3/SDL.h>
 #include <Utils/vectorTypes.hpp>
+#include <glm/mat4x4.hpp>
 
 /// @brief Struct containing per frame data, used for rendering.
 struct FrameContext
@@ -12,6 +14,7 @@ struct FrameContext
     SDL_GPUCommandBuffer* commandBuffer;
     SDL_GPUTexture* swapchainTexture;
     glm::mat4x4 cameraMatrix;
+    SDL_GPUViewport viewport;
     TextureManager* textureManager;
 };
 
@@ -76,8 +79,6 @@ public:
     inline TextureManager* getTextureManager() { return &textureManager; }
 
 private:
-    OffScreenRenderer outputStage;
-
     SDL_Window* window;
     SDL_GPUDevice* device;
     SDL_GPUSampler* sampler;

@@ -18,7 +18,7 @@ struct Output
 
 cbuffer UniformBlock : register(b0, space1)
 {
-    float4x4 ViewProjectionMatrix : packoffset(c0);
+    float4x4 ViewMatrix : packoffset(c0);
 };
 
 StructuredBuffer<TileData> DataBuffer: register(t0,space0);
@@ -51,7 +51,7 @@ Output main(uint id: SV_VertexID)
 
     Output output;
 
-    output.Position = mul(ViewProjectionMatrix, float4(coordWithDepth, 1.0f));
+    output.Position = mul(ViewMatrix , float4(coordWithDepth, 1.0f));
     output.TexCoord = texcoord[vert];
     output.Color = tile.Colour;
 

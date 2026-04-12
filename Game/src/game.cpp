@@ -126,12 +126,11 @@ void Game::drawEditor()
 
     ImGui::Begin ("GameWindow");
     ImGui::GetWindowDrawList()->AddCallback (ImDrawCallback_ImplSDLGPU3_SetSampler, nullptr);
-    auto windowWidth = ImGui::GetWindowSize().x;
-    auto windowHeight = ImGui::GetWindowSize().y;
-    {
-        ImGui::SetCursorPos ({ (windowWidth - 640) / 2, (windowHeight - 480) / 2 });
-        ImGui::Image (graphicsContext.getRenderTexture(), { 640, 480 });
-    }
+    // auto windowWidth = ImGui::GetWindowSize().x;
+    // auto windowHeight = ImGui::GetWindowSize().y;
+    // {
+    //     ImGui::SetCursorPos ({ (windowWidth - 640) / 2, (windowHeight - 480) / 2 });
+    // }
 
     ImGui::End();
 }
@@ -141,7 +140,7 @@ void Game::render()
     graphicsContext.startFrame();
     //#TODO put proper interface in here for this.
     graphicsContext.getFrameContext()->cameraMatrix = camera.getCurrentMatrix();
-    graphicsContext.startRenderTexture();
+    // graphicsContext.startRenderTexture();
     tileRenderer.draw (graphicsContext.getFrameContext());
 
     spriteBatch.draw (&sprite);
@@ -154,10 +153,6 @@ void Game::render()
         ImGUIHelpers::startFrame();
         drawEditor();
         ImGUIHelpers::endFrame (graphicsContext.getFrameContext());
-    }
-    else
-    {
-        graphicsContext.blitRenderTexture();
     }
 
     graphicsContext.endFrame();
