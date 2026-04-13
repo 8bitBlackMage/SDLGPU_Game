@@ -45,7 +45,7 @@ void GraphicsContext::initContext()
         Logger::log ("Created Device:", SDL_GetGPUDeviceDriver (device));
     }
 
-    if (! SDL_SetGPUSwapchainParameters (device, window, SDL_GPU_SWAPCHAINCOMPOSITION_SDR, SDL_GPU_PRESENTMODE_VSYNC))
+    if (! SDL_SetGPUSwapchainParameters (device, window, SDL_GPU_SWAPCHAINCOMPOSITION_SDR, SDL_GPU_PRESENTMODE_IMMEDIATE))
     {
         Logger::log ("SDL GPU SwapChain setup failed: ", SDL_GetError());
         exit (-1);

@@ -1,10 +1,12 @@
 #pragma once
-
-#include <Graphics/Sprites/spriteBatch.hpp>
+#include <Graphics/Pipelines/lineRenderer.hpp>
+#include <Graphics/Pipelines/spriteBatch.hpp>
+#include <Graphics/Structs/line.hpp>
 #include <Graphics/Textures/textureManager.hpp>
 #include <Graphics/TileMap/tileMapRenderer.hpp>
 #include <Graphics/camera.hpp>
 #include <Graphics/graphicsContext.hpp>
+#include <vector>
 /// @brief Class that holds the core Game Data, such as the SDL contexts, scene graph and event handling.
 class Game final
 {
@@ -28,6 +30,9 @@ private:
 
     Sprite sprite;
     SpriteBatch spriteBatch;
+
+    std::vector<Line> lines;
+    LineRenderer lineRenderer;
 
     TileMapRenderer tileRenderer;
 

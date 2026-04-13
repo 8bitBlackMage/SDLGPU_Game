@@ -1,4 +1,4 @@
-#include <Graphics/Sprites/sprite.hpp>
+#include <Graphics/Structs/sprite.hpp>
 #include <Graphics/Textures/texture.hpp>
 
 Sprite::Sprite() {}

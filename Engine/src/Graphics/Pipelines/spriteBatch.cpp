@@ -1,5 +1,5 @@
 #include "SDL3/SDL_gpu.h"
-#include <Graphics/Sprites/spriteBatch.hpp>
+#include <Graphics/Pipelines/spriteBatch.hpp>
 #include <Utils/logger.hpp>
 
 const size_t SPRITE_COUNT = 65536;
@@ -108,11 +108,11 @@ void SpriteBatch::render (FrameContext* frameContext)
                                                                                transferBuffer,
                                                                                true);
 
-    int i = 0;
+    size_t spritesToDraw = 0;
     for (; ! spriteQueue.empty(); spriteQueue.pop())
     {
-        data[i] = spriteQueue.front()->inner;
-        i++;
+        data[spritesToDraw] = spriteQueue.front()->inner;
+        spritesToDraw++;
     }
     SDL_UnmapGPUTransferBuffer (frameContext->device, transferBuffer);
 
@@ -174,7 +174,7 @@ void SpriteBatch::render (FrameContext* frameContext)
         frameContext->commandBuffer,
         0,
         &frameContext->cameraMatrix,
-        sizeof (glm::mat4x4) * 2);
+        sizeof (glm::mat4x4));
     SDL_DrawGPUPrimitives (
         renderPass,
         spritesToDraw * 6,
@@ -183,13 +183,4 @@ void SpriteBatch::render (FrameContext* frameContext)
         0);
 
     SDL_EndGPURenderPass (renderPass);
-}
-
-void SpriteBatch::debugView()
-{
-    ImGui::Begin ("SpriteBatch");
-    {
-        ImGui::SliderInt ("Sprites", &spritesToDraw, 0, 428);
-        ImGui::End();
-    }
 }

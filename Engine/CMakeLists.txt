@@ -21,8 +21,10 @@ target_sources(${PROJECT_NAME}
     src/Graphics/Textures/textureManager.cpp
     src/Graphics/TileMap/tileMapRenderer.cpp
     src/Graphics/Textures/texture.cpp
-    src/Graphics/Sprites/spriteBatch.cpp
-    src/Graphics/Sprites/sprite.cpp
+    src/Graphics/Pipelines/spriteBatch.cpp
+    src/Graphics/Pipelines/LineRenderer.cpp
+    src/Graphics/Structs/sprite.cpp
+    src/Graphics/Structs/line.cpp
     src/Imgui/imguiHelpers.cpp
 )
 

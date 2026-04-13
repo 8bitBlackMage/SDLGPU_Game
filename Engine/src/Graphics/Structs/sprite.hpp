@@ -1,5 +1,5 @@
 #pragma once
-#include <Graphics/Sprites/spriteBatch.hpp>
+#include <Graphics/Pipelines/spriteBatch.hpp>
 #include <Graphics/Textures/texture.hpp>
 
 /// @brief Sprite class, for use with the SpriteBatch renderer.

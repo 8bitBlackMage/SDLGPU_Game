@@ -2,9 +2,11 @@
 
 #include <LDtkLoader/Project.hpp>
 
+#include <Graphics/Structs/line.hpp>
 #include <game.hpp>
 
-#include <Graphics/Sprites/spriteBatch.hpp>
+#include <Graphics/Pipelines/spriteBatch.hpp>
+#include <Graphics/Structs/sprite.hpp>
 #include <Graphics/camera.hpp>
 #include <Graphics/graphicsContext.hpp>
 #include <Imgui/imguiHelpers.hpp>
@@ -33,6 +35,8 @@ Game::Game() : graphicsContext(),
 
     spriteBatch.init (&graphicsContext);
 
+    lineRenderer.init (&graphicsContext);
+
     tileRenderer.init (&graphicsContext);
 
     ldtk::Project project;
@@ -49,6 +53,15 @@ Game::Game() : graphicsContext(),
 
     ImGUIHelpers::initContext (&graphicsContext);
     running = true;
+
+    for (float i = 0; i < 1024; i += 16)
+    {
+        lines.push_back (Line (0, i, 1000000000, i));
+    }
+    for (float i = 0; i < 1024; i += 16)
+    {
+        lines.push_back (Line (i, 0, i, 1000000000));
+    }
 }
 
 void Game::run()
@@ -137,21 +150,32 @@ void Game::drawEditor()
 
 void Game::render()
 {
+    //viewports (scaling) is calculated here
+    //to draw game within window, bounds of that window are needed *here*
     graphicsContext.startFrame();
     //#TODO put proper interface in here for this.
     graphicsContext.getFrameContext()->cameraMatrix = camera.getCurrentMatrix();
-    // graphicsContext.startRenderTexture();
+
     tileRenderer.draw (graphicsContext.getFrameContext());
 
     spriteBatch.draw (&sprite);
 
-    spriteBatch.render (graphicsContext.getFrameContext());
-    graphicsContext.endRenderTexture();
+    //spriteBatch.render (graphicsContext.getFrameContext());
+
+    for (auto& line : lines)
+    {
+        lineRenderer.draw (&line);
+    }
+
+    lineRenderer.render (graphicsContext.getFrameContext());
+
+    //   graphicsContext.endRenderTexture();
 
     if (showEditor)
     {
+        //Debug editor is drawn here.
         ImGUIHelpers::startFrame();
-        drawEditor();
+        drawEditor(); // bounds of the window are only available within the scope of this one function here.
         ImGUIHelpers::endFrame (graphicsContext.getFrameContext());
     }
 
