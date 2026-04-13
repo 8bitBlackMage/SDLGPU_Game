@@ -17,6 +17,8 @@ add_executable(${PROJECT_NAME})
 target_sources(${PROJECT_NAME} 
     PUBLIC
     src/main.cpp
+    src/tileMapEditor.cpp
+    
 )
 
 include(../asset_copy.cmake)

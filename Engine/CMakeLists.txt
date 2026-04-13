@@ -26,6 +26,8 @@ target_sources(${PROJECT_NAME}
     src/Graphics/Pipelines/LineRenderer.cpp
     src/Graphics/Structs/sprite.cpp
     src/Graphics/Structs/line.cpp
+
+    src/LevelData/Maps/tileLayer.cpp
     src/Imgui/imguiHelpers.cpp
 )
 

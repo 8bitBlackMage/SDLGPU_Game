@@ -1,5 +1,6 @@
 
 #include "SDL3/SDL_events.h"
+#include "tileMapEditor.hpp"
 #include <Graphics/graphicsContext.hpp>
 #include <Imgui/imguiHelpers.hpp>
 #include <imgui.h>
@@ -7,8 +8,10 @@ int main()
 {
     bool running = true;
     GraphicsContext context;
+    TileMapEditor editor;
 
     context.initContext();
+    editor.init (&context);
     ImGUIHelpers::initContext (&context);
     SDL_Event event;
     while (running)
@@ -67,7 +70,11 @@ int main()
         ImGui::Begin ("Edit Tools");
 
         ImGui::End();
+
+        editor.render (context.getFrameContext());
+
         ImGUIHelpers::endFrame (context.getFrameContext());
+
         context.endFrame();
     }
 }

@@ -49,6 +49,9 @@ public:
 
     void setCamera (Camera* camera);
 
+    void setCustomViewport (SDL_GPUViewport& viewport);
+    void resetViewport();
+
     /// @brief submits render passes to the GPU.
     void endFrame();
 
