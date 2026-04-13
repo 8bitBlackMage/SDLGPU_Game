@@ -1,10 +1,13 @@
 #pragma once
-#include "SDL3/SDL_gpu.h"
+#include <Graphics/camera.hpp>
+
 #include "glm/ext/matrix_float4x4.hpp"
 #include <Graphics/Textures/textureManager.hpp>
 #include <SDL3/SDL.h>
 #include <Utils/vectorTypes.hpp>
 #include <glm/mat4x4.hpp>
+
+class RenderTexture;
 
 /// @brief Struct containing per frame data, used for rendering.
 struct FrameContext
@@ -31,12 +34,6 @@ public:
     /// @param window pointer to SDL Window
     void initContext();
 
-    ///@brief Sets the size of the Render Texture.
-    ///@param w width of the texture in pixels.
-    ///@param h height of the texture in pixels.
-    ///@returns bool if texture was created successfully.
-    bool setRenderTextureSize (float w, float h);
-
     void shutdown();
 
     /// @brief Sets up the render state for a given frame. must be called before other render calls.
@@ -46,10 +43,12 @@ public:
     /// @return Struct containing this frames data.
     FrameContext* getFrameContext() { return &frameContext; }
 
-    void startRenderTexture();
+    void startRenderTexture (RenderTexture* texture);
 
     void endRenderTexture();
-    void blitRenderTexture();
+
+    void setCamera (Camera* camera);
+
     /// @brief submits render passes to the GPU.
     void endFrame();
 
@@ -74,20 +73,23 @@ public:
     /// @return pointer to window.
     SDL_Window* getWindow() { return window; }
 
-    SDL_GPUTexture* getRenderTexture() { return renderTexture; }
-
     inline TextureManager* getTextureManager() { return &textureManager; }
 
 private:
+    Camera* currentCamera = nullptr;
+
     SDL_Window* window;
     SDL_GPUDevice* device;
     SDL_GPUSampler* sampler;
 
     FrameContext frameContext;
+    glm::vec2 windowSize;
 
-    Vec2<float> renderTextureSize;
-    SDL_GPUTexture* renderTexture;
+    RenderTexture* currentRenderTexture = nullptr;
 
     SDL_GPUTexture* swapChainTexture;
+
     TextureManager textureManager;
+
+    void calculateViews (float width, float height);
 };

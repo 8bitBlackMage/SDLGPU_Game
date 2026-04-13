@@ -6,6 +6,7 @@
 #include <Graphics/TileMap/tileMapRenderer.hpp>
 #include <Graphics/camera.hpp>
 #include <Graphics/graphicsContext.hpp>
+#include <Graphics/renderTexture.hpp>
 #include <vector>
 /// @brief Class that holds the core Game Data, such as the SDL contexts, scene graph and event handling.
 class Game final
@@ -26,6 +27,7 @@ private:
 
     void shutdown();
 
+    RenderTexture editorPreview;
     GraphicsContext graphicsContext;
 
     Sprite sprite;

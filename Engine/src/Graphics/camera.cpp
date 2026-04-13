@@ -32,6 +32,16 @@ void Camera::setY (float newY)
     y = newY;
 }
 
+void Camera::setWidth (float newW)
+{
+    x = newW;
+}
+
+void Camera::setHeight (float newH)
+{
+    y = newH;
+}
+
 float Camera::getX()
 {
     return x;
@@ -40,4 +50,14 @@ float Camera::getX()
 float Camera::getY()
 {
     return y;
+}
+
+float Camera::getWidth()
+{
+    return w;
+}
+
+float Camera::getHeight()
+{
+    return h;
 }

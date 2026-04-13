@@ -1,7 +1,9 @@
 
 
+#include "Graphics/camera.hpp"
 #include <Graphics/Textures/textureManager.hpp>
 #include <Graphics/graphicsContext.hpp>
+#include <Graphics/renderTexture.hpp>
 #include <Utils/logger.hpp>
 
 #include <SDL3/SDL.h>
@@ -64,34 +66,14 @@ void GraphicsContext::initContext()
     SDL_ShowWindow (window);
 }
 
-bool GraphicsContext::setRenderTextureSize (float w, float h)
-{
-    auto textureFormat = SDL_GetGPUSwapchainTextureFormat (device, window);
-    auto textureCreateInfo = SDL_GPUTextureCreateInfo {
-        .height = static_cast<Uint32> (h),
-        .width = static_cast<Uint32> (w),
-        .num_levels = 1,
-        .layer_count_or_depth = 1,
-        .format = textureFormat,
-        .sample_count = SDL_GPU_SAMPLECOUNT_1,
-        .type = SDL_GPU_TEXTURETYPE_2D,
-        .usage = SDL_GPU_TEXTUREUSAGE_SAMPLER | SDL_GPU_TEXTUREUSAGE_COLOR_TARGET
-    };
-    renderTexture = SDL_CreateGPUTexture (device, &textureCreateInfo);
-    if (renderTexture == nullptr)
-    {
-        return false;
-    }
-    renderTextureSize.x = w;
-    renderTextureSize.y = h;
-
-    return true;
-}
-
 void GraphicsContext::shutdown()
 {
     SDL_ReleaseGPUSampler (device, sampler);
-    SDL_ReleaseGPUTexture (device, renderTexture);
+}
+
+void GraphicsContext::setCamera (Camera* camera)
+{
+    currentCamera = camera;
 }
 
 void GraphicsContext::startFrame()
@@ -105,50 +87,32 @@ void GraphicsContext::startFrame()
     int deviceW, deviceH;
 
     SDL_GetWindowSizeInPixels (window, &deviceW, &deviceH);
+    windowSize.x = (float) deviceW;
+    windowSize.y = (float) deviceH;
 
-    float deviceRatio = (float) deviceW / (float) deviceH;
-    float virtualRatio = 320.f / 240.f;
+    calculateViews (windowSize.x, windowSize.y);
 
-    float xScale = deviceW / 320.f;
-    float yScale = deviceH / 240.f;
-    float scale;
-    if (virtualRatio < deviceRatio)
-    {
-        scale = floor (yScale);
-    }
-    else
-    {
-        scale = floor (xScale);
-    }
-
-    float correctedW = 320 * scale;
-    float correctedH = 240 * scale;
-    float correctedX = (deviceW - correctedW) / 2.0f;
-    float correctedY = (deviceH - correctedH) / 2.0f;
-    frameContext.viewport = { correctedX, correctedY, correctedW, correctedH };
     frameContext.swapchainTexture = swapChainTexture;
+}
+
+void GraphicsContext::startRenderTexture (RenderTexture* texture)
+{
+    currentRenderTexture = texture;
+    frameContext.swapchainTexture = texture->getTexture();
+    calculateViews (texture->getSize().x, texture->getSize().y);
+}
+
+void GraphicsContext::endRenderTexture()
+{
+    currentRenderTexture = nullptr;
+    frameContext.swapchainTexture = swapChainTexture;
+    calculateViews (windowSize.x, windowSize.y);
 }
 
 void GraphicsContext::endFrame()
 {
     // Submit the command buffer
     SDL_SubmitGPUCommandBuffer (frameContext.commandBuffer);
-}
-
-void GraphicsContext::startRenderTexture()
-{
-    frameContext.swapchainTexture = renderTexture;
-}
-
-void GraphicsContext::endRenderTexture()
-{
-    frameContext.swapchainTexture = swapChainTexture;
-}
-
-void GraphicsContext::blitRenderTexture()
-{
-    int windowWidth, windowHeight;
-    SDL_GetWindowSize (window, &windowWidth, &windowHeight);
 }
 
 SDL_GPUShader* GraphicsContext::loadShader (std::string filename, Uint32 samplerCount, Uint32 uniformBufferCount, Uint32 storageBufferCount, Uint32 storageTextureCount)
@@ -236,4 +200,50 @@ SDL_GPUShader* GraphicsContext::loadShader (std::string filename, Uint32 sampler
     SDL_free (code);
 
     return shader;
+}
+
+void GraphicsContext::calculateViews (float width, float height)
+{
+    float virtualW;
+    float virtualH;
+
+    if (currentCamera != nullptr)
+    {
+        virtualW = currentCamera->getWidth();
+        virtualH = currentCamera->getHeight();
+    }
+    else
+    {
+        virtualW = width;
+        virtualH = height;
+    }
+
+    float deviceRatio = width / height;
+    float virtualRatio = virtualW / virtualH;
+
+    float xScale = width / virtualW;
+    float yScale = height / virtualH;
+    float scale;
+    if (virtualRatio < deviceRatio)
+    {
+        scale = floor (yScale);
+    }
+    else
+    {
+        scale = floor (xScale);
+    }
+
+    float correctedW = virtualW * scale;
+    float correctedH = virtualH * scale;
+    float correctedX = (width - correctedW) / 2.0f;
+    float correctedY = (height - correctedH) / 2.0f;
+    frameContext.viewport = { correctedX, correctedY, correctedW, correctedH };
+    if (currentCamera == nullptr)
+    {
+        frameContext.cameraMatrix = glm::ortho (correctedX, correctedW, correctedH, correctedY);
+    }
+    else
+    {
+        frameContext.cameraMatrix = currentCamera->getCurrentMatrix();
+    }
 }

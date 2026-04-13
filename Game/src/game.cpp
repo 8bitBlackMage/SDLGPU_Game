@@ -28,11 +28,6 @@ Game::Game() : graphicsContext(),
 
     graphicsContext.initContext();
 
-    if (! graphicsContext.setRenderTextureSize (320, 240))
-    {
-        Logger::log ("failed to create texture size of:", 320, " ", 240);
-    }
-
     spriteBatch.init (&graphicsContext);
 
     lineRenderer.init (&graphicsContext);
@@ -54,14 +49,16 @@ Game::Game() : graphicsContext(),
     ImGUIHelpers::initContext (&graphicsContext);
     running = true;
 
-    for (float i = 0; i < 1024; i += 16)
+    for (float i = 0; i < 2048; i += 16)
     {
         lines.push_back (Line (0, i, 1000000000, i));
     }
-    for (float i = 0; i < 1024; i += 16)
+    for (float i = 0; i < 2048; i += 16)
     {
         lines.push_back (Line (i, 0, i, 1000000000));
     }
+
+    editorPreview.init (&graphicsContext, 320, 240);
 }
 
 void Game::run()
@@ -81,7 +78,6 @@ void Game::handleEvents (float)
     SDL_Event event;
     while (SDL_PollEvent (&event))
     {
-        ImGUIHelpers::handleEvents (&event);
         switch (event.type)
         {
             case SDL_EVENT_QUIT:
@@ -96,6 +92,7 @@ void Game::handleEvents (float)
             default:
                 break;
         }
+        ImGUIHelpers::handleEvents (&event);
     }
 
     const bool* keyStates = SDL_GetKeyboardState (NULL);
@@ -137,30 +134,27 @@ void Game::drawEditor()
 
     ImGui::End();
 
-    ImGui::Begin ("GameWindow");
+    ImGui::Begin ("GameWindow", 0, ImGuiWindowFlags_NoScrollbar || ImGuiWindowFlags_NoScrollWithMouse);
     ImGui::GetWindowDrawList()->AddCallback (ImDrawCallback_ImplSDLGPU3_SetSampler, nullptr);
-    // auto windowWidth = ImGui::GetWindowSize().x;
-    // auto windowHeight = ImGui::GetWindowSize().y;
-    // {
-    //     ImGui::SetCursorPos ({ (windowWidth - 640) / 2, (windowHeight - 480) / 2 });
-    // }
-
+    auto windowWidth = ImGui::GetWindowSize().x * 0.9f;
+    auto windowHeight = ImGui::GetWindowSize().y * 0.9f;
+    ImGui::Image (editorPreview.getTexture(), { windowWidth, windowHeight });
+    editorPreview.resize (&graphicsContext, windowWidth, windowHeight);
     ImGui::End();
 }
 
 void Game::render()
 {
-    //viewports (scaling) is calculated here
-    //to draw game within window, bounds of that window are needed *here*
     graphicsContext.startFrame();
-    //#TODO put proper interface in here for this.
-    graphicsContext.getFrameContext()->cameraMatrix = camera.getCurrentMatrix();
+    if (showEditor)
+        graphicsContext.startRenderTexture (&editorPreview);
+    graphicsContext.setCamera (&camera);
 
     tileRenderer.draw (graphicsContext.getFrameContext());
 
     spriteBatch.draw (&sprite);
 
-    //spriteBatch.render (graphicsContext.getFrameContext());
+    spriteBatch.render (graphicsContext.getFrameContext());
 
     for (auto& line : lines)
     {
@@ -168,8 +162,8 @@ void Game::render()
     }
 
     lineRenderer.render (graphicsContext.getFrameContext());
-
-    //   graphicsContext.endRenderTexture();
+    if (showEditor)
+        graphicsContext.endRenderTexture();
 
     if (showEditor)
     {
