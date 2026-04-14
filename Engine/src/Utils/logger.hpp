@@ -15,7 +15,7 @@ public:
     {
         Logger::getLogger().appendToLog (args...);
     }
-    void draw();
+    void draw (bool* close);
 
     template <typename... Args>
     void appendToLog (Args const&... args)

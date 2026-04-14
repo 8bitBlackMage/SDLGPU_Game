@@ -9,9 +9,9 @@ Logger& Logger::getLogger()
     return logger;
 }
 
-void Logger::draw()
+void Logger::draw (bool* close)
 {
-    ImGui::Begin ("Log");
+    ImGui::Begin ("Log", close);
     if (ImGui::Button ("Clear"))
     {
         clear();

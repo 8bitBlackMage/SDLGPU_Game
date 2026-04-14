@@ -1,12 +1,13 @@
 
 
-#include "tileMapEditor.hpp"
+#include "sceneEditor.hpp"
 #include "Graphics/Structs/sprite.hpp"
 #include "Graphics/graphicsContext.hpp"
 #include "LevelData/Maps/scene.hpp"
 #include "imgui.h"
+#include "imgui_internal.h"
 
-void TileMapEditor::init (Scene* scene, GraphicsContext* context)
+void SceneEditor::init (Scene* scene, GraphicsContext* context)
 {
     currentLevel = scene;
     graphicsContext = context;
@@ -26,15 +27,15 @@ void TileMapEditor::init (Scene* scene, GraphicsContext* context)
     graphicsContext->getTextureManager()->endBatchUpload (graphicsContext);
 }
 
-void TileMapEditor::render (FrameContext* frameContext)
+void SceneEditor::setupDockSpace (ImGuiID centre, ImGuiID left, ImGuiID right, ImGuiID bottom)
 {
-    if (currentLevel == nullptr)
-    {
-        return;
-    }
+    ImGui::DockBuilderDockWindow ("Map Settings", left);
+    ImGui::DockBuilderDockWindow ("Scene Editor", centre);
+}
 
+void SceneEditor::present (FrameContext* frameContext)
+{
     ImGui::Begin ("Map Settings");
-
     ImGui::InputScalar ("Map Width", ImGuiDataType_U16, &mapWidth);
     ImGui::InputScalar ("Map Height", ImGuiDataType_U16, &mapHeight);
     ImGui::InputScalar ("Grid Size", ImGuiDataType_U16, &gridSize);
@@ -42,8 +43,8 @@ void TileMapEditor::render (FrameContext* frameContext)
     ImGui::Text ("grid: X: %i, y: %i", (int) floor (mouseX / gridSize), (int) floor (mouseY / gridSize));
     ImGui::End();
 
-    ImGui::Begin ("Map Editor", NULL, ImGuiWindowFlags_HorizontalScrollbar);
-
+    ImGui::SetNextWindowSizeConstraints ({ 800, 600 }, { 1920, 1080 });
+    ImGui::Begin ("Scene Editor", NULL, ImGuiWindowFlags_HorizontalScrollbar);
     //get Mouse Position.
 
     auto mousePos = ImGui::GetMousePos();
@@ -79,7 +80,7 @@ void TileMapEditor::render (FrameContext* frameContext)
     ImGui::End();
 }
 
-void TileMapEditor::generateGrid (float width, float height, float gridSize)
+void SceneEditor::generateGrid (float width, float height, float gridSize)
 {
     gridLines.clear();
     for (float y = 0; y < height; y += gridSize)
@@ -92,7 +93,7 @@ void TileMapEditor::generateGrid (float width, float height, float gridSize)
     }
 }
 
-void TileMapEditor::regenerateMap()
+void SceneEditor::regenerateMap()
 {
     if (mapWidth == 0 || mapHeight == 0 || gridSize == 0)
     {

@@ -20,7 +20,7 @@ void ImGUIHelpers::styleLayout()
     style.DisabledAlpha = 1.0f;
     style.WindowPadding = ImVec2 (12.0f, 12.0f);
     style.WindowRounding = 11.5f;
-    style.WindowBorderSize = 0.0f;
+    style.WindowBorderSize = 0.1f;
     style.WindowMinSize = ImVec2 (20.0f, 20.0f);
     style.WindowTitleAlign = ImVec2 (0.5f, 0.5f);
     style.WindowMenuButtonPosition = ImGuiDir_Right;
@@ -50,16 +50,16 @@ void ImGUIHelpers::styleLayout()
 
 void ImGUIHelpers::styleColourDark()
 {
-    constexpr auto darkBackground = u8tofloatColour (20, 20, 20, 255);
-    constexpr auto midBackground = u8tofloatColour (30, 30, 30, 255);
-    constexpr auto lightBackground = u8tofloatColour (60, 60, 60, 255);
+    constexpr auto darkBackground = u8tofloatColour (65, 65, 65, 255);
+    constexpr auto midBackground = u8tofloatColour (80, 80, 80, 255);
+    constexpr auto lightBackground = u8tofloatColour (100, 100, 100, 255);
 
     constexpr auto text = u8tofloatColour (255, 255, 255, 255);
-    constexpr auto disabledText = u8tofloatColour (100, 100, 100, 255);
+    constexpr auto disabledText = u8tofloatColour (150, 150, 150, 255);
 
-    constexpr auto darkHighlight = u8tofloatColour (70, 70, 70, 255);
-    constexpr auto midHighlight = u8tofloatColour (90, 90, 90, 255);
-    constexpr auto brightHighlight = u8tofloatColour (100, 100, 100, 255);
+    constexpr auto darkHighlight = u8tofloatColour (90, 90, 96, 255);
+    constexpr auto midHighlight = u8tofloatColour (100, 100, 106, 255);
+    constexpr auto brightHighlight = u8tofloatColour (130, 130, 136, 255);
 
     ImGuiStyle& style = ImGui::GetStyle();
     style.Colors[ImGuiCol_Text] = text;
@@ -112,7 +112,7 @@ void ImGUIHelpers::styleColourDark()
     style.Colors[ImGuiCol_TabHovered] = brightHighlight;
     style.Colors[ImGuiCol_TabActive] = midHighlight;
 
-    style.Colors[ImGuiCol_TabUnfocused] = midBackground;
+    style.Colors[ImGuiCol_TabUnfocused] = lightBackground;
     style.Colors[ImGuiCol_TabUnfocusedActive] = lightBackground;
 
     style.Colors[ImGuiCol_PlotLines] = midBackground;
@@ -137,9 +137,9 @@ void ImGUIHelpers::styleColourDark()
 
 void ImGUIHelpers::styleColourLight()
 {
-    constexpr auto darkBackground = u8tofloatColour (231, 231, 231, 255);
-    constexpr auto midBackground = u8tofloatColour (241, 241, 241, 255);
-    constexpr auto lightBackground = u8tofloatColour (249, 249, 249, 255);
+    constexpr auto darkBackground = u8tofloatColour (178, 178, 178, 255);
+    constexpr auto midBackground = u8tofloatColour (198, 198, 198, 255);
+    constexpr auto lightBackground = u8tofloatColour (226, 226, 226, 255);
 
     constexpr auto text = u8tofloatColour (0, 0, 0, 255);
     constexpr auto disabledText = u8tofloatColour (25, 25, 25, 255);

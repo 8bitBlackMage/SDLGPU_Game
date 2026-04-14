@@ -13,7 +13,7 @@ void initContext (GraphicsContext* context);
 
 void handleEvents (SDL_Event* event);
 
-void startFrame();
+ImGuiID startFrame();
 
 void endFrame (FrameContext* frameContext);
 } // namespace ImGUIHelpers

@@ -16,6 +16,8 @@ target_include_directories(${PROJECT_NAME}
 target_sources(${PROJECT_NAME}
     PUBLIC
     src/Utils/logger.cpp
+    src/Utils/fileHelpers.cpp
+
     src/Graphics/graphicsContext.cpp
     src/Graphics/camera.cpp
     src/Graphics/renderTexture.cpp

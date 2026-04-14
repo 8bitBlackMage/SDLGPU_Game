@@ -42,7 +42,7 @@ void initContext (GraphicsContext* context)
     style.FontScaleDpi = mainScale;
 }
 
-void startFrame()
+ImGuiID startFrame()
 {
     styleLayout();
     styleColourDark();
@@ -50,7 +50,7 @@ void startFrame()
     ImGui_ImplSDLGPU3_NewFrame();
     ImGui_ImplSDL3_NewFrame();
     ImGui::NewFrame();
-    ImGui::DockSpaceOverViewport();
+    return ImGui::DockSpaceOverViewport();
 }
 
 void handleEvents (SDL_Event* event)

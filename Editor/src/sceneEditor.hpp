@@ -9,14 +9,16 @@
 
 #include "LevelData/Maps/scene.hpp"
 
-class TileMapEditor
+#include <imgui.h>
+class SceneEditor
 {
 public:
-    TileMapEditor() = default;
+    SceneEditor() = default;
 
     void init (Scene* scene, GraphicsContext* context);
 
-    void render (FrameContext* context);
+    void setupDockSpace (ImGuiID centre, ImGuiID left, ImGuiID right, ImGuiID bottom);
+    void present (FrameContext* context);
 
 private:
     void regenerateMap();
@@ -40,4 +42,7 @@ private:
     Texture testTex;
 
     Scene* currentLevel;
+
+    bool mapOpen;
+    bool mapSettingsOpen;
 };
