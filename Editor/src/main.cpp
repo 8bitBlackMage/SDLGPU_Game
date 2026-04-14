@@ -4,14 +4,20 @@
 #include <Graphics/graphicsContext.hpp>
 #include <Imgui/imguiHelpers.hpp>
 #include <imgui.h>
+
 int main()
 {
+    Scene scene;
+    scene.width = 320;
+    scene.height = 240;
+    scene.gridSize = 32;
+
     bool running = true;
     GraphicsContext context;
     TileMapEditor editor;
 
     context.initContext();
-    editor.init (&context);
+    editor.init (&scene, &context);
     ImGUIHelpers::initContext (&context);
     SDL_Event event;
     while (running)
@@ -30,13 +36,13 @@ int main()
         ImGui::BeginMainMenuBar();
         if (ImGui::BeginMenu ("File"))
         {
-            if (ImGui::MenuItem ("New"))
+            if (ImGui::MenuItem ("New", "Ctrl+N"))
             {
             }
-            if (ImGui::MenuItem ("Save"))
+            if (ImGui::MenuItem ("Save", "Ctrl+S"))
             {
             }
-            if (ImGui::MenuItem ("Open"))
+            if (ImGui::MenuItem ("Open", "Ctrl+O"))
             {
             }
             if (ImGui::MenuItem ("Quit", "Alt+F4"))
@@ -47,6 +53,12 @@ int main()
         }
         if (ImGui::BeginMenu ("Edit"))
         {
+            if (ImGui::MenuItem ("Undo", "Ctrl+Z"))
+            {
+            }
+            if (ImGui::MenuItem ("Redo", "Ctrl+Shift+Z"))
+            {
+            }
             ImGui::EndMenu();
         }
         if (ImGui::BeginMenu ("Run"))

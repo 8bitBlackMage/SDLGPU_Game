@@ -30,6 +30,7 @@ target_sources(${PROJECT_NAME}
 
     src/LevelData/Maps/tileLayer.cpp
     src/Imgui/imguiHelpers.cpp
+    src/Imgui/imguiTheme.cpp
 )
 
 include(../fetch_dependencies.cmake)

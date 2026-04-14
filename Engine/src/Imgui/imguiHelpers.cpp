@@ -1,8 +1,8 @@
 #include <Imgui/imguiHelpers.hpp>
+#include <Imgui/imguiTheme.hpp>
 #include <imgui.h>
 #include <imgui_impl_sdl3.h>
 #include <imgui_impl_sdlgpu3.h>
-
 void ImDrawCallback_ImplSDLGPU3_SetSampler (const ImDrawList* /*parent_list*/, const ImDrawCmd* cmd)
 {
     ImGui_ImplSDLGPU3_RenderState* state = (ImGui_ImplSDLGPU3_RenderState*) ImGui::GetPlatformIO().Renderer_RenderState;
@@ -27,10 +27,14 @@ void initContext (GraphicsContext* context)
     ImGui_ImplSDLGPU3_InitInfo initInfo = {};
     initInfo.Device = context->getDevice();
     initInfo.ColorTargetFormat = SDL_GetGPUSwapchainTextureFormat (context->getDevice(), context->getWindow());
-    initInfo.PresentMode = SDL_GPU_PRESENTMODE_IMMEDIATE;
+    initInfo.PresentMode = SDL_GPU_PRESENTMODE_VSYNC;
+    initInfo.MSAASamples = SDL_GPU_SAMPLECOUNT_1; // Only used in multi-viewports mode.
+    initInfo.SwapchainComposition = SDL_GPU_SWAPCHAINCOMPOSITION_SDR; // Only used in multi-viewports mode.
     ImGui_ImplSDLGPU3_Init (&initInfo);
 
     ImGuiStyle& style = ImGui::GetStyle();
+    io.ConfigDpiScaleFonts = true; // [Experimental] Automatically overwrite style.FontScaleDpi in Begin() when Monitor DPI changes. This will scale fonts but _NOT_ scale sizes/padding for now.
+    io.ConfigDpiScaleViewports = true; // [Experimental] Scale Dear ImGui and Platform Windows when Monitor DPI changes.
 
     //Handle High DPI mode.
     float mainScale = SDL_GetDisplayContentScale (SDL_GetPrimaryDisplay());
@@ -40,6 +44,8 @@ void initContext (GraphicsContext* context)
 
 void startFrame()
 {
+    styleLayout();
+    styleColourDark();
     ImGui_ImplSDLGPU3_NewFrame();
     ImGui_ImplSDL3_NewFrame();
     ImGui::NewFrame();
@@ -54,7 +60,7 @@ void handleEvents (SDL_Event* event)
 void endFrame (FrameContext* frameContext)
 {
     ImGui::EndFrame();
-    ImGui::UpdatePlatformWindows();
+
     // Rendering
     ImGui::Render();
     ImDrawData* draw_data = ImGui::GetDrawData();
@@ -78,6 +84,11 @@ void endFrame (FrameContext* frameContext)
         ImGui_ImplSDLGPU3_RenderDrawData (draw_data, frameContext->commandBuffer, render_pass);
 
         SDL_EndGPURenderPass (render_pass);
+    }
+    if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+    {
+        ImGui::UpdatePlatformWindows();
+        ImGui::RenderPlatformWindowsDefault();
     }
 }
 

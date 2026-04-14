@@ -6,14 +6,21 @@
 #include "LevelData/Maps/scene.hpp"
 #include "imgui.h"
 
-void TileMapEditor::init (GraphicsContext* context)
+void TileMapEditor::init (Scene* scene, GraphicsContext* context)
 {
-    background.init (context);
-    lineRenderer.init (context);
-    SpriteRenderer.init (context);
+    currentLevel = scene;
     graphicsContext = context;
-    renderTexture.init (context, 1, 1);
-    generateGrid (8192, 8292, 32);
+    mapHeight = currentLevel->height / currentLevel->gridSize;
+    mapWidth = currentLevel->width / currentLevel->gridSize;
+    gridSize = currentLevel->gridSize;
+
+    background.init (graphicsContext);
+    lineRenderer.init (graphicsContext);
+    SpriteRenderer.init (graphicsContext);
+    renderTexture.init (graphicsContext, 1, 1);
+
+    regenerateMap();
+
     graphicsContext->getTextureManager()->beginBatchUpload (graphicsContext);
     testTex = graphicsContext->getTextureManager()->loadTexture ("player.png");
     graphicsContext->getTextureManager()->endBatchUpload (graphicsContext);
@@ -21,6 +28,11 @@ void TileMapEditor::init (GraphicsContext* context)
 
 void TileMapEditor::render (FrameContext* frameContext)
 {
+    if (currentLevel == nullptr)
+    {
+        return;
+    }
+
     ImGui::Begin ("Map Settings");
 
     ImGui::InputScalar ("Map Width", ImGuiDataType_U16, &mapWidth);
@@ -59,7 +71,7 @@ void TileMapEditor::render (FrameContext* frameContext)
     SpriteRenderer.render (frameContext);
     graphicsContext->endRenderTexture();
 
-    if (mapHeight * gridSize != currentLevel.height || mapWidth * gridSize != currentLevel.width || gridSize != currentLevel.gridSize)
+    if (mapHeight * gridSize != currentLevel->height || mapWidth * gridSize != currentLevel->width || gridSize != currentLevel->gridSize)
     {
         regenerateMap();
     }
@@ -90,7 +102,7 @@ void TileMapEditor::regenerateMap()
     renderTexture.resize (graphicsContext, (float) mapWidth * gridSize, (float) mapHeight * gridSize);
     generateGrid ((float) mapWidth * gridSize, (float) mapHeight * gridSize, (float) gridSize);
 
-    currentLevel.width = mapWidth * gridSize;
-    currentLevel.height = mapHeight * gridSize;
-    currentLevel.gridSize = gridSize;
+    currentLevel->width = mapWidth * gridSize;
+    currentLevel->height = mapHeight * gridSize;
+    currentLevel->gridSize = gridSize;
 }

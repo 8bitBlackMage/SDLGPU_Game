@@ -14,7 +14,7 @@ class TileMapEditor
 public:
     TileMapEditor() = default;
 
-    void init (GraphicsContext* context);
+    void init (Scene* scene, GraphicsContext* context);
 
     void render (FrameContext* context);
 
@@ -39,5 +39,5 @@ private:
 
     Texture testTex;
 
-    Scene currentLevel;
+    Scene* currentLevel;
 };
