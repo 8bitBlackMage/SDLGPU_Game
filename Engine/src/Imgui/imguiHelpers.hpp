@@ -1,5 +1,6 @@
 #pragma once
 
+#include "imgui.h"
 #include <Graphics/graphicsContext.hpp>
 
 class ImDrawList;

@@ -46,6 +46,7 @@ void startFrame()
 {
     styleLayout();
     styleColourDark();
+
     ImGui_ImplSDLGPU3_NewFrame();
     ImGui_ImplSDL3_NewFrame();
     ImGui::NewFrame();
