@@ -38,6 +38,6 @@ void Sprite::setTextureFromPortion (Texture t, int width, int height, int u, int
 
     inner.textureU = uvwh.x;
     inner.textureV = uvwh.y;
-    inner.textureW = uvwh.w;
-    inner.textureH = uvwh.h;
+    inner.textureW = uvwh.z;
+    inner.textureH = uvwh.w;
 }

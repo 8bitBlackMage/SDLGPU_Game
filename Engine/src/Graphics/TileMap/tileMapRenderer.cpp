@@ -105,8 +105,8 @@ void TileMapRenderer::loadTileMap (const ldtk::Level& level, GraphicsContext* co
 
                 data.textureU = uvwh.x;
                 data.textureV = uvwh.y;
-                data.textureW = uvwh.w;
-                data.textureH = uvwh.h;
+                data.textureW = uvwh.z;
+                data.textureH = uvwh.w;
 
                 data.a = tile.alpha;
                 tileData.push_back (data);

@@ -1,5 +1,7 @@
 #pragma once
-#include <Utils/vectorTypes.hpp>
+
+#include <glm/vec2.hpp>
+#include <glm/vec4.hpp>
 #include <rectpack2D/rect_structs.h>
 /// @brief Thin wrapper around SDL GPU Texture.
 
@@ -19,8 +21,8 @@ public:
     float getW() const;
     float getH() const;
 
-    Vec2<float> translatePixelToUV (int x, int y) const;
-    Vec4<float> getSubRectUV (int u, int v, int w, int h) const;
+    glm::vec2 translatePixelToUV (int x, int y) const;
+    glm::vec4 getSubRectUV (int u, int v, int w, int h) const;
 
 private:
     friend class TextureManager;

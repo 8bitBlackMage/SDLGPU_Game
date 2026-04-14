@@ -4,7 +4,7 @@
 #include "glm/ext/matrix_float4x4.hpp"
 #include <Graphics/Textures/textureManager.hpp>
 #include <SDL3/SDL.h>
-#include <Utils/vectorTypes.hpp>
+
 #include <glm/mat4x4.hpp>
 
 class RenderTexture;

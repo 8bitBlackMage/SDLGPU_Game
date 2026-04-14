@@ -1,8 +1,8 @@
+#include "glm/ext/vector_float2.hpp"
 #include <Graphics/Textures/texture.hpp>
 #include <Graphics/Textures/textureManager.hpp>
 #include <Graphics/graphicsContext.hpp>
 #include <Utils/logger.hpp>
-#include <Utils/vectorTypes.hpp>
 
 #include <SDL3/SDL.h>
 #include <SDL3_image/SDL_image.h>
@@ -158,7 +158,7 @@ void TextureManager::debugView()
         ImGui::Image ((ImTextureID) (intptr_t) texture,
                       { 200, 200 },
                       { uv.x, uv.y },
-                      { uv.w, uv.h });
+                      { uv.z, uv.w });
     }
     ImGui::End();
     ImGui::Begin ("Atlas View");
@@ -179,7 +179,7 @@ void TextureManager::debugView()
     ImGui::End();
 }
 
-Vec2<int> TextureManager::solve()
+glm::vec2 TextureManager::solve()
 {
     constexpr bool allow_flip = true;
     const auto runtime_flipping_mode = rectpack2D::flipping_option::ENABLED;
@@ -211,12 +211,12 @@ Vec2<int> TextureManager::solve()
             report_unsuccessful,
             runtime_flipping_mode));
 
-    return Vec2 (result_size.w, result_size.h);
+    return glm::vec2 (result_size.w, result_size.h);
 }
 
-Vec4<float> TextureManager::pixelToUV (int x, int y, int w, int h)
+glm::vec4 TextureManager::pixelToUV (int x, int y, int w, int h)
 {
-    return Vec4<float> {
+    return glm::vec4 {
         (float) x / textureSize.x,
         (float) y / textureSize.y,
         (float) (x + w) / textureSize.x,

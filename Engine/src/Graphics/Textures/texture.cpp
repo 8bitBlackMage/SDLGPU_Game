@@ -1,6 +1,5 @@
 #include <Graphics/Textures/texture.hpp>
 #include <Graphics/Textures/textureManager.hpp>
-#include <Utils/vectorTypes.hpp>
 
 Texture::Texture()
 {
@@ -46,7 +45,7 @@ float Texture::getH() const
     return (height) / textureSizePixelH;
 }
 
-Vec2<float> Texture::translatePixelToUV (int x, int y) const
+glm::vec2 Texture::translatePixelToUV (int x, int y) const
 {
     return {
         static_cast<float> (x) / static_cast<float> (manager->textureSize.x),
@@ -54,7 +53,7 @@ Vec2<float> Texture::translatePixelToUV (int x, int y) const
     };
 }
 
-Vec4<float> Texture::getSubRectUV (int u, int v, int w, int h) const
+glm::vec4 Texture::getSubRectUV (int u, int v, int w, int h) const
 {
     auto parentX = manager->getData (id)->bounds.x;
     auto parentY = manager->getData (id)->bounds.y;

@@ -1,6 +1,7 @@
 #pragma once
 #include <Graphics/Textures/texture.hpp>
-#include <Utils/vectorTypes.hpp>
+#include <glm/vec2.hpp>
+#include <glm/vec4.hpp>
 
 #include <SDL3/SDL.h>
 #include <map>
@@ -35,9 +36,9 @@ public:
     void debugView();
 
 private:
-    Vec2<int> solve();
+    glm::vec2 solve();
 
-    Vec4<float> pixelToUV (int x, int y, int w, int h);
+    glm::vec4 pixelToUV (int x, int y, int w, int h);
 
     ///@brief inner texture class that actually stores data pertaining to textures.
     class TextureData
@@ -66,7 +67,7 @@ private:
 
     TextureData* getData (size_t id) { return &textures[hashedFileNames[id]]; }
 
-    Vec2<int> textureSize;
+    glm::vec2 textureSize;
     SDL_GPUTexture* texture;
 
     int zoomFactor = 4;
