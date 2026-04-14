@@ -1,16 +1,22 @@
 
 
 #include "tileMapEditor.hpp"
+#include "Graphics/Structs/sprite.hpp"
 #include "Graphics/graphicsContext.hpp"
 #include "LevelData/Maps/scene.hpp"
 #include "imgui.h"
 
 void TileMapEditor::init (GraphicsContext* context)
 {
+    background.init (context);
     lineRenderer.init (context);
+    SpriteRenderer.init (context);
     graphicsContext = context;
     renderTexture.init (context, 1, 1);
     generateGrid (8192, 8292, 32);
+    graphicsContext->getTextureManager()->beginBatchUpload (graphicsContext);
+    testTex = graphicsContext->getTextureManager()->loadTexture ("player.png");
+    graphicsContext->getTextureManager()->endBatchUpload (graphicsContext);
 }
 
 void TileMapEditor::render (FrameContext* frameContext)
@@ -21,17 +27,10 @@ void TileMapEditor::render (FrameContext* frameContext)
     ImGui::InputScalar ("Map Height", ImGuiDataType_U16, &mapHeight);
     ImGui::InputScalar ("Grid Size", ImGuiDataType_U16, &gridSize);
     ImGui::Text ("Mouse: X: %i, y: %i", mouseX, mouseY);
+    ImGui::Text ("grid: X: %i, y: %i", (int) floor (mouseX / gridSize), (int) floor (mouseY / gridSize));
     ImGui::End();
 
     ImGui::Begin ("Map Editor", NULL, ImGuiWindowFlags_HorizontalScrollbar);
-    graphicsContext->startRenderTexture (&renderTexture);
-    for (auto& line : gridLines)
-    {
-        lineRenderer.draw (&line);
-    }
-    lineRenderer.render (frameContext);
-
-    graphicsContext->endRenderTexture();
 
     //get Mouse Position.
 
@@ -40,8 +39,25 @@ void TileMapEditor::render (FrameContext* frameContext)
     auto scrollPosX = ImGui::GetScrollX();
     auto scrollPosY = ImGui::GetScrollY();
 
-    mouseX = mousePos.x - cursorScreenPos.x - scrollPosX;
-    mouseY = mousePos.y - cursorScreenPos.y - scrollPosY;
+    mouseX = mousePos.x - cursorScreenPos.x;
+    mouseY = mousePos.y - cursorScreenPos.y;
+
+    graphicsContext->startRenderTexture (&renderTexture);
+    for (auto& line : gridLines)
+    {
+        lineRenderer.draw (&line);
+    }
+    background.render (frameContext);
+
+    auto previewPosX = floor ((float) mouseX / gridSize) * gridSize;
+    auto previewPosY = floor ((float) mouseY / gridSize) * gridSize;
+
+    auto sprite = Sprite { testTex, static_cast<int> (previewPosX), static_cast<int> (previewPosY), gridSize, gridSize, 0, 0, 16, 16 };
+    SpriteRenderer.draw (&sprite);
+
+    lineRenderer.render (frameContext);
+    SpriteRenderer.render (frameContext);
+    graphicsContext->endRenderTexture();
 
     if (mapHeight * gridSize != currentLevel.height || mapWidth * gridSize != currentLevel.width || gridSize != currentLevel.gridSize)
     {
