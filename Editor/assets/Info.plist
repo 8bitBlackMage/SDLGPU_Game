@@ -2,12 +2,14 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>LSApplicationCategoryType</key>
+	<string></string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleExecutable</key>
 	<string>Concorde</string>
 	<key>CFBundleGetInfoString</key>
-	<string></string>
+	<string>1.0</string>
 	<key>CFBundleIconFile</key>
 	<string>icon</string>
 	<key>CFBundleIdentifier</key>
@@ -15,7 +17,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleLongVersionString</key>
-	<string></string>
+	<string>1.0</string>
 	<key>CFBundleName</key>
 	<string>DungeonCrawler</string>
 	<key>CFBundlePackageType</key>
@@ -23,7 +25,7 @@
 	<key>CFBundleShortVersionString</key>
 	<string>1.0</string>
 	<key>CFBundleSignature</key>
-	<string>????</string>
+	<string>8bitBlackmage</string>
 	<key>CFBundleVersion</key>
 	<string>1.0</string>
 	<key>CSResourcesFileMapped</key>

@@ -91,31 +91,21 @@ FetchContent_MakeAvailable(glm)
 
 
 FetchContent_Declare(
-    integer-scaling
-    GIT_REPOSITORY "https://github.com/Marat-Tanalin/integer-scaling.git"
-    GIT_TAG "master"
-    EXCLUDE_FROM_ALL
-)
-FetchContent_MakeAvailable(integer-scaling)
-
-add_library(integer-scaling)
-
-target_include_directories(integer-scaling PUBLIC ${integer-scaling_SOURCE_DIR}/cpp)
-
-target_sources(integer-scaling 
-    PUBLIC
-    ${integer-scaling_SOURCE_DIR}/cpp/IntegerScaling.cpp
+    json
+    GIT_REPOSITORY https://github.com/nlohmann/json.git 
+    GIT_TAG 34e46d76da69b3754feb4e7a3b7a335c06fb53e6
 )
 
+FetchContent_MakeAvailable(json)
 
 add_library(dependencies INTERFACE)
 
 target_link_libraries(dependencies INTERFACE 
     SDL3::SDL3
     SDL3_image::SDL3_image
-    integer-scaling
     SDL3_ttf::SDL3_ttf
     glm::glm
+    nlohmann_json::nlohmann_json
     rectpack2D
     imgui
     LDtkLoader::LDtkLoader

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Graphics/graphicsContext.hpp"
+#include "LevelData/project.hpp"
 #include "editorSettings.hpp"
 #include "sceneEditor.hpp"
 class MainWindow
@@ -17,6 +18,8 @@ public:
     void setupDockSpace (ImGuiID id);
 
 private:
+    Project currentProject;
+
     bool firstFrame = true;
     bool running = true;
 

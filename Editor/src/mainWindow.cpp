@@ -1,10 +1,14 @@
 #include "mainWindow.hpp"
 #include "Imgui/imguiHelpers.hpp"
+#include "LevelData/project.hpp"
 #include "SDL3/SDL_dialog.h"
 #include "Utils/fileHelpers.hpp"
 #include "imgui_internal.h"
+#include "nlohmann/json_fwd.hpp"
 #include <Utils/logger.hpp>
 #include <cstddef>
+#include <filesystem>
+#include <fstream>
 
 #ifdef __APPLE__
 constexpr const char* saveShortcut = "Ctrl+S";
@@ -64,10 +68,16 @@ void MainWindow::present()
         }
         if (ImGui::MenuItem ("Save", saveShortcut))
         {
-            SDL_ShowSaveFileDialog ([] (void* userdata, const char* const* filelist, int filter) {
+            SDL_ShowSaveFileDialog ([] (void* userdata, const char* const* filelist, int filter)
+                                    {
+                                        if (filelist == nullptr)
+                                        {
+                                            return;
+                                        }
+                                        auto currentProject =(Project*) userdata;
 
-            },
-                                    nullptr,
+                                        currentProject->saveFile (std::filesystem::path (filelist[0])); },
+                                    &currentProject,
                                     graphicsContext.getWindow(),
                                     &projectFiles,
                                     1,
@@ -76,9 +86,8 @@ void MainWindow::present()
         if (ImGui::MenuItem ("Open", openShortcut))
         {
             SDL_ShowOpenFileDialog (
-                [] (void* userdata, const char* const* filelist, int filter)
-                {
-                    Logger::log (filelist[0]);
+                [] (void* userdata, const char* const* filelist, int filter) {
+
                 },
                 nullptr,
                 graphicsContext.getWindow(),

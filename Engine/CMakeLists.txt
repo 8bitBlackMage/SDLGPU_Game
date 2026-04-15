@@ -30,6 +30,7 @@ target_sources(${PROJECT_NAME}
     src/Graphics/Structs/sprite.cpp
     src/Graphics/Structs/line.cpp
 
+    src/LevelData/project.cpp
     src/LevelData/Maps/tileLayer.cpp
     src/Imgui/imguiHelpers.cpp
     src/Imgui/imguiTheme.cpp

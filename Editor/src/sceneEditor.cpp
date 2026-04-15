@@ -13,9 +13,9 @@ void SceneEditor::init (Scene* scene, GraphicsContext* context)
     graphicsContext = context;
     if (scene != nullptr)
     {
-        mapHeight = currentLevel->height / currentLevel->gridSize;
-        mapWidth = currentLevel->width / currentLevel->gridSize;
-        gridSize = currentLevel->gridSize;
+        // mapHeight = currentLevel->height / currentLevel->gridSize;
+        // mapWidth = currentLevel->width / currentLevel->gridSize;
+        // gridSize = currentLevel->gridSize;
     }
     background.init (graphicsContext);
     lineRenderer.init (graphicsContext);
@@ -80,10 +80,10 @@ void SceneEditor::present (FrameContext* frameContext)
     graphicsContext->endRenderTexture();
     if (currentLevel != nullptr)
     {
-        if (mapHeight * gridSize != currentLevel->height || mapWidth * gridSize != currentLevel->width || gridSize != currentLevel->gridSize)
-        {
-            regenerateMap();
-        }
+        // if (mapHeight * gridSize != currentLevel->height || mapWidth * gridSize != currentLevel->width || gridSize != currentLevel->gridSize)
+        // {
+        //     regenerateMap();
+        // }
     }
     ImGui::Image (renderTexture.getTexture(), { renderTexture.getSize().x, renderTexture.getSize().y });
     ImGui::End();
@@ -112,7 +112,7 @@ void SceneEditor::regenerateMap()
     renderTexture.resize (graphicsContext, (float) mapWidth * gridSize, (float) mapHeight * gridSize);
     generateGrid ((float) mapWidth * gridSize, (float) mapHeight * gridSize, (float) gridSize);
 
-    currentLevel->width = mapWidth * gridSize;
-    currentLevel->height = mapHeight * gridSize;
-    currentLevel->gridSize = gridSize;
+    // currentLevel->width = mapWidth * gridSize;
+    // currentLevel->height = mapHeight * gridSize;
+    // currentLevel->gridSize = gridSize;
 }
