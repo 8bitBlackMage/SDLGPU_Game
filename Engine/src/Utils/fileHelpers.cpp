@@ -5,6 +5,23 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+static std::filesystem::path appRootPath;
+
+void setApplicationRootPath (const char* pathstr)
+{
+    appRootPath = pathstr;
+}
+
+std::filesystem::path getApplicationRootPath()
+{
+    return appRootPath;
+}
+
+std::filesystem::path getAssetFolderPath()
+{
+    return getApplicationRootPath().parent_path().append ("assets");
+}
+
 std::filesystem::path getUserHomePath()
 {
     struct passwd* pw = getpwuid (getuid());

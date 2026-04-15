@@ -1,15 +1,26 @@
 #include "mainWindow.hpp"
 #include "Imgui/imguiHelpers.hpp"
+#include "SDL3/SDL_dialog.h"
+#include "Utils/fileHelpers.hpp"
 #include "imgui_internal.h"
 #include <Utils/logger.hpp>
 #include <cstddef>
+
+#ifdef __APPLE__
+constexpr const char* saveShortcut = "Ctrl+S";
+constexpr const char* newShortcut = "Ctrl+n";
+constexpr const char* openShortcut = "Ctrl+n";
+#else
+constexpr const char* saveShortcut = "Ctrl+s";
+constexpr const char* newShortcut = "Ctrl+n";
+constexpr const char* openShortcut = "Ctrl+n";
+#endif
 
 MainWindow::MainWindow()
 {
     graphicsContext.initContext ("Concorde");
 
     sceneEditor.init (nullptr, &graphicsContext);
-
     ImGUIHelpers::initContext (&graphicsContext);
 }
 void MainWindow::run()
@@ -40,17 +51,41 @@ void MainWindow::loop()
 
 void MainWindow::present()
 {
+    SDL_DialogFileFilter projectFiles {
+        .name = "Concorde Projects",
+        .pattern = "ccproj",
+    };
+
     ImGui::BeginMainMenuBar();
     if (ImGui::BeginMenu ("File"))
     {
-        if (ImGui::MenuItem ("New", "Ctrl+N"))
+        if (ImGui::MenuItem ("New", newShortcut))
         {
         }
-        if (ImGui::MenuItem ("Save", "Ctrl+S"))
+        if (ImGui::MenuItem ("Save", saveShortcut))
         {
+            SDL_ShowSaveFileDialog ([] (void* userdata, const char* const* filelist, int filter) {
+
+            },
+                                    nullptr,
+                                    graphicsContext.getWindow(),
+                                    &projectFiles,
+                                    1,
+                                    getUserHomePath().append ("Documents/").c_str());
         }
-        if (ImGui::MenuItem ("Open", "Ctrl+O"))
+        if (ImGui::MenuItem ("Open", openShortcut))
         {
+            SDL_ShowOpenFileDialog (
+                [] (void* userdata, const char* const* filelist, int filter)
+                {
+                    Logger::log (filelist[0]);
+                },
+                nullptr,
+                graphicsContext.getWindow(),
+                &projectFiles,
+                1,
+                getUserHomePath().append ("Documents/").c_str(),
+                false);
         }
         if (ImGui::MenuItem ("Settings"))
         {

@@ -1,3 +1,4 @@
+#include "Utils/fileHelpers.hpp"
 #include "glm/ext/vector_float2.hpp"
 #include <Graphics/Textures/texture.hpp>
 #include <Graphics/Textures/textureManager.hpp>
@@ -53,7 +54,7 @@ void TextureManager::endBatchUpload (GraphicsContext* context)
 
     for (auto& textureData : textures)
     {
-        std::filesystem::path imgpath = "assets/images/" + textureData.fileName;
+        std::filesystem::path imgpath = getAssetFolderPath().append ("images/" + textureData.fileName);
 
         auto surface = IMG_Load (imgpath.c_str());
 

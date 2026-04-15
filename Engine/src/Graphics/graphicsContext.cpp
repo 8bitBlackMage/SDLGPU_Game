@@ -2,6 +2,7 @@
 
 #include "Graphics/camera.hpp"
 #include "SDL3/SDL_gpu.h"
+#include "Utils/fileHelpers.hpp"
 #include <Graphics/Textures/textureManager.hpp>
 #include <Graphics/graphicsContext.hpp>
 #include <Graphics/renderTexture.hpp>
@@ -149,19 +150,19 @@ SDL_GPUShader* GraphicsContext::loadShader (std::string filename, Uint32 sampler
     {
         format = SDL_GPU_SHADERFORMAT_SPIRV;
         entryPoint = "main";
-        shaderpath = "assets/shaders/compiled/SPIRV/" + filename + ".spv";
+        shaderpath = getAssetFolderPath().string() + "/shaders/compiled/SPIRV/" + filename + ".spv";
     }
     else if (backendFormats & SDL_GPU_SHADERFORMAT_MSL)
     {
         format = SDL_GPU_SHADERFORMAT_MSL;
         entryPoint = "main0";
-        shaderpath = "assets/shaders/compiled/MSL/" + filename + ".msl";
+        shaderpath = getAssetFolderPath().string() + "/shaders/compiled/MSL/" + filename + ".msl";
     }
     else if (backendFormats & SDL_GPU_SHADERFORMAT_DXIL)
     {
         format = SDL_GPU_SHADERFORMAT_DXIL;
         entryPoint = "main";
-        shaderpath = "assets/shaders/compiled/DXIL/" + filename + ".dxil";
+        shaderpath = getAssetFolderPath().string() + "/shaders/compiled/DXIL/" + filename + ".dxil";
     }
     else
     {

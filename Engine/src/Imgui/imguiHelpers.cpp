@@ -1,3 +1,4 @@
+#include "Utils/fileHelpers.hpp"
 #include <Imgui/imguiHelpers.hpp>
 #include <Imgui/imguiTheme.hpp>
 #include <imgui.h>
@@ -21,7 +22,7 @@ void initContext (GraphicsContext* context)
     io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
-    io.Fonts->AddFontFromFileTTF ("assets/fonts/NotoSans-VariableFont_wdth,wght.ttf", 18.f);
+    io.Fonts->AddFontFromFileTTF (getAssetFolderPath().append ("fonts/NotoSans-VariableFont_wdth,wght.ttf").c_str(), 18.f);
 
     ImGui_ImplSDL3_InitForSDLGPU (context->getWindow());
     ImGui_ImplSDLGPU3_InitInfo initInfo = {};
