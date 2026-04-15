@@ -21,9 +21,9 @@ GraphicsContext::~GraphicsContext()
     shutdown();
 }
 
-void GraphicsContext::initContext()
+void GraphicsContext::initContext (const std::string& windowName)
 {
-    window = SDL_CreateWindow ("Dungeon Crawler", 1920, 1080, SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY | SDL_WINDOW_HIDDEN);
+    window = SDL_CreateWindow (windowName.c_str(), 1920, 1080, SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY | SDL_WINDOW_HIDDEN);
     if (window == nullptr)
     {
         Logger::log ("SDL WINDOW Creation failed: ", SDL_GetError());

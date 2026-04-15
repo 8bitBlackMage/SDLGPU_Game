@@ -32,7 +32,7 @@ public:
 
     /// @brief Sets up SDL GPU device state, must be called first otherwise no other functions will work.
     /// @param window pointer to SDL Window
-    void initContext();
+    void initContext (const std::string& windowName = "Olympus");
 
     void shutdown();
 

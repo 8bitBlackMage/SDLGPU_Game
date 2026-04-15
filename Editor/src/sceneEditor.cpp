@@ -11,10 +11,12 @@ void SceneEditor::init (Scene* scene, GraphicsContext* context)
 {
     currentLevel = scene;
     graphicsContext = context;
-    mapHeight = currentLevel->height / currentLevel->gridSize;
-    mapWidth = currentLevel->width / currentLevel->gridSize;
-    gridSize = currentLevel->gridSize;
-
+    if (scene != nullptr)
+    {
+        mapHeight = currentLevel->height / currentLevel->gridSize;
+        mapWidth = currentLevel->width / currentLevel->gridSize;
+        gridSize = currentLevel->gridSize;
+    }
     background.init (graphicsContext);
     lineRenderer.init (graphicsContext);
     SpriteRenderer.init (graphicsContext);
@@ -35,6 +37,11 @@ void SceneEditor::setupDockSpace (ImGuiID centre, ImGuiID left, ImGuiID right, I
 
 void SceneEditor::present (FrameContext* frameContext)
 {
+    if (currentLevel == nullptr)
+    {
+        return;
+    }
+
     ImGui::Begin ("Map Settings");
     ImGui::InputScalar ("Map Width", ImGuiDataType_U16, &mapWidth);
     ImGui::InputScalar ("Map Height", ImGuiDataType_U16, &mapHeight);
@@ -71,10 +78,12 @@ void SceneEditor::present (FrameContext* frameContext)
     lineRenderer.render (frameContext);
     SpriteRenderer.render (frameContext);
     graphicsContext->endRenderTexture();
-
-    if (mapHeight * gridSize != currentLevel->height || mapWidth * gridSize != currentLevel->width || gridSize != currentLevel->gridSize)
+    if (currentLevel != nullptr)
     {
-        regenerateMap();
+        if (mapHeight * gridSize != currentLevel->height || mapWidth * gridSize != currentLevel->width || gridSize != currentLevel->gridSize)
+        {
+            regenerateMap();
+        }
     }
     ImGui::Image (renderTexture.getTexture(), { renderTexture.getSize().x, renderTexture.getSize().y });
     ImGui::End();

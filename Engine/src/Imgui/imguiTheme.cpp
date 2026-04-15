@@ -96,7 +96,7 @@ void ImGUIHelpers::styleColourDark()
     style.Colors[ImGuiCol_ButtonHovered] = brightHighlight;
     style.Colors[ImGuiCol_ButtonActive] = darkHighlight;
 
-    style.Colors[ImGuiCol_Header] = darkHighlight;
+    style.Colors[ImGuiCol_Header] = midHighlight;
     style.Colors[ImGuiCol_HeaderHovered] = brightHighlight;
     style.Colors[ImGuiCol_HeaderActive] = midHighlight;
 
@@ -112,7 +112,10 @@ void ImGUIHelpers::styleColourDark()
     style.Colors[ImGuiCol_TabHovered] = brightHighlight;
     style.Colors[ImGuiCol_TabActive] = midHighlight;
 
-    style.Colors[ImGuiCol_TabUnfocused] = lightBackground;
+    style.Colors[ImGuiCol_TabDimmed] = midHighlight;
+    style.Colors[ImGuiCol_TabDimmedSelected] = brightHighlight;
+
+    style.Colors[ImGuiCol_TabUnfocused] = midBackground;
     style.Colors[ImGuiCol_TabUnfocusedActive] = lightBackground;
 
     style.Colors[ImGuiCol_PlotLines] = midBackground;
@@ -133,6 +136,8 @@ void ImGUIHelpers::styleColourDark()
     style.Colors[ImGuiCol_NavWindowingHighlight] = brightHighlight;
     style.Colors[ImGuiCol_NavWindowingDimBg] = midBackground;
     style.Colors[ImGuiCol_ModalWindowDimBg] = darkBackground;
+
+    style.Colors[ImGuiCol_DockingEmptyBg] = darkBackground;
 }
 
 void ImGUIHelpers::styleColourLight()
@@ -220,4 +225,6 @@ void ImGUIHelpers::styleColourLight()
     style.Colors[ImGuiCol_NavWindowingHighlight] = brightHighlight;
     style.Colors[ImGuiCol_NavWindowingDimBg] = midBackground;
     style.Colors[ImGuiCol_ModalWindowDimBg] = darkBackground;
+
+    style.Colors[ImGuiCol_DockingEmptyBg] = darkBackground;
 }
