@@ -33,8 +33,8 @@ void ImGUIHelpers::styleLayout()
     style.FrameBorderSize = 0.0f;
     style.ItemSpacing = ImVec2 (4.300000190734863f, 5.5f);
     style.ItemInnerSpacing = ImVec2 (7.099999904632568f, 1.799999952316284f);
-    style.CellPadding = ImVec2 (12.10000038146973f, 9.199999809265137f);
-    style.IndentSpacing = 0.0f;
+    //    style.CellPadding = ImVec2 (12.10000038146973f, 9.199999809265137f);
+
     style.ColumnsMinSpacing = 4.900000095367432f;
     style.ScrollbarSize = 11.60000038146973f;
     style.ScrollbarRounding = 15.89999961853027f;
@@ -45,11 +45,12 @@ void ImGUIHelpers::styleLayout()
     //style.TabMinWidthForCloseButton = 0.0f;
     style.ColorButtonPosition = ImGuiDir_Right;
     style.ButtonTextAlign = ImVec2 (0.5f, 0.5f);
-    style.SelectableTextAlign = ImVec2 (0.0f, 0.0f);
+    style.SelectableTextAlign = ImVec2 (0.01f, 0.0f);
 }
 
 void ImGUIHelpers::styleColourDark()
 {
+    //constexpr auto darkAccent = u8tofloatColour(50,50,50,255);
     constexpr auto darkBackground = u8tofloatColour (65, 65, 65, 255);
     constexpr auto midBackground = u8tofloatColour (80, 80, 80, 255);
     constexpr auto lightBackground = u8tofloatColour (100, 100, 100, 255);
@@ -65,16 +66,16 @@ void ImGUIHelpers::styleColourDark()
     style.Colors[ImGuiCol_Text] = text;
     style.Colors[ImGuiCol_TextDisabled] = disabledText;
 
-    style.Colors[ImGuiCol_WindowBg] = darkBackground;
-    style.Colors[ImGuiCol_ChildBg] = darkBackground;
-    style.Colors[ImGuiCol_PopupBg] = darkBackground;
+    style.Colors[ImGuiCol_WindowBg] = midBackground;
+    style.Colors[ImGuiCol_ChildBg] = midBackground;
+    style.Colors[ImGuiCol_PopupBg] = midBackground;
 
-    style.Colors[ImGuiCol_Border] = midBackground;
+    style.Colors[ImGuiCol_Border] = lightBackground;
     style.Colors[ImGuiCol_BorderShadow] = darkBackground;
 
     style.Colors[ImGuiCol_FrameBgActive] = lightBackground;
-    style.Colors[ImGuiCol_FrameBgHovered] = darkBackground;
-    style.Colors[ImGuiCol_FrameBg] = midBackground;
+    style.Colors[ImGuiCol_FrameBgHovered] = lightBackground;
+    style.Colors[ImGuiCol_FrameBg] = darkBackground;
 
     style.Colors[ImGuiCol_TitleBg] = darkBackground;
     style.Colors[ImGuiCol_TitleBgActive] = midBackground;
@@ -126,7 +127,7 @@ void ImGUIHelpers::styleColourDark()
     style.Colors[ImGuiCol_TableHeaderBg] = midBackground;
     style.Colors[ImGuiCol_TableBorderStrong] = midHighlight;
     style.Colors[ImGuiCol_TableBorderLight] = lightBackground;
-    style.Colors[ImGuiCol_TableRowBgAlt] = darkBackground;
+    style.Colors[ImGuiCol_TableRowBgAlt] = darkHighlight;
 
     style.Colors[ImGuiCol_TextSelectedBg] = lightBackground;
     style.Colors[ImGuiCol_DragDropTarget] = midHighlight;
@@ -135,9 +136,7 @@ void ImGUIHelpers::styleColourDark()
 
     style.Colors[ImGuiCol_NavWindowingHighlight] = brightHighlight;
     style.Colors[ImGuiCol_NavWindowingDimBg] = midBackground;
-    style.Colors[ImGuiCol_ModalWindowDimBg] = darkBackground;
-
-    style.Colors[ImGuiCol_DockingEmptyBg] = darkBackground;
+    style.Colors[ImGuiCol_ModalWindowDimBg] = u8tofloatColour (65, 65, 65, 100);
 }
 
 void ImGUIHelpers::styleColourLight()

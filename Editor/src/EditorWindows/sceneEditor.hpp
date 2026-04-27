@@ -1,5 +1,5 @@
-#pragma once
-
+#ifndef CONCORDE_SCENEEDITOR_H
+#define CONCORDE_SCENEEDITOR_H
 #include "Graphics/Pipelines/backgroundRenderer.hpp"
 #include "Graphics/Pipelines/lineRenderer.hpp"
 #include "Graphics/Pipelines/spriteBatch.hpp"
@@ -46,3 +46,6 @@ private:
     bool mapOpen;
     bool mapSettingsOpen;
 };
+
+
+#endif //CONCORDE_SCENEEDITOR_H

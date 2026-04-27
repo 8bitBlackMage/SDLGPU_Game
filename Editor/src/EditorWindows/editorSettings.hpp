@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CONCORDE_EDITORSETTINGS_H
+#define CONCORDE_EDITORSETTINGS_H
 #include <string>
 
 class EditorSettings
@@ -14,3 +15,5 @@ private:
     int currentTheme = 0;
     std::string themes[2] = { "Dark", "Light" };
 };
+
+#endif //CONCORDE_EDITORSETTINGS_H

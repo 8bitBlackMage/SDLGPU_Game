@@ -6,6 +6,7 @@
 #include "LevelData/Maps/scene.hpp"
 #include "imgui.h"
 #include "imgui_internal.h"
+#include "windowIDs.hpp"
 
 void SceneEditor::init (Scene* scene, GraphicsContext* context)
 {
@@ -31,8 +32,8 @@ void SceneEditor::init (Scene* scene, GraphicsContext* context)
 
 void SceneEditor::setupDockSpace (ImGuiID centre, ImGuiID left, ImGuiID right, ImGuiID bottom)
 {
-    ImGui::DockBuilderDockWindow ("Map Settings", left);
-    ImGui::DockBuilderDockWindow ("Scene Editor", centre);
+    ImGui::DockBuilderDockWindow (WindowIDs::sceneSettings, left);
+    ImGui::DockBuilderDockWindow (WindowIDs::sceneEditor, centre);
 }
 
 void SceneEditor::present (FrameContext* frameContext)
@@ -42,7 +43,7 @@ void SceneEditor::present (FrameContext* frameContext)
         return;
     }
 
-    ImGui::Begin ("Map Settings");
+    ImGui::Begin (WindowIDs::sceneSettings);
     ImGui::InputScalar ("Map Width", ImGuiDataType_U16, &mapWidth);
     ImGui::InputScalar ("Map Height", ImGuiDataType_U16, &mapHeight);
     ImGui::InputScalar ("Grid Size", ImGuiDataType_U16, &gridSize);
@@ -51,7 +52,7 @@ void SceneEditor::present (FrameContext* frameContext)
     ImGui::End();
 
     ImGui::SetNextWindowSizeConstraints ({ 800, 600 }, { 1920, 1080 });
-    ImGui::Begin ("Scene Editor", NULL, ImGuiWindowFlags_HorizontalScrollbar);
+    ImGui::Begin (WindowIDs::sceneEditor, NULL, ImGuiWindowFlags_HorizontalScrollbar);
     //get Mouse Position.
 
     auto mousePos = ImGui::GetMousePos();

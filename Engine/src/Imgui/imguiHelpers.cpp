@@ -4,12 +4,12 @@
 #include <imgui.h>
 #include <imgui_impl_sdl3.h>
 #include <imgui_impl_sdlgpu3.h>
-void ImDrawCallback_ImplSDLGPU3_SetSampler (const ImDrawList* /*parent_list*/, const ImDrawCmd* cmd)
-{
-    ImGui_ImplSDLGPU3_RenderState* state = (ImGui_ImplSDLGPU3_RenderState*) ImGui::GetPlatformIO().Renderer_RenderState;
-    SDL_GPUSampler* sampler = cmd->UserCallbackData ? (SDL_GPUSampler*) cmd->UserCallbackData : state->SamplerNearest;
-    state->SamplerCurrent = sampler;
-}
+// void ImDrawCallback_ImplSDLGPU3_SetSampler (const ImDrawList* /*parent_list*/, const ImDrawCmd* cmd)
+// {
+//     ImGui_ImplSDLGPU3_RenderState* state = (ImGui_ImplSDLGPU3_RenderState*) ImGui::GetPlatformIO().Renderer_RenderState;
+//     SDL_GPUSampler* sampler = cmd->UserCallbackData ? (SDL_GPUSampler*) cmd->UserCallbackData : state->SamplerNearest;
+//     state->SamplerCurrent = sampler;
+// }
 
 namespace ImGUIHelpers
 {
@@ -22,7 +22,7 @@ void initContext (GraphicsContext* context)
     io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
-    io.Fonts->AddFontFromFileTTF (getAssetFolderPath().append ("fonts/NotoSans-VariableFont_wdth,wght.ttf").c_str(), 18.f);
+    io.Fonts->AddFontFromFileTTF (getAssetFolderPath().append ("fonts/0xProtoNerdFont-Regular.ttf").c_str(), 18.f);
 
     ImGui_ImplSDL3_InitForSDLGPU (context->getWindow());
     ImGui_ImplSDLGPU3_InitInfo initInfo = {};

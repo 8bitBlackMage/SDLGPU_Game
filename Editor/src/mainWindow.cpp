@@ -1,29 +1,23 @@
 #include "mainWindow.hpp"
+
+#include "EditorWindows/projectSettings.hpp"
 #include "Imgui/imguiHelpers.hpp"
+
+#include "EditorWindows/windowIDs.hpp"
 #include "LevelData/project.hpp"
-#include "SDL3/SDL_dialog.h"
-#include "Utils/fileHelpers.hpp"
 #include "imgui_internal.h"
-#include "nlohmann/json_fwd.hpp"
+#include "nfd.h"
+
+#include <filesystem>
+#include <nfd.hpp>
+
 #include <Utils/logger.hpp>
 #include <cstddef>
-#include <filesystem>
-#include <fstream>
-
-#ifdef __APPLE__
-constexpr const char* saveShortcut = "Ctrl+S";
-constexpr const char* newShortcut = "Ctrl+n";
-constexpr const char* openShortcut = "Ctrl+n";
-#else
-constexpr const char* saveShortcut = "Ctrl+s";
-constexpr const char* newShortcut = "Ctrl+n";
-constexpr const char* openShortcut = "Ctrl+n";
-#endif
+#include <string>
 
 MainWindow::MainWindow()
 {
     graphicsContext.initContext ("Concorde");
-
     sceneEditor.init (nullptr, &graphicsContext);
     ImGUIHelpers::initContext (&graphicsContext);
 }
@@ -55,46 +49,34 @@ void MainWindow::loop()
 
 void MainWindow::present()
 {
-    SDL_DialogFileFilter projectFiles {
-        .name = "Concorde Projects",
-        .pattern = "ccproj",
-    };
-
     ImGui::BeginMainMenuBar();
     if (ImGui::BeginMenu ("File"))
     {
-        if (ImGui::MenuItem ("New", newShortcut))
+        if (ImGui::MenuItem ("New", "Ctrl+N"))
         {
         }
-        if (ImGui::MenuItem ("Save", saveShortcut))
+        if (ImGui::MenuItem ("Save", "Ctrl+S"))
         {
-            SDL_ShowSaveFileDialog ([] (void* userdata, const char* const* filelist, int filter)
-                                    {
-                                        if (filelist == nullptr)
-                                        {
-                                            return;
-                                        }
-                                        auto currentProject =(Project*) userdata;
+            NFD::Guard nfdGuard;
+            NFD::UniquePathN path;
+            nfdu8filteritem_t filter = { "Project File", "ccproj" };
+            auto result = NFD::SaveDialog (path, &filter, 1);
 
-                                        currentProject->saveFile (std::filesystem::path (filelist[0])); },
-                                    &currentProject,
-                                    graphicsContext.getWindow(),
-                                    &projectFiles,
-                                    1,
-                                    getUserHomePath().append ("Documents/").c_str());
+            if (result == NFD_OKAY)
+            {
+                currentProject.saveFile (std::filesystem::path (path.get()));
+            }
         }
-        if (ImGui::MenuItem ("Open", openShortcut))
+        if (ImGui::MenuItem ("Open", "Ctrl+O"))
         {
-            SDL_ShowOpenFileDialog (
-                [] (void* userdata, const char* const* filelist, int filter) {
-
-                },
-                nullptr,
-                graphicsContext.getWindow(),
-                &projectFiles,
-                1,
-                getUserHomePath().append ("Documents/").c_str(),
-                false);
+            NFD::Guard nfdGuard;
+            NFD::UniquePathN path;
+            nfdu8filteritem_t filter = { "Project File", "ccproj" };
+            auto result = NFD::OpenDialog (path, &filter, 1);
+            if (result == NFD_OKAY)
+            {
+                currentProject.loadFile (std::filesystem::path (path.get()));
+            }
         }
         if (ImGui::MenuItem ("Settings"))
         {
@@ -135,7 +117,7 @@ void MainWindow::present()
     {
         Logger::getLogger().draw (&showLogger);
     }
-
+    projectSettings.present (&currentProject);
     sceneEditor.present (graphicsContext.getFrameContext());
     editorSettings.present();
 }
@@ -157,12 +139,14 @@ void MainWindow::setupDockSpace (ImGuiID id)
     const ImGuiDockNodeFlags dockspaceFlags = ImGuiDockNodeFlags_None | ImGuiDockNodeFlags_NoWindowMenuButton;
     ImGui::DockBuilderRemoveNode (id);
     ImGui::DockBuilderAddNode (id, dockspaceFlags);
-    auto left = ImGui::DockBuilderSplitNode (id, ImGuiDir_Left, 0.2f, nullptr, &id);
-    auto right = ImGui::DockBuilderSplitNode (id, ImGuiDir_Right, 0.2f, nullptr, &id);
+    auto left = ImGui::DockBuilderSplitNode (id, ImGuiDir_Left, 0.24f, nullptr, &id);
+    auto right = ImGui::DockBuilderSplitNode (id, ImGuiDir_Right, 0.24f, nullptr, &id);
     auto bottom = ImGui::DockBuilderSplitNode (id, ImGuiDir_Down, 0.3f, nullptr, &id);
 
-    ImGui::DockBuilderDockWindow ("Log", bottom);
+    ImGui::DockBuilderDockWindow (WindowIDs::fileBrowser, id);
 
+    ImGui::DockBuilderDockWindow ("Log", bottom);
+    projectSettings.setupDockSpace (id, left, right, bottom);
     sceneEditor.setupDockSpace (id, left, right, bottom);
     ImGui::DockBuilderFinish (id);
 }

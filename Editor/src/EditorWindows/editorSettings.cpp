@@ -32,7 +32,7 @@ void EditorSettings::present()
     if (open)
     {
         ImGui::SetNextWindowSizeConstraints ({ 500, 500 }, { 1920, 1080 });
-        ImGui::Begin ("Settings", &open, ImGuiWindowFlags_NoDocking);
+        ImGui::Begin (" Settings", &open, ImGuiWindowFlags_NoDocking);
         std::string& themePreview = themes[currentTheme];
         if (ImGui::BeginCombo ("Theme", themePreview.c_str()))
         {
