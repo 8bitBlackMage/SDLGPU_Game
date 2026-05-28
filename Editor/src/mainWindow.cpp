@@ -4,7 +4,7 @@
 #include "Imgui/imguiHelpers.hpp"
 
 #include "EditorWindows/windowIDs.hpp"
-#include "LevelData/project.hpp"
+
 #include "imgui_internal.h"
 #include "nfd.h"
 
@@ -18,7 +18,7 @@
 MainWindow::MainWindow()
 {
     graphicsContext.initContext ("Concorde");
-    sceneEditor.init (nullptr, &graphicsContext);
+    sceneEditor.init (&graphicsContext);
     ImGUIHelpers::initContext (&graphicsContext);
 }
 void MainWindow::run()
@@ -62,10 +62,10 @@ void MainWindow::present()
             nfdu8filteritem_t filter = { "Project File", "ccproj" };
             auto result = NFD::SaveDialog (path, &filter, 1);
 
-            if (result == NFD_OKAY)
-            {
-                currentProject.saveFile (std::filesystem::path (path.get()));
-            }
+            // if (result == NFD_OKAY)
+            // {
+            //     currentProject.saveFile (std::filesystem::path (path.get()));
+            // }
         }
         if (ImGui::MenuItem ("Open", "Ctrl+O"))
         {
@@ -73,10 +73,10 @@ void MainWindow::present()
             NFD::UniquePathN path;
             nfdu8filteritem_t filter = { "Project File", "ccproj" };
             auto result = NFD::OpenDialog (path, &filter, 1);
-            if (result == NFD_OKAY)
-            {
-                currentProject.loadFile (std::filesystem::path (path.get()));
-            }
+            // if (result == NFD_OKAY)
+            // {
+            //     currentProject.loadFile (std::filesystem::path (path.get()));
+            // }
         }
         if (ImGui::MenuItem ("Settings"))
         {
@@ -117,7 +117,7 @@ void MainWindow::present()
     {
         Logger::getLogger().draw (&showLogger);
     }
-    projectSettings.present (&currentProject);
+    //projectSettings.present (&currentProject);
     sceneEditor.present (graphicsContext.getFrameContext());
     editorSettings.present();
 }

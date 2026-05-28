@@ -7,7 +7,6 @@
 #include "EditorWindows/sceneEditor.hpp"
 #include "Graphics/graphicsContext.hpp"
 
-#include "LevelData/project.hpp"
 #include "imgui.h"
 class MainWindow
 {
@@ -23,7 +22,7 @@ public:
     void setupDockSpace (ImGuiID id);
 
 private:
-    Project currentProject;
+    //  Project currentProject;
 
     bool firstFrame = true;
     bool running = true;
@@ -31,7 +30,6 @@ private:
     bool showLogger = false;
 
     GraphicsContext graphicsContext;
-
 
     ProjectSettings projectSettings;
     SceneEditor sceneEditor;

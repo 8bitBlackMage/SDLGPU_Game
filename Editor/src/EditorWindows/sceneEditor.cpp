@@ -3,21 +3,20 @@
 #include "sceneEditor.hpp"
 #include "Graphics/Structs/sprite.hpp"
 #include "Graphics/graphicsContext.hpp"
-#include "LevelData/Maps/scene.hpp"
 #include "imgui.h"
 #include "imgui_internal.h"
 #include "windowIDs.hpp"
 
-void SceneEditor::init (Scene* scene, GraphicsContext* context)
+void SceneEditor::init (GraphicsContext* context)
 {
-    currentLevel = scene;
+    // currentLevel = scene;
     graphicsContext = context;
-    if (scene != nullptr)
-    {
-        // mapHeight = currentLevel->height / currentLevel->gridSize;
-        // mapWidth = currentLevel->width / currentLevel->gridSize;
-        // gridSize = currentLevel->gridSize;
-    }
+    // if (scene != nullptr)
+    // {
+    //     // mapHeight = currentLevel->height / currentLevel->gridSize;
+    //     // mapWidth = currentLevel->width / currentLevel->gridSize;
+    //     // gridSize = currentLevel->gridSize;
+    // }
     background.init (graphicsContext);
     lineRenderer.init (graphicsContext);
     SpriteRenderer.init (graphicsContext);
@@ -38,11 +37,7 @@ void SceneEditor::setupDockSpace (ImGuiID centre, ImGuiID left, ImGuiID right, I
 
 void SceneEditor::present (FrameContext* frameContext)
 {
-    if (currentLevel == nullptr)
-    {
-        return;
-    }
-
+    return;
     ImGui::Begin (WindowIDs::sceneSettings);
     ImGui::InputScalar ("Map Width", ImGuiDataType_U16, &mapWidth);
     ImGui::InputScalar ("Map Height", ImGuiDataType_U16, &mapHeight);
@@ -79,13 +74,13 @@ void SceneEditor::present (FrameContext* frameContext)
     lineRenderer.render (frameContext);
     SpriteRenderer.render (frameContext);
     graphicsContext->endRenderTexture();
-    if (currentLevel != nullptr)
-    {
-        // if (mapHeight * gridSize != currentLevel->height || mapWidth * gridSize != currentLevel->width || gridSize != currentLevel->gridSize)
-        // {
-        //     regenerateMap();
-        // }
-    }
+    // if (currentLevel != nullptr)
+    // {
+    //     // if (mapHeight * gridSize != currentLevel->height || mapWidth * gridSize != currentLevel->width || gridSize != currentLevel->gridSize)
+    //     // {
+    //     //     regenerateMap();
+    //     // }
+    // }
     ImGui::Image (renderTexture.getTexture(), { renderTexture.getSize().x, renderTexture.getSize().y });
     ImGui::End();
 }

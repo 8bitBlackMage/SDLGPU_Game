@@ -1,12 +1,12 @@
 #ifndef CONCORDE_PROJECTSETTINGS_H
 #define CONCORDE_PROJECTSETTINGS_H
-#include "LevelData/project.hpp"
+#include "GameData/gameData.hpp"
 #include "imgui.h"
 
 class ProjectSettings
 {
 public:
-    void present (Project* currentProject);
+    void present (GameData* currentProject);
     void setupDockSpace (ImGuiID centre, ImGuiID left, ImGuiID right, ImGuiID bottom);
 
     void newScenePopUp();

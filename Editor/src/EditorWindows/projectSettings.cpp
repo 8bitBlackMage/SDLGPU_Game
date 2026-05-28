@@ -6,30 +6,30 @@
 #include "windowIDs.hpp"
 #include <string>
 
-void ProjectSettings::present (Project* currentProject)
+void ProjectSettings::present (GameData* currentProject)
 {
     ImGui::Begin (WindowIDs::projectSettings);
-    ImGui::InputText ("Project Name ", &currentProject->name);
+    ImGui::InputText ("Project Name ", currentProject->getName());
     if (ImGui::TreeNodeEx ("Scenes", ImGuiTreeNodeFlags_DefaultOpen))
     {
         ImGuiStyle& style = ImGui::GetStyle();
         ImGui::BeginTable ("Scenes", 1, ImGuiTableFlags_RowBg);
 
-        for (auto& scene : currentProject->scenes)
-        {
-            ImGui::TableNextRow();
-            bool isSelected;
-            ImGui::TableSetColumnIndex (0);
-            ImGui::PushStyleVar (ImGuiStyleVar_ItemSpacing, ImVec2 (style.ItemSpacing.x, style.CellPadding.y * 2)); // Fix
-            ImGui::Selectable (scene.second.c_str(), isSelected, ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowOverlap, { 0, 0 });
-            ImGui::PopStyleVar();
-        }
+        // for (auto& scene : currentProject->getScenes())
+        // {
+        //     ImGui::TableNextRow();
+        //     bool isSelected;
+        //     ImGui::TableSetColumnIndex (0);
+        //     ImGui::PushStyleVar (ImGuiStyleVar_ItemSpacing, ImVec2 (style.ItemSpacing.x, style.CellPadding.y * 2)); // Fix
+        //     ImGui::Selectable (scene.second.c_str(), isSelected, ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowOverlap, { 0, 0 });
+        //     ImGui::PopStyleVar();
+        // }
         ImGui::EndTable();
 
         ImGui::TreePop();
     }
     ImGui::Separator();
-    if (ImGui::Button ("󰦃 New Scene"))
+    if (ImGui::Button ("New Scene"))
     {
         ImGui::OpenPopup ("New Scene");
     }
@@ -38,21 +38,21 @@ void ProjectSettings::present (Project* currentProject)
         ImGuiStyle& style = ImGui::GetStyle();
         ImGui::BeginTable ("Entity Definitions", 1, ImGuiTableFlags_RowBg);
 
-        for (auto& entityDef : currentProject->entityDefs)
-        {
-            ImGui::TableNextRow();
-            bool isSelected;
-            ImGui::TableSetColumnIndex (0);
-            ImGui::PushStyleVar (ImGuiStyleVar_ItemSpacing, ImVec2 (style.ItemSpacing.x, style.CellPadding.y * 2)); // Fix
-            ImGui::Selectable (entityDef.second.c_str(), isSelected, ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowOverlap, { 0, 0 });
-            ImGui::PopStyleVar();
-        }
+        // for (auto& entityDef : currentProject->entityDefs)
+        // {
+        //     ImGui::TableNextRow();
+        //     bool isSelected;
+        //     ImGui::TableSetColumnIndex (0);
+        //     ImGui::PushStyleVar (ImGuiStyleVar_ItemSpacing, ImVec2 (style.ItemSpacing.x, style.CellPadding.y * 2)); // Fix
+        //     ImGui::Selectable (entityDef.second.c_str(), isSelected, ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowOverlap, { 0, 0 });
+        //     ImGui::PopStyleVar();
+        // }
         ImGui::EndTable();
 
         ImGui::TreePop();
     }
     ImGui::Separator();
-    if (ImGui::Button ("󰙑 New Entity Definition"))
+    if (ImGui::Button ("New Entity Definition"))
     {
         ImGui::OpenPopup ("New Entity Definition");
     }
@@ -69,13 +69,28 @@ void ProjectSettings::newScenePopUp()
     ImGui::SetNextWindowSizeConstraints ({ 500, 200 }, { 500, 200 });
     ImVec2 center = ImGui::GetMainViewport()->GetCenter();
     ImGui::SetNextWindowPos (center, ImGuiCond_Appearing, ImVec2 (0.5f, 0.5f));
-    if (ImGui::BeginPopupModal ("New Scene", nullptr,ImGuiWindowFlags_NoScrollbar|ImGuiWindowFlags_NoScrollWithMouse |ImGuiWindowFlags_NoResize))
+    if (ImGui::BeginPopupModal ("New Scene", nullptr, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoResize))
     {
-        ImGui::Dummy(ImVec2(0.0f, 25.0f));
+        ImGui::Dummy (ImVec2 (0.0f, 25.0f));
         ImGui::Text ("File Path");
-        ImGui::InputText ("##FilePath",&filepath);
-        ImGui::TextColored ({0.24705882f,0.74901961f ,0.24705882f,1.0f},"Path is Valid");
-        ImGui::Dummy(ImVec2(0.0f, 25.0f));
+
+        bool validPath = true;
+        ImGui::InputText ("##FilePath", &filepath);
+
+        if (! exists (std::filesystem::path (filepath).parent_path()))
+        {
+            validPath = false;
+        }
+
+        if (validPath)
+        {
+            ImGui::TextColored ({ 0.24705882f, 0.74901961f, 0.24705882f, 1.0f }, "Path is Valid");
+        }
+        else
+        {
+            ImGui::TextColored ({ 0.89019608f, 0.17254902f, 0.03529412f, 1.0f }, "Path is not Valid");
+        }
+        ImGui::Dummy (ImVec2 (0.0f, 25.0f));
         if (ImGui::Button ("Ok"))
         {
             ImGui::CloseCurrentPopup();
@@ -95,13 +110,13 @@ void ProjectSettings::newEntityDefinitionPopUp()
     ImGui::SetNextWindowSizeConstraints ({ 500, 200 }, { 500, 200 });
     ImVec2 center = ImGui::GetMainViewport()->GetCenter();
     ImGui::SetNextWindowPos (center, ImGuiCond_Appearing, ImVec2 (0.5f, 0.5f));
-    if (ImGui::BeginPopupModal ("New Entity Definition", nullptr,ImGuiWindowFlags_NoScrollbar|ImGuiWindowFlags_NoScrollWithMouse |ImGuiWindowFlags_NoResize))
+    if (ImGui::BeginPopupModal ("New Entity Definition", nullptr, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoResize))
     {
-        ImGui::Dummy(ImVec2(0.0f, 25.0f));
+        ImGui::Dummy (ImVec2 (0.0f, 25.0f));
         ImGui::Text ("File Path");
-        ImGui::InputText ("##FilePath",&filepath);
-        ImGui::TextColored ({0.24705882f,0.74901961f ,0.24705882f,1.0f},"Path is Valid");
-        ImGui::Dummy(ImVec2(0.0f, 25.0f));
+        ImGui::InputText ("##FilePath", &filepath);
+        ImGui::TextColored ({ 0.24705882f, 0.74901961f, 0.24705882f, 1.0f }, "Path is Valid");
+        ImGui::Dummy (ImVec2 (0.0f, 25.0f));
         if (ImGui::Button ("Ok"))
         {
             ImGui::CloseCurrentPopup();

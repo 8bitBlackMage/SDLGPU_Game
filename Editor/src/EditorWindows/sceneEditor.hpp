@@ -7,15 +7,13 @@
 #include "Graphics/graphicsContext.hpp"
 #include "Graphics/renderTexture.hpp"
 
-#include "LevelData/Maps/scene.hpp"
-
 #include <imgui.h>
 class SceneEditor
 {
 public:
     SceneEditor() = default;
 
-    void init (Scene* scene, GraphicsContext* context);
+    void init (GraphicsContext* context);
 
     void setupDockSpace (ImGuiID centre, ImGuiID left, ImGuiID right, ImGuiID bottom);
     void present (FrameContext* context);
@@ -41,11 +39,10 @@ private:
 
     Texture testTex;
 
-    Scene* currentLevel;
+    //Scene* currentLevel;
 
     bool mapOpen;
     bool mapSettingsOpen;
 };
-
 
 #endif //CONCORDE_SCENEEDITOR_H

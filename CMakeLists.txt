@@ -1,16 +1,15 @@
 cmake_minimum_required(VERSION 3.23)
 
 Project("DungeonCrawler"
-    VERSION 1.0
-    DESCRIPTION "SDL Top Down"
-    LANGUAGES C CXX
-    )
+        VERSION 1.0
+        DESCRIPTION "SDL Top Down"
+        LANGUAGES C CXX
+)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-
 
 add_subdirectory(Engine)
 
@@ -23,11 +22,9 @@ add_subdirectory(Engine)
 # endif()
 
 
-
-
 add_subdirectory(Editor)
 
 add_subdirectory(Game)
 
-
+add_subdirectory(LevelDataTester)
 

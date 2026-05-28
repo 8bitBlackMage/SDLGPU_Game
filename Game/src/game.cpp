@@ -128,14 +128,14 @@ void Game::drawEditor()
                               {
         ImGui::Text ("%s", name);
         ImGui::SameLine();
-        ImGui::GetWindowDrawList()->AddCallback (ImDrawCallback_ImplSDLGPU3_SetSampler, nullptr);
+        //ImGui::GetWindowDrawList()->AddCallback (ImDrawCallback_ImplSDLGPU3_SetSampler, nullptr);
         ImGui::Text ("%s", SDL_GetStringProperty (prop, name, "")); },
                               nullptr));
 
     ImGui::End();
 
     ImGui::Begin ("GameWindow", 0, ImGuiWindowFlags_NoScrollbar || ImGuiWindowFlags_NoScrollWithMouse);
-    ImGui::GetWindowDrawList()->AddCallback (ImDrawCallback_ImplSDLGPU3_SetSampler, nullptr);
+    //ImGui::GetWindowDrawList()->AddCallback (ImDrawCallback_ImplSDLGPU3_SetSampler, nullptr);
     auto windowWidth = ImGui::GetWindowSize().x * 0.9f;
     auto windowHeight = ImGui::GetWindowSize().y * 0.9f;
     ImGui::Image (editorPreview.getTexture(), { windowWidth, windowHeight });
