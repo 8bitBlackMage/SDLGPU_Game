@@ -17,6 +17,7 @@ target_sources(${PROJECT_NAME}
         PUBLIC
         src/Utils/logger.cpp
         src/Utils/fileHelpers.cpp
+        src/Utils/ApplicationDefs.cpp
 
         src/Graphics/graphicsContext.cpp
         src/Graphics/camera.cpp
@@ -29,6 +30,7 @@ target_sources(${PROJECT_NAME}
         src/Graphics/Pipelines/backgroundRenderer.cpp
         src/Graphics/Structs/sprite.cpp
         src/Graphics/Structs/line.cpp
+
         src/Imgui/imguiHelpers.cpp
         src/Imgui/imguiTheme.cpp
 
