@@ -19,14 +19,14 @@ void RenderTexture::init (GraphicsContext* context, float width, float height)
 {
     auto textureFormat = SDL_GetGPUSwapchainTextureFormat (context->getDevice(), context->getWindow());
     auto createInfo = SDL_GPUTextureCreateInfo {
-        .height = static_cast<Uint32> (height),
-        .width = static_cast<Uint32> (width),
-        .num_levels = 1,
-        .layer_count_or_depth = 1,
-        .format = textureFormat,
-        .sample_count = SDL_GPU_SAMPLECOUNT_1,
         .type = SDL_GPU_TEXTURETYPE_2D,
-        .usage = SDL_GPU_TEXTUREUSAGE_SAMPLER | SDL_GPU_TEXTUREUSAGE_COLOR_TARGET
+        .format = textureFormat,
+        .usage = SDL_GPU_TEXTUREUSAGE_SAMPLER | SDL_GPU_TEXTUREUSAGE_COLOR_TARGET,
+        .width = static_cast<Uint32> (width),
+        .height = static_cast<Uint32> (height),
+        .layer_count_or_depth = 1,
+        .num_levels = 1,
+        .sample_count = SDL_GPU_SAMPLECOUNT_1,
     };
 
     target = SDL_CreateGPUTexture (context->getDevice(), &createInfo);

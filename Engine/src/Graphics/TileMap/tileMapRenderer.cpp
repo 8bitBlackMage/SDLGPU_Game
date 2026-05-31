@@ -33,25 +33,25 @@ void TileMapRenderer::init (GraphicsContext* context)
     auto desc = SDL_GPUColorTargetDescription {
         .format = SDL_GetGPUSwapchainTextureFormat (context->getDevice(), context->getWindow()),
         .blend_state = {
-            .enable_blend = true,
-            .color_blend_op = SDL_GPU_BLENDOP_ADD,
-            .alpha_blend_op = SDL_GPU_BLENDOP_ADD,
             .src_color_blendfactor = SDL_GPU_BLENDFACTOR_SRC_ALPHA,
             .dst_color_blendfactor = SDL_GPU_BLENDFACTOR_ONE_MINUS_SRC_ALPHA,
+            .color_blend_op = SDL_GPU_BLENDOP_ADD,
             .src_alpha_blendfactor = SDL_GPU_BLENDFACTOR_SRC_ALPHA,
             .dst_alpha_blendfactor = SDL_GPU_BLENDFACTOR_ONE_MINUS_SRC_ALPHA,
+            .alpha_blend_op = SDL_GPU_BLENDOP_ADD,
+            .enable_blend = true,
         },
 
     };
 
     auto createInfo = SDL_GPUGraphicsPipelineCreateInfo {
-        .target_info = SDL_GPUGraphicsPipelineTargetInfo {
-            .num_color_targets = 1,
-            .color_target_descriptions = &desc,
-        },
-        .primitive_type = SDL_GPU_PRIMITIVETYPE_TRIANGLELIST,
         .vertex_shader = vert,
         .fragment_shader = frag,
+        .primitive_type = SDL_GPU_PRIMITIVETYPE_TRIANGLELIST,
+        .target_info = SDL_GPUGraphicsPipelineTargetInfo {
+            .color_target_descriptions = &desc,
+            .num_color_targets = 1,
+        },
     };
     RenderPipeline = SDL_CreateGPUGraphicsPipeline (context->getDevice(), &createInfo);
     if (! RenderPipeline)
@@ -64,11 +64,11 @@ void TileMapRenderer::init (GraphicsContext* context)
 
     auto samplerCreateInfo = SDL_GPUSamplerCreateInfo {
         .min_filter = SDL_GPU_FILTER_NEAREST,
-        .max_anisotropy = SDL_GPU_FILTER_NEAREST,
         .mipmap_mode = SDL_GPU_SAMPLERMIPMAPMODE_NEAREST,
         .address_mode_u = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE,
         .address_mode_v = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE,
         .address_mode_w = SDL_GPU_SAMPLERADDRESSMODE_CLAMP_TO_EDGE,
+        .max_anisotropy = SDL_GPU_FILTER_NEAREST,
     };
 
     sampler = SDL_CreateGPUSampler (context->getDevice(), &samplerCreateInfo);
@@ -150,8 +150,8 @@ void TileMapRenderer::loadTileMap (const ldtk::Level& level, GraphicsContext* co
     SDL_GPUCopyPass* copyPass = SDL_BeginGPUCopyPass (commandBuffer);
 
     auto transferBufferLocation = SDL_GPUTransferBufferLocation {
-        .offset = 0,
-        .transfer_buffer = transferBuffer
+        .transfer_buffer = transferBuffer,
+        .offset = 0
     };
 
     const auto tileSize = tileData.size() * sizeof (Tile);
@@ -199,10 +199,10 @@ void TileMapRenderer::draw (FrameContext* frameContext)
 
     auto colourTargetInfo = SDL_GPUColorTargetInfo {
         .texture = frameContext->swapchainTexture,
-        .cycle = false,
+        .clear_color { 0, 0, 0, 1 },
         .load_op = SDL_GPU_LOADOP_CLEAR,
         .store_op = SDL_GPU_STOREOP_STORE,
-        .clear_color { 0, 0, 0, 1 }
+        .cycle = false
     };
 
     SDL_GPURenderPass* renderPass = SDL_BeginGPURenderPass (

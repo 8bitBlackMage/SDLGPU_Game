@@ -23,24 +23,24 @@ void LineRenderer::init (GraphicsContext* context)
         .format = SDL_GetGPUSwapchainTextureFormat (context->getDevice(), context->getWindow()),
         .blend_state = {
 
-            .enable_blend = false,
-            .color_blend_op = SDL_GPU_BLENDOP_REVERSE_SUBTRACT,
-            .alpha_blend_op = SDL_GPU_BLENDOP_ADD,
             .src_color_blendfactor = SDL_GPU_BLENDFACTOR_SRC_ALPHA,
             .dst_color_blendfactor = SDL_GPU_BLENDFACTOR_ONE_MINUS_SRC_ALPHA,
+            .color_blend_op = SDL_GPU_BLENDOP_REVERSE_SUBTRACT,
             .src_alpha_blendfactor = SDL_GPU_BLENDFACTOR_SRC_ALPHA,
             .dst_alpha_blendfactor = SDL_GPU_BLENDFACTOR_ONE_MINUS_SRC_ALPHA,
+            .alpha_blend_op = SDL_GPU_BLENDOP_ADD,
+            .enable_blend = false,
         }
     };
 
-    auto createInfo = SDL_GPUGraphicsPipelineCreateInfo { .target_info = SDL_GPUGraphicsPipelineTargetInfo {
-                                                              .num_color_targets = 1,
-                                                              .color_target_descriptions = &colourTargetDesc,
-
-                                                          },
+    auto createInfo = SDL_GPUGraphicsPipelineCreateInfo { .vertex_shader = vert,
+                                                          .fragment_shader = frag,
                                                           .primitive_type = SDL_GPU_PRIMITIVETYPE_LINELIST,
-                                                          .vertex_shader = vert,
-                                                          .fragment_shader = frag };
+                                                          .target_info = SDL_GPUGraphicsPipelineTargetInfo {
+                                                              .color_target_descriptions = &colourTargetDesc,
+                                                              .num_color_targets = 1,
+
+                                                          } };
 
     RenderPipeline = SDL_CreateGPUGraphicsPipeline (context->getDevice(), &createInfo);
 
@@ -102,8 +102,8 @@ void LineRenderer::render (FrameContext* frameContext)
     SDL_GPUCopyPass* copyPass = SDL_BeginGPUCopyPass (frameContext->commandBuffer);
 
     auto transferBufferLocation = SDL_GPUTransferBufferLocation {
-        .offset = 0,
-        .transfer_buffer = transferBuffer
+        .transfer_buffer = transferBuffer,
+        .offset = 0
     };
     auto bufferRegion = SDL_GPUBufferRegion {
         .buffer = dataBuffer,
@@ -121,10 +121,10 @@ void LineRenderer::render (FrameContext* frameContext)
 
     auto colourTargetInfo = SDL_GPUColorTargetInfo {
         .texture = frameContext->swapchainTexture,
-        .cycle = false,
+        .clear_color { 0, 0, 0, 0 },
         .load_op = SDL_GPU_LOADOP_LOAD,
         .store_op = SDL_GPU_STOREOP_STORE,
-        .clear_color { 0, 0, 0, 0 }
+        .cycle = false
     };
 
     SDL_GPURenderPass* renderPass = SDL_BeginGPURenderPass (

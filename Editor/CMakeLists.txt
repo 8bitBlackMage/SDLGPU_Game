@@ -24,7 +24,6 @@ target_sources(${PROJECT_NAME}
         src/EditorWindows/sceneEditor.cpp
         src/EditorWindows/editorSettings.cpp
         src/EditorWindows/projectSettings.cpp
-        src/EditorWindows/PopUps/newPopUp.cpp
 )
 
 

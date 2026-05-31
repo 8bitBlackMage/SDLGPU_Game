@@ -1,4 +1,4 @@
-include(fetchContent)
+include(FetchContent)
 
 FetchContent_Declare(
         SDL3
@@ -45,7 +45,7 @@ FetchContent_MakeAvailable(rectpack2D)
 FetchContent_Declare(
         LDtkLoader
         GIT_REPOSITORY "https://github.com/Madour/LDtkLoader"
-        GIT_TAG "Master"
+        GIT_TAG "master"
         EXCLUDE_FROM_ALL
 )
 

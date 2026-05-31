@@ -2,3 +2,5 @@ build/**
 **/.DS_Store
 **/.cache/**
 .DS_Store
+out/**
+compile_commands.json

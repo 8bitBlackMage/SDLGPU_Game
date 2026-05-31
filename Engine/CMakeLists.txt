@@ -25,7 +25,7 @@ target_sources(${PROJECT_NAME}
         src/Graphics/TileMap/tileMapRenderer.cpp
         src/Graphics/Textures/texture.cpp
         src/Graphics/Pipelines/spriteBatch.cpp
-        src/Graphics/Pipelines/LineRenderer.cpp
+        src/Graphics/Pipelines/lineRenderer.cpp
         src/Graphics/Pipelines/backgroundRenderer.cpp
         src/Graphics/Structs/sprite.cpp
         src/Graphics/Structs/line.cpp
