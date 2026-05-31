@@ -1,19 +1,9 @@
 cmake_minimum_required(VERSION 3.28)
 
+include(../cmake/project_function.cmake)
 
-project("Concorde"
-        VERSION 1.0
-        DESCRIPTION "SDL Top Down"
-        LANGUAGES C CXX OBJC
-)
+OLYMPUS_PROJECT(Concorde 0.1 "Editor for Olympus Engine")
 
-set(CMAKE_CXX_STANDARD 23)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-
-add_executable(${PROJECT_NAME} MACOSX_BUNDLE
-)
 
 
 target_sources(${PROJECT_NAME}
@@ -21,25 +11,28 @@ target_sources(${PROJECT_NAME}
         src/main.cpp
         src/mainWindow.cpp
 
+        src/EditorWindows/aboutWindow.cpp
         src/EditorWindows/sceneEditor.cpp
         src/EditorWindows/editorSettings.cpp
         src/EditorWindows/projectSettings.cpp
 )
 
 
+
+
 if (APPLE)
-    set(MACOSX_BUNDLE_ICON_FILE "icon.icns")
-    set(application_icon "assets/${MACOSX_BUNDLE_ICON_FILE}")
-    set_source_files_properties(${application_icon}
+  set(MACOSX_BUNDLE_ICON_FILE "icon.icns")
+  set(application_icon "assets/${MACOSX_BUNDLE_ICON_FILE}")
+  set_source_files_properties(${application_icon}
             PROPERTIES
             MACOSX_PACKAGE_LOCATION "Resources"
     )
-    set(info_plist "assets/Info.plist")
-    set_source_files_properties(${info_plist}
+  set(info_plist "assets/Info.plist")
+  set_source_files_properties(${info_plist}
             PROPERTIES
             MACOSX_PACKAGE_LOCATION "/"
     )
-    target_sources(${PROJECT_NAME}
+  target_sources(${PROJECT_NAME}
             PUBLIC
             ${application_icon}
             ${info_plist}
@@ -47,7 +40,6 @@ if (APPLE)
 endif ()
 
 
-include(../asset_copy.cmake)
 
 fetchContent_Declare(
         nfd

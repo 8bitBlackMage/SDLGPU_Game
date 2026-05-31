@@ -1,6 +1,7 @@
 #ifndef CONCORDE_MAINWINDOW_H
 #define CONCORDE_MAINWINDOW_H
 
+#include "EditorWindows/aboutWindow.hpp"
 #include "EditorWindows/editorSettings.hpp"
 
 #include "EditorWindows/projectSettings.hpp"
@@ -31,6 +32,7 @@ private:
 
     GraphicsContext graphicsContext;
 
+    AboutWindow aboutWindow;
     ProjectSettings projectSettings;
     SceneEditor sceneEditor;
     EditorSettings editorSettings;
