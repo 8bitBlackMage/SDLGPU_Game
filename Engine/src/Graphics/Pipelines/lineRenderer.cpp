@@ -16,8 +16,8 @@ void LineRenderer::init (GraphicsContext* context)
         Logger::log ("Invalid GPU Context provided");
     }
 
-    SDL_GPUShader* vert = context->loadShader ("lineRenderer.vert", 0, 1, 1, 0);
-    SDL_GPUShader* frag = context->loadShader ("lineRenderer.frag", 0, 0, 0, 0);
+    SDL_GPUShader* vert = context->loadShader ("linerenderer.vert", 0, 1, 1, 0);
+    SDL_GPUShader* frag = context->loadShader ("linerenderer.frag", 0, 0, 0, 0);
 
     auto colourTargetDesc = SDL_GPUColorTargetDescription {
         .format = SDL_GetGPUSwapchainTextureFormat (context->getDevice(), context->getWindow()),

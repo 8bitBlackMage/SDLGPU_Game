@@ -39,7 +39,9 @@ std::filesystem::path getSettingsFolderPath()
 {
 }
 #elif defined(__linux__)
-
+#include <pwd.h>
+#include <sys/types.h>
+#include <unistd.h>
 void setApplicationRootPath (const char* pathstr)
 {
     appRootPath = pathstr;
@@ -50,9 +52,16 @@ std::filesystem::path getApplicationRootPath()
     return appRootPath;
 }
 
+std::filesystem::path getUserHomePath()
+{
+    struct passwd* pw = getpwuid (getuid());
+
+    return std::filesystem::path (pw->pw_dir);
+}
+
 std::filesystem::path getAssetFolderPath()
 {
-    return getApplicationRootPath().append ("assets");
+    return getUserHomePath().append (".local/share/Game/assets");
 }
 
 std::filesystem::path getSettingsFolderPath()
