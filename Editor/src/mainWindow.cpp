@@ -8,11 +8,9 @@
 #include "imgui_internal.h"
 #include "nfd.h"
 
-#include <filesystem>
 #include <nfd.hpp>
 
 #include <Utils/logger.hpp>
-#include <cstddef>
 #include <string>
 
 MainWindow::MainWindow()
@@ -52,6 +50,10 @@ void MainWindow::present()
     ImGui::BeginMainMenuBar();
     if (ImGui::BeginMenu ("File"))
     {
+        if (ImGui::MenuItem ("About"))
+        {
+            aboutWindow.toggleOpen();
+        }
         if (ImGui::MenuItem ("New", "Ctrl+N"))
         {
         }
@@ -120,6 +122,7 @@ void MainWindow::present()
     //projectSettings.present (&currentProject);
     sceneEditor.present (graphicsContext.getFrameContext());
     editorSettings.present();
+    aboutWindow.present();
 }
 void MainWindow::handleEvents()
 {

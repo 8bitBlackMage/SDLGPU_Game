@@ -8,4 +8,8 @@
 namespace ApplicationDefs
 {
 extern std::string applicationName;
-}
+extern std::string applicationVersion;
+extern std::string applicationDesc;
+extern std::string applicationArch;
+extern std::string applicationOS;
+} // namespace ApplicationDefs

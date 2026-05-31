@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.28)
 
 include(../cmake/project_function.cmake)
 
-OLYMPUS_PROJECT(Concorde 1.0 "Editor for Olympus Engine")
+OLYMPUS_PROJECT(Concorde 0.1 "Editor for Olympus Engine")
 
 
 
@@ -11,6 +11,7 @@ target_sources(${PROJECT_NAME}
         src/main.cpp
         src/mainWindow.cpp
 
+        src/EditorWindows/aboutWindow.cpp
         src/EditorWindows/sceneEditor.cpp
         src/EditorWindows/editorSettings.cpp
         src/EditorWindows/projectSettings.cpp
