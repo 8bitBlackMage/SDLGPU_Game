@@ -39,7 +39,7 @@ target_sources(${PROJECT_NAME}
         src/GameData/scene.cpp
 )
 
-include(../fetch_dependencies.cmake)
+include(../cmake/fetch_dependencies.cmake)
 
 
 target_link_libraries(${PROJECT_NAME}

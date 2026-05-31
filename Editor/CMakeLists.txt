@@ -1,20 +1,9 @@
 cmake_minimum_required(VERSION 3.28)
 
+include(../cmake/project_function.cmake)
 
-project("Concorde"
-        VERSION 1.0
-        DESCRIPTION "SDL Top Down"
-        LANGUAGES C CXX OBJC
-)
+OLYMPUS_PROJECT(Concorde 1.0 "Editor for Olympus Engine")
 
-set(CMAKE_CXX_STANDARD 23)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-
-
-add_executable(${PROJECT_NAME} MACOSX_BUNDLE
-)
 
 
 target_sources(${PROJECT_NAME}
@@ -28,9 +17,6 @@ target_sources(${PROJECT_NAME}
 )
 
 
-target_compile_definitions(${PROJECT_NAME}
-        PRIVATE
-        APPLICATION_NAME="${PROJECT_NAME}")
 
 
 if (APPLE)
@@ -53,7 +39,6 @@ if (APPLE)
 endif ()
 
 
-include(../asset_copy.cmake)
 
 fetchContent_Declare(
         nfd

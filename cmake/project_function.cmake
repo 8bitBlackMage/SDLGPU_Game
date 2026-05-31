@@ -1,0 +1,33 @@
+macro(OLYMPUS_PROJECT OPROJECT_NAME OPROJECT_VERSION OPROJECT_DESC)
+
+  project(
+    ${OPROJECT_NAME}
+    LANGUAGES C CXX OBJC
+    VERSION ${OPROJECT_VERSION}
+    DESCRIPTION ${OPROJECT_DESC}
+  )
+
+  add_executable(${OPROJECT_NAME}
+    MACOSX_BUNDLE)
+
+
+  set(CMAKE_CXX_STANDARD 23)
+  set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+  set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+
+  target_compile_definitions(
+    ${PROJECT_NAME} PRIVATE
+    APPLICATION_NAME="${PROJECT_NAME}")
+
+  target_compile_definitions(
+    ${PROJECT_NAME} PRIVATE
+    APPLICATION_VERSION="${PROJECT_VERSION}")
+  target_compile_definitions(
+    ${PROJECT_NAME} PRIVATE
+    APPLICATION_DESCRIPTION="{PROJECT_DESCRIPTION}"}
+  )
+
+  include(${CMAKE_SOURCE_DIR}/cmake/asset_copy.cmake)
+
+endmacro()

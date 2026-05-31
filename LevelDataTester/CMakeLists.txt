@@ -13,7 +13,7 @@ target_sources(${PROJECT_NAME}
         src/main.cpp)
 
 
-include(../asset_copy.cmake)
+include(../cmake/asset_copy.cmake)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE Olympus)
 
