@@ -1,3 +1,6 @@
+#include "SDL3/SDL_gpu.h"
+#include "SDL3/SDL_oldnames.h"
+#include "SDL3/SDL_surface.h"
 #include "Utils/fileHelpers.hpp"
 #include "glm/ext/vector_float2.hpp"
 #include <Graphics/Textures/texture.hpp>
@@ -68,9 +71,11 @@ void TextureManager::endBatchUpload (GraphicsContext* context)
 
     textureSize = solve();
 
+    const auto textureFormat = SDL_GetGPUSwapchainTextureFormat (context->getDevice(), context->getWindow());
+
     SDL_GPUTextureCreateInfo texCreateInfo = {};
     texCreateInfo.type = SDL_GPU_TEXTURETYPE_2D;
-    texCreateInfo.format = SDL_GPU_TEXTUREFORMAT_B8G8R8A8_UNORM;
+    texCreateInfo.format = textureFormat;
     texCreateInfo.usage = SDL_GPU_TEXTUREUSAGE_SAMPLER;
     texCreateInfo.width = textureSize.x;
     texCreateInfo.height = textureSize.y;
@@ -86,11 +91,18 @@ void TextureManager::endBatchUpload (GraphicsContext* context)
     SDL_GPUTransferBuffer* transferBuffer = SDL_CreateGPUTransferBuffer (context->getDevice(), &transferBufferCreateInfo);
 
     SDL_GPUCommandBuffer* cmd = SDL_AcquireGPUCommandBuffer (context->getDevice());
+
+    auto desiredPixelFormat = SDL_GetPixelFormatFromGPUTextureFormat (textureFormat);
+
     for (auto& surfaceData : surfaceBuffer)
     {
         auto textureData = surfaceData.first;
         auto surface = surfaceData.second;
 
+        if (surface->format != desiredPixelFormat)
+        {
+            surface = SDL_ConvertSurface (surface, desiredPixelFormat);
+        }
         uint32_t uploadPitch = surface->pitch;
         void* texturePointer = SDL_MapGPUTransferBuffer (context->getDevice(), transferBuffer, true);
 
