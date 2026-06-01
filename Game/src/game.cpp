@@ -3,12 +3,12 @@
 #include <LDtkLoader/Project.hpp>
 
 #include "game.hpp"
-#include <Graphics/Structs/line.hpp>
-
 #include <Graphics/Pipelines/spriteBatch.hpp>
+#include <Graphics/Structs/line.hpp>
 #include <Graphics/Structs/sprite.hpp>
 #include <Graphics/camera.hpp>
 #include <Graphics/graphicsContext.hpp>
+#include <Graphics/shaderManager.hpp>
 #include <Imgui/imguiHelpers.hpp>
 #include <Utils/logger.hpp>
 #include <imgui.h>

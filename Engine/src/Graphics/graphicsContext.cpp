@@ -66,6 +66,9 @@ void GraphicsContext::initContext (const std::string& windowName)
     };
 
     sampler = SDL_CreateGPUSampler (device, &samplerCreateInfo);
+
+    shaderManager.init (this);
+
     SDL_ShowWindow (window);
 }
 
@@ -120,89 +123,9 @@ void GraphicsContext::endFrame()
 
 SDL_GPUShader* GraphicsContext::loadShader (std::string filename, Uint32 samplerCount, Uint32 uniformBufferCount, Uint32 storageBufferCount, Uint32 storageTextureCount)
 {
-    Logger::getLogger().appendToLog ("Loading Shader from:", filename.c_str());
-    if (! device)
-    {
-        Logger::getLogger().appendToLog ("Device not initialised");
-        return nullptr;
-    }
+    auto path = getAssetFolderPath().append ("shaders/source/" + filename + ".hlsl");
 
-    SDL_GPUShaderStage stage;
-    if (filename.contains (".vert"))
-    {
-        stage = SDL_GPU_SHADERSTAGE_VERTEX;
-    }
-    else if (filename.contains (".frag"))
-    {
-        stage = SDL_GPU_SHADERSTAGE_FRAGMENT;
-    }
-    else
-    {
-        Logger::getLogger().appendToLog ("invalid shader type");
-        return nullptr;
-    }
-
-    std::filesystem::path shaderpath;
-
-    SDL_GPUShaderFormat backendFormats = SDL_GetGPUShaderFormats (device);
-    SDL_GPUShaderFormat format = SDL_GPU_SHADERFORMAT_INVALID;
-    std::string entryPoint;
-    if (backendFormats & SDL_GPU_SHADERFORMAT_SPIRV)
-    {
-        format = SDL_GPU_SHADERFORMAT_SPIRV;
-        entryPoint = "main";
-        shaderpath = getAssetFolderPath().string() + "/shaders/compiled/SPIRV/" + filename + ".spv";
-    }
-    else if (backendFormats & SDL_GPU_SHADERFORMAT_MSL)
-    {
-        format = SDL_GPU_SHADERFORMAT_MSL;
-        entryPoint = "main0";
-        shaderpath = getAssetFolderPath().string() + "/shaders/compiled/MSL/" + filename + ".msl";
-    }
-    else if (backendFormats & SDL_GPU_SHADERFORMAT_DXIL)
-    {
-        format = SDL_GPU_SHADERFORMAT_DXIL;
-        entryPoint = "main";
-        shaderpath = getAssetFolderPath().string() + "/shaders/compiled/DXIL/" + filename + ".dxil";
-    }
-    else
-    {
-        Logger::getLogger().appendToLog ("Invalid shader format");
-        return nullptr;
-    }
-
-    size_t codeSize;
-    void* code = SDL_LoadFile (shaderpath.c_str(), &codeSize);
-
-    if (code == nullptr)
-    {
-        Logger::log ("Failed to load shader from disk", SDL_GetError());
-        return nullptr;
-    }
-
-    SDL_GPUShaderCreateInfo createInfo;
-
-    createInfo.code = static_cast<const uint8_t*> (code);
-    createInfo.code_size = codeSize;
-    createInfo.entrypoint = entryPoint.c_str();
-    createInfo.format = format;
-    createInfo.stage = stage;
-    createInfo.num_samplers = samplerCount;
-    createInfo.num_uniform_buffers = uniformBufferCount;
-    createInfo.num_storage_buffers = storageBufferCount;
-    createInfo.num_storage_textures = storageTextureCount;
-
-    SDL_GPUShader* shader = SDL_CreateGPUShader (device, &createInfo);
-    if (shader == nullptr)
-    {
-        Logger::log ("failed to create shader", SDL_GetError);
-        SDL_free (code);
-        return nullptr;
-    }
-
-    SDL_free (code);
-
-    return shader;
+    return shaderManager.loadShader (path);
 }
 
 void GraphicsContext::calculateViews (float width, float height)

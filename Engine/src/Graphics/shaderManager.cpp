@@ -1,6 +1,6 @@
-#include "Graphics/graphicsContext.hpp"
 #include "SDL3_shadercross/SDL_shadercross.h"
 #include "Utils/logger.hpp"
+#include <Graphics/graphicsContext.hpp>
 #include <Graphics/shaderManager.hpp>
 #include <filesystem>
 #include <fstream>
@@ -13,18 +13,22 @@ void ShaderManager::init (GraphicsContext* context)
 
 SDL_GPUShader* ShaderManager::loadShader (std::filesystem::path filepath)
 {
+    Logger::log ("Loading:", filepath);
+    Logger::log ("Attempting to find Shader in cache");
     if (shaderCache.contains (filepath))
     {
         return shaderCache.at (filepath);
     }
     // Handle shader loading and compilation here...
 
-    return nullptr;
+    return compileShader (filepath);
 }
 
 SDL_GPUShader* ShaderManager::compileShader (std::filesystem::path filepath)
 {
+    Logger::log ("Compiling Shader from HLSL");
     if (! graphicsContext)
+
     {
         Logger::log ("Graphics Context invalid");
         return nullptr;
@@ -38,6 +42,18 @@ SDL_GPUShader* ShaderManager::compileShader (std::filesystem::path filepath)
         return nullptr;
     }
 
+    // figure out what type of shader this is.
+    SDL_ShaderCross_ShaderStage stage;
+    if (filepath.string().contains ("frag"))
+
+    {
+        stage = SDL_SHADERCROSS_SHADERSTAGE_FRAGMENT;
+    }
+    else if (filepath.string().contains ("vert"))
+    {
+        stage = SDL_SHADERCROSS_SHADERSTAGE_VERTEX;
+    }
+
     std::ifstream hlslFile (filepath.string());
     std::string hlslSource { std::istreambuf_iterator (hlslFile), std::istreambuf_iterator<char>() };
 
@@ -47,11 +63,10 @@ SDL_GPUShader* ShaderManager::compileShader (std::filesystem::path filepath)
         return nullptr;
     }
     //2. compile HLSL to SPIRV
-
     auto hlslShaderInfo = SDL_ShaderCross_HLSL_Info {
         .source = hlslSource.c_str(),
         .entrypoint = "main",
-        .shader_stage = SDL_SHADERCROSS_SHADERSTAGE_FRAGMENT
+        .shader_stage = stage,
     };
     size_t spirvSize;
     auto* spirvShader = SDL_ShaderCross_CompileSPIRVFromHLSL (&hlslShaderInfo, &spirvSize);
@@ -66,10 +81,17 @@ SDL_GPUShader* ShaderManager::compileShader (std::filesystem::path filepath)
         .bytecode = (Uint8*) spirvShader,
         .bytecode_size = spirvSize,
         .entrypoint = "main",
-        .shader_stage = SDL_SHADERCROSS_SHADERSTAGE_FRAGMENT,
+        .shader_stage = stage,
+        .props = 0,
     };
+    Logger::log ("Compiled Shader to SPIRV");
 
-    auto* shader = SDL_ShaderCross_CompileGraphicsShaderFromSPIRV (graphicsContext->getDevice(), &shaderInfo, nullptr, 0);
+    auto reflectInfo = SDL_ShaderCross_ReflectGraphicsSPIRV (
+        (Uint8*) spirvShader, spirvSize, 0);
+
+    Logger::log ("Generating native shader resource");
+
+    auto* shader = SDL_ShaderCross_CompileGraphicsShaderFromSPIRV (graphicsContext->getDevice(), &shaderInfo, &reflectInfo->resource_info, 0);
 
     if (shader == nullptr)
     {

@@ -1,6 +1,7 @@
 #pragma once
 #include <Graphics/camera.hpp>
 
+#include "Graphics/shaderManager.hpp"
 #include "glm/ext/matrix_float4x4.hpp"
 #include <Graphics/Textures/textureManager.hpp>
 #include <SDL3/SDL.h>
@@ -93,6 +94,8 @@ private:
     SDL_GPUTexture* swapChainTexture;
 
     TextureManager textureManager;
+
+    ShaderManager shaderManager;
 
     void calculateViews (float width, float height);
 };
