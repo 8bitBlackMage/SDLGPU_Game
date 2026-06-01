@@ -20,6 +20,7 @@ target_sources(${PROJECT_NAME}
         src/Utils/ApplicationDefs.cpp
 
         src/Graphics/graphicsContext.cpp
+        src/Graphics/shaderManager.cpp
         src/Graphics/camera.cpp
         src/Graphics/renderTexture.cpp
         src/Graphics/Textures/textureManager.cpp

@@ -33,6 +33,16 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(SDL3_Ttf)
 
+set(SDLSHADERCROSS_VENDORED ON)
+FetchContent_Declare(
+      SDL3_ShaderCross
+      GIT_REPOSITORY "https://github.com/libsdl-org/SDL_shadercross.git"
+      GIT_TAG "main"
+      EXCLUDE_FROM_ALL
+)
+
+
+FetchContent_MakeAvailable(SDL3_ShaderCross)
 
 FetchContent_Declare(
         rectpack2D
@@ -108,6 +118,7 @@ target_link_libraries(dependencies INTERFACE
         SDL3::SDL3
         SDL3_image::SDL3_image
         SDL3_ttf::SDL3_ttf
+        SDL3_shadercross::SDL3_shadercross
         glm::glm
         nlohmann_json::nlohmann_json
         rectpack2D

@@ -2,8 +2,8 @@
 
 #include <LDtkLoader/Project.hpp>
 
+#include "game.hpp"
 #include <Graphics/Structs/line.hpp>
-#include <game.hpp>
 
 #include <Graphics/Pipelines/spriteBatch.hpp>
 #include <Graphics/Structs/sprite.hpp>
